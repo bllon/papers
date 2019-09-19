@@ -1,0 +1,137 @@
+{extend name="public:base"}
+		{block name="body"}
+		<div class="container container-fluid">
+			<div class="row">
+				<div class="col-md-8">
+					<div class="page-header">
+					  <h2>{$postInfo.title}</h2>
+					  <h4>{$postInfo.subtitle}</h4>
+					  <small>发贴人: {$postInfo.writer}</small><br>
+					  <small>学校: {$postInfo.user_id|getschool}</small>
+					</div>
+					<div class="panel panel-default">
+					  <div class="panel-body text-warning" style="letter-spacing:1px;">
+					     {$postInfo.content|raw}
+					  </div>
+					</div>
+					
+				    <div class="row">
+				    	<div class="col-md-12">
+					    	<form id="comment-content" class="col-md-12" action="{:url('index/commit')}" style="padding:0px;" method="post">
+								<textarea id="content" name="content" class="form-control"></textarea>
+								<input type="hidden" name="reply_user" id="reply_user" value="{$Think.session.user_name}" />
+								<input type="hidden" name="user_id" id="user_id" value="{$Think.session.user_id}" />
+								<input type="hidden" name="grade" id="grade" value="0" />
+								<input type="hidden" name="reply_id" id="reply_id" value="0" />
+								<input type="hidden" name="post_id" id="post_id" value="{$postInfo.id}" />
+								<button type="submit" class="btn btn-sm btn-info" id="comment">评论</button>
+							</form>	
+						</div>
+				    </div>
+				    <h4 style="margin-top:50px;">所有评论</h4>
+				    <div class="row" style="margin-bottom:50px;">
+				    	
+
+
+						<div class="col-md-12" id="comment_list">
+							
+						</div>
+				    </div>
+				</div>
+				
+				
+				
+				<div class="modal fade replymodel" tabindex="-1" role="dialog">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title" id="exampleModalLabel">评论</h4>
+				      </div>
+				      <div class="modal-body">
+				        <form action="{:url('index/reply')}" method="post">
+				          	<textarea name="content" style="width:100%;"></textarea>
+							<input type="hidden" name="reply_user" value="{$Think.session.user_name}" />
+							<input type="hidden" name="user_id" value="{$Think.session.user_id}" />
+							<input type="hidden" name="grade" value="1" />
+							<input type="hidden" name="reply_id" class="replyId" value="0" />
+							<input type="hidden" name="post_id" value="{$postInfo.id}" />
+							<button type="submit" class="btn btn-info" id="">提交</button>
+				        </form>
+				      </div>
+				    </div><!-- /.modal-content -->
+				  </div><!-- /.modal-dialog -->
+				</div><!-- /.modal -->
+				<input type="hidden" id="userId" value="{$Think.session.user_id}"/>
+		<script>
+			$('.panel-body img').css('max-width','700px');
+			
+			$(function(){
+				var editor1;
+				KindEditor.ready(function(K) {
+					editor1 = K.create('textarea[name="replycontent"]', {
+						height:'50px',
+						resizeType : 0,
+						allowPreviewEmoticons : false,
+						allowImageUpload : false,
+						items : [
+							 'emoticons','fontname']
+					});
+				});
+			})
+			
+			//评论贴子
+			$('#comment').on('click',function(){
+				if($('#userId').val() == ''){
+					alert('对不起，你还没有登录');
+					return false;
+				}
+			})
+			
+			//非ajax获取评论时，设置回复按钮，评论已被渲染
+			// $('button.reply').on('click',function(){
+			// 	if($('#userId').val() == ''){
+			// 		alert('对不起，你还没有登录');
+			// 		return false;
+			// 	}
+			// 	console.log(123);
+			// 	console.log($(this).attr('replyId'));
+			// 	$('input.replyId').val($(this).attr('replyId'));
+			// })
+			
+
+
+			// 异步加载所有评论
+			$(document).ready(function(){
+				$.get("{:url('index/getComment')}",{id:{$postInfo.id}},function(data){
+					if(data.status == 1){
+						$('#comment_list').html(data.message);
+						console.log('获取评论成功');
+
+						//渲染后添加事件
+						$('button.reply').on('click',function(){
+							if($('#userId').val() == ''){
+								alert('对不起，你还没有登录');
+								return false;
+							}
+							console.log(123);
+							console.log($(this).attr('replyId'));
+							$('input.replyId').val($(this).attr('replyId'));
+						})
+
+						$('#footer').css({
+							'position':'absolute',
+							'top':$(document).height()+30+'px'
+						});
+
+					}else{
+						console.log('获取评论失败');
+					}				
+				})
+
+
+
+			})
+		</script>
+{/block}
+

@@ -1,0 +1,64 @@
+{extend name="public:base2"}
+		{block name="body"}
+		<div class="clear"></div>
+		<div class="container container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header" id="tit">
+					  <h2>贴子专区
+					  	{if $Think.Cookie.postSchool}
+					  	<button id="scBtn" class="btn btn-sm btn-warning" style="margin-left:20px;">显示全部</button>
+					  	{else /}
+					  	<button id="scBtn" class="btn btn-sm btn-warning" style="margin-left:20px;">只显示本校</button>
+					  	{/if}
+					  </h2>
+					</div>
+					
+					<div class="list-group">
+					{volist name="postList" id="post"}
+					  <a href="{:url('index/postDetail',['id'=>$post.id])}" target="_blank" class="list-group-item" style="padding:10px 5px;max-height:160px;overflow:hidden;">
+					    <h4 class="list-group-item-heading">{$post.title} <span class="glyphicon glyphicon-pencil"></span></h4>
+					    <p class="text-right" style="margin:0;"><span class="pull-left">{$post.subtitle}</span><small>发帖人: {$post.writer}</small></p>
+					    <p class="text-right" style="margin:0;color:#dfa600;"><small>{$post.user_id|getschool}</small></p>
+					    <p class="text-right" style="margin:0;color:#dfa600;"><small>{$post.create_time|date='Y-m-d H:i:s'}</small></p>
+					    <!--<h5 class="list-group-item-text" style="margin:0;"></h5>-->
+					    <!--<div class="list-group-item-text" style="padding:10px 5px;">{$post.content|raw}</div>-->
+					  </a>
+					{/volist}	
+					</div>
+					<div class="page text-center">{$postList|raw}</div>
+					<input type="hidden" id="userId" value="{$Think.session.user_id}"/>
+			</div>
+					
+			<script>
+				$('#scBtn').on('click',function(){	
+					
+					if($('#userId').val() == ''){
+						alert('对不起，你还没有登录');
+						return false;
+					}
+					
+					if($(this).html() == '只显示本校'){
+						$.get("{:url('index/selectPost')}",{sta:1},function(data){
+							$('#scBtn').html('显示全部');
+							location.reload();
+						})
+						return false;
+					}
+					
+					if($(this).html() == '显示全部'){
+						sta = 0;
+						$.get("{:url('index/selectPost')}",{sta:0},function(data){
+							$('#scBtn').html('只显示本校');
+							location.reload();
+						})
+						return false;
+					}
+					
+				});
+			</script>		
+		  		
+			
+{/block}
+
+

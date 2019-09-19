@@ -1,0 +1,91 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 用户角色管理</h1>
+          <p>role of user maneger</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">权限管理</li>
+          <li class="breadcrumb-item"><a href="{:url('role/userRoleList')}">用户角色管理</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="row">
+              <div class="col-md-12">
+              	<!--<a class="active" href="{:url('role/userRoleList')}" class="btn btn-warning btn-sm">前台用户角色管理</a>
+              	<a href="{:url('role/adminRoleList')}" class="btn btn-warning btn-sm">后台用户角色管理</a>-->
+              	<div class="bs-component">
+	              <ul class="nav nav-pills">
+	                <li class="nav-item"><a class="nav-link active" href="{:url('role/userRoleList')}">前台</a></li>
+	                <li class="nav-item"><a class="nav-link" href="{:url('role/adminRoleList')}">后台</a></li>
+	              </ul>
+	            </div>
+              </div>
+            </div>
+           	<div class="row" style="margin-top:20px;">
+           		<div class="col-md-2"></div>
+              	<div class="col-md-8">
+              		<h4>前台用户</h4>
+              		<div class="tile">
+			            <div class="tile-body">
+			              <table class="table table-hover table-bordered">
+			                <thead>
+			                  <tr>
+			                    <th>ID</th>
+			                    <th>用户名</th>
+			                    <th>角色</th>
+			                    <th>操作</th>
+			                  </tr>
+			                </thead>
+			                <tbody>
+			                	{volist name="userRoleList" id="user"}
+			                	<tr>
+			                		<td>{$user.id}</td>
+				                	<td>{$user.name}</td>
+				                	<td>
+                            {switch $user.role_id } 
+                            {case 21 }<span class="text-secondary">{$user.role_id|getRoleName}</span>{/case} 
+                            {case 22}<span class="text-primary">{$user.role_id|getRoleName}</span>{/case} 
+                            {default /}<span class="text-warning">{$user.role_id|getRoleName}</span>
+                            {/switch}
+                          </td>
+				                	<td>
+				                		<a href="{:url('role/editUserRole',['id'=>$user.id])}"><button class="btn btn-info btn-sm">编辑</button></a>
+				                	</td>
+			                	</tr>
+			                	
+			                	{/volist}
+			
+			                </tbody>
+			              </table>
+			              
+			            </div>
+			          </div>
+			          
+			          <div class="page">{$userRoleList|raw}</div>
+              	</div>
+              	<div class="col-md-2"></div>
+              	
+              	
+              	
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+       
+    {include file="public/footer2"}
+    <script>
+    	$('.page ul li').addClass('page-item');
+		$('.page ul li a').addClass('page-link');
+		$('.page ul li span').addClass('page-link');
+    </script>
+  </body>
+</html>

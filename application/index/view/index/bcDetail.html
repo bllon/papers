@@ -1,0 +1,98 @@
+{extend name="public:base2"}
+		{block name="body"}
+		<div class="clear"></div>
+		<div class="container container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header">
+					  <h3>收藏和借阅</h3>
+					</div>
+					<div class="page-body">
+						<div class="row">
+							<div class="col-md-5">
+								<h4>我的收藏</h4>
+								<div class="list-group">
+								{volist name="collectList" id="collect" empty="暂无收藏"}
+								  <a href="{:url('index/paperDetail',['id'=>$collect.paper_id])}" target="_blank" class="list-group-item">
+								    <h4 class="list-group-item-heading">{$collect.paper_id|getPaperName}</h4>
+								    <p class="text-right" style="margin:0;"><span class="pull-left"></span><small>{$collect.create_time}</small></p>
+								  </a>
+								{/volist}
+								</div>
+							</div>
+							<div class="col-md-2"></div>
+							<div class="col-md-5">
+								<h4>我的借阅</h4>
+								<div class="list-group">
+								{volist name="borrowList" id="borrow" empty="暂无借阅"}
+								  <li class="list-group-item">
+								    <h4 class="list-group-item-heading"><a href="{:url('index/paperDetail',['id'=>$borrow.paper_id])}" target="_blank">{$borrow.paper_id|getPaperName}</a><span class="pull-right"><small>{$borrow.create_time}</small></span></h4>
+								    <p class="text-right" style="margin:0;">
+								    	
+								    		{switch name="$borrow.status"}
+											{case 0}
+												<span class="pull-left" style="padding:10px;">
+													<small>目前状态:<span style="color:#00e735;">预约成功</span>&nbsp;&nbsp;&nbsp;请联系管理员取资料</small>
+												</span>
+												<button class="btn btn-primary btn-sm cancel" value="{$borrow.id}">取消预约</button>
+											{/case}
+											{case 1}
+												<span class="pull-left" style="padding:10px;">
+													<small>目前状态:<span class="text-primary">借阅成功</span>&nbsp;&nbsp;&nbsp;请阅读完后及时归还</small>
+												</span>
+												<button class="btn btn-primary btn-sm replyReturn" value="{$borrow.id}">归还</button>
+											{/case}
+											{case 2}
+												<span style="padding:10px;">
+													<small>目前状态:<span class="text-danger">等待归还</span>&nbsp;&nbsp;&nbsp;请及时归还</small>
+												</span>
+											{/case}
+											{case 3}
+												<span style="padding:10px;">
+													<small>目前状态:<span class="text-danger">已归还</span>&nbsp;&nbsp;&nbsp;</small>
+												</span>
+											{/case}
+											{/switch}
+								    	
+								    	
+								    </p>
+								  </li>
+								{/volist}
+								</div>
+							</div>
+						</div>
+					</div>
+
+						
+				</div>
+				
+				<script>
+					//取消预约
+					$('.cancel').on('click',function(){
+						console.log($(this).attr('value'));
+						$.get("{:url('index/cancel')}",{'id':$(this).attr('value')},function(data){
+							if(data.status == -1){
+								alert(data.message);
+							}else{
+								alert(data.message);
+								location.reload();
+							}
+							
+						})
+					})
+					
+					//归还论文
+					$('.replyReturn').on('click',function(){
+						console.log($(this).attr('value'));
+						$.get("{:url('index/replyReturn')}",{'id':$(this).attr('value')},function(data){
+							if(data.status == -1){
+								alert(data.message);
+							}else{
+								alert(data.message);
+								location.reload();
+							}
+							
+						})
+					})
+				</script>
+{/block}

@@ -1,0 +1,104 @@
+   {include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-th-list"></i> 论文列表</h1>
+          <p>paper list of school</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">论文管理</li>
+          <li class="breadcrumb-item active"><a href="{:url('paper/lunwenList')}">论文列表</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="tile-body">
+              <table class="table table-hover table-bordered">
+                <thead>
+                  <tr>
+                    <th id="paper">标题</th>
+                    <th>作者</th>
+                    <th>专业</th>
+                    <th>类别</th>
+                    <th>入库时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                	{volist name="lunwenList" id="lunwen"}
+                  <tr>
+                    <td>{$lunwen.lunwen_title|subTitle}</td>
+                    <td>{$lunwen.writer}</td>
+                    <td>{$lunwen.major}</td>
+                    <td>{$lunwen.lunwen_rank}</td>
+                    <td>{$lunwen.addtime|date="Y/m/d"}</td>
+                    <td colspan="2" class="text-center">
+                    	{if $lunwen.lunwen_terms}
+                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>0])}"><button class="btn btn-sm btn-primary" type="button">不公开</button></a>
+                    	{else /}
+                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>1])}"><button class="btn btn-sm btn-warning" type="button">公开</button></a>
+                    	{/if}
+                    	&nbsp;
+                    	<a href="#" class="deleLunwen" lunwenId="{$lunwen.id}"><button class="btn btn-sm btn-danger" type="button">删除</button></a>
+                    </td>
+                  </tr>
+                  {/volist}
+
+                </tbody>
+              </table>
+              <div class="page">{$lunwenList|raw}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+  </body>
+  <script type="text/javascript" src="/static/docs/js/plugins/sweetalert.min.js"></script>
+  <script>
+	$('.page ul li').addClass('page-item');
+	$('.page ul li a').addClass('page-link');
+	$('.page ul li span').addClass('page-link');
+	$('.page ul li').each(function(i){
+		if($(this).find('a').attr('href')!=undefined){
+			href = $(this).find('a').attr('href');
+			$(this).find('a').attr('href',href+'&#paper');
+		}
+	})
+	
+	//删除论文
+      $('.deleLunwen').click(function(){
+      	var lunwenId = $(this).attr('lunwenId');
+      	swal({
+      		title: "确定要删除?",
+      		text: "删除后将不能恢复!",
+      		type: "warning",
+      		showCancelButton: true,
+      		confirmButtonText: "是的",
+      		cancelButtonText: "不可以",
+      		closeOnConfirm: false,
+      		closeOnCancel: false
+      	}, function(isConfirm) {
+      		if (isConfirm) {
+      			$.get("{:url('paper/deleLunwen')}",{id:lunwenId},function(data){
+      				if(data.status == 0){
+      					swal(data.message, "未实施任何操作", "error");
+      				}else if(data.status == 1){
+      					swal("已删除!", "已删除该论文所有信息", "success");
+                setTimeout(function(){
+                  location.reload();
+                },1000);
+      				}
+      			})
+      		} else {
+      			swal("已取消", "未实施任何操作", "error");
+      		}
+      	});
+      });
+  </script>
+</html>

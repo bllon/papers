@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/docs/css/main.css">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Register - paper Admin</title>
+  </head>
+  <body>
+    <section class="material-half-bg">
+      <div class="cover"></div>
+    </section>
+    <section class="login-content">
+      <div class="logo">
+        <h1>paper</h1>
+      </div>
+      <div class="box">
+        <form class="registration-form col-md-12" action="{:url('admin/user/doRegister')}" method="post">
+          <h3 class="register-head"><i class="fa fa-lg fa-fw fa-user"></i>注册</h3>
+          <div class="form-group">
+            <label class="control-label">学校名称</label>
+            <input class="form-control" type="text" name="school_name" placeholder="school" autofocus>
+          </div>
+          <div class="form-group">
+            <label class="control-label">用户名</label>
+            <input class="form-control" type="text" name="username" placeholder="username" autofocus>
+          </div>
+          <div class="form-group">
+            <label class="control-label">邮箱</label>
+            <input class="form-control" type="email" name="email" placeholder="Email" autofocus>
+          </div>
+          <div class="form-group">
+            <label class="control-label">手机号</label>
+            <input class="form-control" type="text" name="phone" placeholder="mobile" autofocus>
+          </div>
+          <div class="form-group">
+            <label class="control-label">密码</label>
+            <input class="form-control" type="password" name="password" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label class="control-label">确认密码</label>
+            <input class="form-control" type="password" name="password_confirm" placeholder="password_confirm">
+          </div>
+          <div class="form-group btn-container">
+            <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>注册</button>
+          </div>
+        </form>
+        
+      </div>
+    </section>
+   {include file="public/footer2"}
+    <script type="text/javascript">
+      // Login Page Flipbox control
+      $('.login-content [data-toggle="flip"]').click(function() {
+      	$('.login-box').toggleClass('flipped');
+      	return false;
+      });
+    </script>
+  </body>
+</html>

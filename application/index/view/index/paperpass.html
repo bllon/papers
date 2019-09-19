@@ -1,0 +1,224 @@
+{extend name="public:base"}
+		{block name="body"}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8 col-xs-12">
+					<div class="page-header">
+					  <h2>论文查重&nbsp;&nbsp;<small><a href="{:url('index/passrecord')}" target="_blank" class="">我的查重记录</a></small></h2>
+					</div>
+					<div class="panel panel-default">
+					  <div class="panel-body text-warning" style="letter-spacing:1px;">
+					     查重过程缓慢,数据操作大,需要一定时间等待
+					   <h4><strong class="text-danger">强调:</strong>本站不会保留你的论文，绝对可靠</h4>
+					  </div>
+					</div>
+					<form action="{:url('index/doPass')}" method="post" enctype="multipart/form-data" id="form">
+					  
+					  <input type="hidden" name="user_id" id="user_id" value="{$Think.session.user_id}" />		
+					  <input type="hidden" name="token" id="" value="{$Think.session.token}" />
+					  <div class="form-group">
+					  	<label for="papertitle">论文标题</label>
+					  	<input type="text" class="form-control" name="papertitle" id="papertitle" value="" placeholder="输入论文标题"/>
+					  </div>
+					  <div class="form-group">
+					    <label for="paper" class="control-label">论文文档(仅支持pdf格式)</label>
+					    <input type="file" name="paper" id="input-file-disable-remove" class="dropify" data-show-remove="false" data-max-file-size="5M" />
+					  </div>
+					  
+					  <div class="form-group">
+					    <button type="button" id="pass" class="btn btn-primary">提交</button>
+					  </div>
+					  
+					</form>
+				</div>
+				<script>
+					$('#pass').on('click',function(){
+
+						var reg = /^\s*$/;
+						if(reg.test($('#papertitle').val())==true){
+							alert('请填写标题');	
+							$('#papertitle').val('');
+							return false;
+						}
+						
+						if($('.dropify-preview').css('display')=='none'){
+							alert('请上传文件');	
+							return false;
+						}
+
+						$.get("{:url('getPassNum')}",{},function(data){
+							if(data.status == 0){
+								alert('你的查重次数已用完');								
+								return false;
+							}else{
+								$('#form').submit();
+							}
+						})
+					});
+						
+					
+					$('#upload').on('click',function(){
+						
+						
+						var paper = $('#input-file-disable-remove')[0].files[0];
+						
+//						var imgext = ['jpeg','png','jpg','gif'];
+//						var paperext = ['pdf'];
+						
+//						if(title_img == undefined ||paper == undefined){
+//							alert('请上传完整文件');
+//						}
+//						
+//						if(imgext.indexOf(title_img.type.split('/')[1]) == -1){
+//							
+//							alert('请上传'+imgext.join(',')+'格式的图片');
+//						}
+//						
+//						if(paperext.indexOf(paper.type.split('/')[1]) == -1){
+//							
+//							alert('请上传'+paperext.join(',')+'格式的文档');
+//						}
+//						
+//						if(title_img.size < 0){
+//							alert('请上传图片');
+//							return false;
+//						}
+//						if(title_img.size > 40000){
+//							alert('标题文件过大');
+//							return false;
+//						}
+//						if(paper.size < 0){
+//							alert('请上传文档');
+//							return false;
+//						}
+//						if(paper.size > 4600000){
+//							alert('文档文件过大');
+//							return false;
+//						}
+
+						var formData = new FormData();
+						formData.append('paper',paper);
+						$.ajax({
+							type:"post",
+							url:"{:url('index/doPass')}",
+							async:true,
+							contentType:false,
+							processData: false,
+							data:formData,
+							success:function(data){
+								alert(data);
+								console.log(data);
+								
+							},
+							error:function(data){
+								alert(data);
+								console.log(data);
+							},
+						});
+					
+
+						
+						return false;
+					})
+				</script>
+				
+		<script src="/static/dropify/dist/js/dropify.min.js"></script>
+    <script src="/static/jquery-minicolors/jquery.minicolors.js"></script>
+
+	<link rel="stylesheet" href="/static/jquery-minicolors/jquery.minicolors.css">
+	<link rel="stylesheet" href="/static/dropify/dist/css/demo.css">
+    <link rel="stylesheet" href="/static/dropify/dist/css/dropify.min.css">
+		<script>
+            $(document).ready(function(){
+                // Basic
+                $('.dropify').dropify();
+
+                // Translated
+                $('.dropify-fr').dropify({
+                    messages: {
+                        default: 'Glissez-déposez un fichier ici ou cliquez',
+                        replace: 'Glissez-déposez un fichier ou cliquez pour remplacer',
+                        remove:  'Supprimer',
+                        error:   'Désolé, le fichier trop volumineux'
+                    }
+                });
+
+                // Used events
+                var drEvent = $('#input-file-events').dropify();
+
+                drEvent.on('dropify.beforeClear', function(event, element){
+                    return confirm("Do you really want to delete \"" + element.file.name + "\" ?");
+                });
+
+                drEvent.on('dropify.afterClear', function(event, element){
+                    alert('File deleted');
+                });
+
+                drEvent.on('dropify.errors', function(event, element){
+                    console.log('Has Errors');
+                });
+
+                var drDestroy = $('#input-file-to-destroy').dropify();
+                drDestroy = drDestroy.data('dropify')
+                $('#toggleDropify').on('click', function(e){
+                    e.preventDefault();
+                    if (drDestroy.isDropified()) {
+                        drDestroy.destroy();
+                    } else {
+                        drDestroy.init();
+                    }
+                })
+            });
+        </script>
+        
+        <script>
+		$(document).ready( function() {
+
+			
+
+            $('.demo').each( function() {
+
+				$(this).minicolors({
+
+					control: $(this).attr('data-control') || 'hue',
+
+					defaultValue: $(this).attr('data-defaultValue') || '',
+
+					inline: $(this).attr('data-inline') === 'true',
+
+					letterCase: $(this).attr('data-letterCase') || 'lowercase',
+
+					opacity: $(this).attr('data-opacity'),
+
+					position: $(this).attr('data-position') || 'bottom left',
+
+					change: function(hex, opacity) {
+
+						var log;
+
+						try {
+
+							log = hex ? hex : 'transparent';
+
+							if( opacity ) log += ', ' + opacity;
+
+							console.log(log);
+
+						} catch(e) {}
+
+					},
+
+					theme: 'default'
+
+				});
+
+                
+
+            });
+
+			
+
+		});
+
+	</script>
+{/block}

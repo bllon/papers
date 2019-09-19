@@ -1,0 +1,212 @@
+{extend name="public:base2"}
+		{block name="body"}
+		<div class="clear"></div>
+		<div class="container container-fluid" id="pageContent">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header" id="tit">
+					  <h2>{$paperInfo.rank_type}</h2>
+					</div>
+					
+
+						<div class="text-center" style="padding-bottom:50px;">
+							<h4>
+								{if $collectaction}
+								<button class="btn btn-light btn-sm pull-left" id="collect" style="margin-right:10px;">已收藏</button>
+								{else/}
+								<button class="btn btn-warning btn-sm pull-left" id="collect" style="margin-right:10px;">收藏</button>
+								{/if}
+								{if $borrowaction}
+								<button class="btn btn-primary btn-sm pull-left" id="borrow">已借阅</button>
+								{else/}
+								<button class="btn btn-success btn-sm pull-left" id="borrow">借阅</button>
+								{/if}
+								
+								<a href="{$paperInfo.url}" target="_blank">{$paperInfo.lunwen_title}</a>
+								<button class="btn btn-info btn-sm pull-right" id="pdf">pdf浏览</button></h4>
+							<p>发布者: {$paperInfo.writer} &nbsp;&nbsp;&nbsp;&nbsp;
+								发布时间: {$paperInfo.addtime|date="Y/m/d"} &nbsp;&nbsp;&nbsp;&nbsp;
+								阅读量 : {$paperInfo.pv} &nbsp;&nbsp;&nbsp;&nbsp;
+							</p>
+							<center class="lunwen">
+								<article class="page">
+								{volist name="$paperInfo.content" id="content" key="i"}
+									<h3 class="text-left text-info"><span class="badge">{$i}</span></h3>
+									<p class="" style="padding:0 10px;">{$content|raw}</p><br><hr class="text-danger" />
+								{/volist}
+									<a href="#tit">回到顶部</a>
+								</article>
+								
+								<div class="pdfcontent">
+									<iframe class="media" src="/static/pdfjs-2.0.943-dist/web/viewer.html" file="{$paperInfo.lunwen_file}" width="100%" height="1000px"></iframe>
+								</div>
+							</center>
+							<hr />
+							<input type="hidden" name="paperId" id="paperId" value="{$paperInfo.id}" />
+							<input type="hidden" id="userId" value="{$Think.session.user_id}"/>
+							<input type="hidden" id="collectaction" value="{$collectaction}"/>
+							<input type="hidden" id="borrowaction" value="{$borrowaction}"/>
+
+							<!-- 文章高度 -->
+							<input type="hidden" id="wordHeight" value="">
+						</div>
+				</div>
+				
+		<script type="text/javascript">
+
+			//获取pdf文件名
+			window.pdffile = $('iframe').attr('file');
+			$('.pdfcontent').html('');
+		    
+		    //切换浏览模式
+		    $('#pdf').on('click',function(){
+
+		    	if($(this).html()=='pdf浏览'){
+//		    		console.log('pdf模式');
+		    		$('.page').addClass('hidden');
+//					$('.pdfcontent').css('display','block');
+					$('.pdfcontent').html('<iframe class="media" src="/static/pdfjs-2.0.943-dist/web/viewer.html" file="{$paperInfo.lunwen_file}" width="100%" height="1000px"></iframe>');
+					$('.page').readmore('destroy');
+					$(this).removeClass('btn-info');$(this).addClass('btn-warning');
+					$(this).html('普通模式');
+
+					// $(document).height($('html').height()+'px');
+					//调整页脚
+					$('#footer').css({
+						'position':'absolute',
+						'top':$('#pageContent').height()+70+'px'
+					});
+
+					return false;
+
+		    	}else if($(this).html()=='普通模式'){
+//		    		console.log('普通模式');
+		    		$('.page').removeClass('hidden');
+//					$('.pdfcontent').css('display','none');
+					$('.pdfcontent').html('');
+//					readmore(i);
+					$(this).addClass('btn-info');$(this).removeClass('btn-warning');
+					$(this).html('pdf浏览');
+
+					//初始化继续阅读
+					var h = $('#wordHeight').val();
+				  	ready(h);
+
+					//调整页脚
+					$('#footer').css({
+						'position':'absolute',
+						'top':$(document).height()+'px'
+					});
+		    		return false;
+		    	}
+		    	
+			})
+		   
+		    //5分钟后增加阅读量
+		    setTimeout(function(){
+		    	$.get("{:url('index/incPv')}",{'id':$('#paperId').val()},function(data){
+		    	})
+		    },1000*60*5);
+			
+			
+			//收藏功能
+			$('#collect').on('click',function(){
+				if($('#userId').val() == ''){
+					alert('对不起，你还没有登录');
+					return false;
+				}
+				$.get("{:url('index/collect')}",{'paper_id':$('#paperId').val(),'user_id':$('#userId').val(),'action':$('#collectaction').val()},function(data){
+					console.log(data.message);
+					location.reload();
+				})
+			})
+			
+			//借阅功能
+			$('#borrow').on('click',function(){
+				
+				if($('#userId').val() == ''){
+					alert('对不起，你还没有登录');
+					return false;
+				}
+				$.get("{:url('index/borrow')}",{'paper_id':$('#paperId').val(),'user_id':$('#userId').val(),'action':$('#borrowaction').val()},function(data){
+					if(data.status == -1){
+						alert(data.message);
+					}
+					console.log(data.message);
+					location.reload();
+				})
+			})
+
+		</script> 		
+		
+		<!-- 继续阅读插件 -->
+		<script src="/static/readmore/readmore.js"></script>
+
+
+
+		<script>
+		  	
+		  	//添加继续阅读
+		  	function readmore(i){
+		  		
+		  		$('.page').readmore({
+				    moreLink: '<a href="#" class="margin-top:20px;">继续阅读</a>',
+					lessLink: '<a href="#">收缩</a>',
+				    maxHeight: i,
+					beforeToggle: function() {},
+					afterToggle: function() {
+						if(i > height){
+							$('.page').readmore({
+							    moreLink: '<a href="#">继续阅读</a>',
+								lessLink: '<a href="#">收缩</a>',
+							    maxHeight: height,
+								beforeToggle: function() {},
+								afterToggle: function() {}
+							});
+							i = 0;
+						}else{
+							i = i+n;
+							readmore(i);
+						}
+						
+					}
+				});
+				
+				$('#footer').css({
+					'position':'absolute',
+					'top':$(document).height()+'px'
+				});
+		  	}
+
+		  	var height = parseInt($('.page').css('height'))+1;
+			$('#wordHeight').val(height);
+
+		  	//初始化继续阅读
+		  	function ready(h){
+				var n = height/5;
+				var i = n;
+				if(height > 1000){
+					readmore(i);
+				}
+				
+				
+				if(i == 0){
+					$('.page').readmore('destroy');
+					$('.page').readmore({
+				    	moreLink: '<a href="#">继续阅读</a>',
+						lessLink: '<a href="#">收缩</a>',
+					    maxHeight: height,
+						beforeToggle: function() {},
+						afterToggle: function() {}
+					});
+				}
+		  	}
+			
+			
+			ready(height);
+			$('#footer').remove();
+
+		</script>
+		  
+			
+{/block}

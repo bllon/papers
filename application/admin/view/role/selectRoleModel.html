@@ -1,0 +1,58 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 角色管理</h1>
+          <p>role maneger</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">角色管理</li>          
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+           	<div class="row">
+           		<div class="col-md-2"></div>
+              	<div class="col-md-8">
+              		<a href="{:url('role/addRole',['role_type'=>1])}"><button class="btn btn-info btn-sm">前台角色</button></a>
+                  <a href="{:url('role/addRole',['role_type'=>0])}" style="margin-left:40px;"><button class="btn btn-info btn-sm">后台角色</button></a>
+              	</div>
+              	<div class="col-md-2"></div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+    <script>
+    	
+    	$('#selectall').click(function(){
+    		
+    		if($(this).prop('checked') == true){    			
+    			
+    			//全选
+    			$('.powers').each(function(i){
+    				$(this).find('input').prop('checked',true);
+    			})
+    			
+    		}
+
+    		if($(this).prop('checked') == false){
+				
+    			//取消全选
+    			$('.powers').each(function(i){
+    				$(this).find('input').prop('checked',false);
+    			})
+    			
+    		}    		
+    		
+    	})
+    </script>
+  </body>
+</html>

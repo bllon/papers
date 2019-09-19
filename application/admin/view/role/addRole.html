@@ -1,0 +1,94 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 角色管理</h1>
+          <p>role maneger</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">角色管理</li>
+          <li class="breadcrumb-item">
+            <a href="{:url('role/addRole')}">
+              {if condition='$type'}
+              添加前台角色
+              {else/}
+              添加后台角色
+              {/if}
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+           	<div class="row">
+           		<div class="col-md-2"></div>
+              	<div class="col-md-8">
+              		<form action="{:url('role/doAddRole')}" method="post">
+              			<div class="form-group">
+              				<label for="">角色名称</label>
+              				<input type="text" class="form-control" name="name" id="" value="" placeholder="输入角色名称"/>
+              			</div>
+              			<div class="form-group">
+
+              				<label for="">选择权限</label>
+              				<div class="animated-checkbox" style="display:inline;margin-left:15px;">
+					              <label>
+					                <input type="checkbox" id="selectall"><span class="label-text">全选</span>
+					              </label>
+				              </div>
+
+              				<div class="box">
+	              				{volist name="powerList" id="power"}
+	              				<div class="animated-checkbox powers" style="display:inline;margin-right:5px;">
+  					              <label>
+  					                <input type="checkbox" name="power_id[]" value="{$power.id}"><span class="label-text">{$power.name}</span>
+  					              </label>
+					               </div>	
+			                	{/volist}
+	              			</div>
+              			</div>
+                    <input type="hidden" name="sta" value="{$type}">
+              			<center>
+              				<button type="submit" class="btn btn-info btn-sm">提交</button>
+              			</center>
+              		</form>
+              	</div>
+              	<div class="col-md-2"></div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+    <script>
+    	
+    	$('#selectall').click(function(){
+    		
+    		if($(this).prop('checked') == true){    			
+    			
+    			//全选
+    			$('.powers').each(function(i){
+    				$(this).find('input').prop('checked',true);
+    			})
+    			
+    		}
+
+    		if($(this).prop('checked') == false){
+				
+    			//取消全选
+    			$('.powers').each(function(i){
+    				$(this).find('input').prop('checked',false);
+    			})
+    			
+    		}    		
+    		
+    	})
+    </script>
+  </body>
+</html>

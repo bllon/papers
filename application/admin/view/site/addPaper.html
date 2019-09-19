@@ -1,0 +1,56 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 添加论文</h1>
+          <p>add paper of school</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">网站管理</li>
+          <li class="breadcrumb-item"><a href="{:url('site/addPaper')}">添加论文</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="row">
+              <div class="col-lg-6">
+                <form action="{:url('site/doAddPaper')}" method="post">
+                	
+                  <div class="form-group">
+                    <label for="exampleSelect2">学校</label>
+                    <select name="school">
+                    	{volist name="schoolList" id="school"}
+                    	<option value="{$school.school_name}">{$school.school_name}</option>
+                    	{/volist}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleSelect2">关键字</label>
+                    <input type="text" class="form-control" name="keywords" id="" value="" />
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleSelect2">添加数量(条)</label>
+                    <input type="number" class="form-control" name="number" id="" value="" />
+                  </div>
+		          <div class="form-group text-right">
+                    <button type="submit" class="btn btn-info">提交</button>
+                  </div>
+		              
+                </form>
+              </div>
+                
+            </div>
+           
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+  </body>
+</html>

@@ -1,0 +1,113 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 论文搜索</h1>
+          <p>paper search of school</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">论文管理</li>
+          <li class="breadcrumb-item"><a href="{:url('paper/search')}">论文搜索</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="row">
+              <div class="col-lg-6">
+                <form action="{:url('paper/search')}" method="get">
+                  
+                  <div class="form-group">
+                    <label for="exampleSelect1">选择搜索方式</label>
+                    <select class="form-control-sm" name="chance"  id="chance">
+                      <option value="0" 
+                      {eq name="$chance" value="0"}
+                      selected="selected"
+                      {/eq}
+                      	>论文标题</option>
+                      <option value="1" 
+                      {eq name="$chance" value="1"}
+                      selected="selected"
+                      {/eq}	
+                      	>作者姓名</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleSelect2">输入关键字</label>
+                    <div class="app-search">
+                    	<input class="form-control" id="keywords" name="keywords" type="search" placeholder="Search" value="{$keywords}">
+          				<button type="submit" class="app-search__button"><i class="fa fa-search"></i></button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+        <div class="col-md-12">
+        	{if $lunwenList}
+        		<h5>结果</h5>
+        		<div class="col-md-12">
+		          <div class="tile">
+		            <div class="tile-body">
+		              <table class="table table-hover table-bordered">
+		                <thead>
+		                  <tr>
+		                    <th id="paper">标题</th>
+		                    <th>作者</th>
+		                    <th>专业</th>
+		                    <th>类别</th>
+		                    <th>质量</th>
+		                    <th>操作</th>
+		                  </tr>
+		                </thead>
+		                <tbody>
+		                	{volist name="lunwenList" id="lunwen"}
+		                  <tr>
+		                    <td>{$lunwen.lunwen_title}</td>
+		                    <td>{$lunwen.writer}</td>
+		                    <td>{$lunwen.major}</td>
+		                    <td>{$lunwen.lunwen_rank}</td>
+		                    <td>{$lunwen.biaoji}</td>
+		                    <td colspan="2" class="text-center">
+		                    	{if $lunwen.lunwen_terms}
+		                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>0])}"><button class="btn btn-sm btn-primary" type="button">不公开</button></a>
+		                    	{else /}
+		                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>1])}"><button class="btn btn-sm btn-warning" type="button">公开</button></a>
+		                    	{/if}
+		                    	&nbsp;
+		                    	<a href="{:url('paper/deleLunwen',['id'=>$lunwen.id])}"><button class="btn btn-sm btn-danger" type="button">删除</button></a>
+		                    </td>
+		                  </tr>
+		                  {/volist}
+		
+		                </tbody>
+		              </table>
+		              <div class="page">{$lunwenList|raw}</div>
+		            </div>
+		          </div>
+		        </div>
+        	{/if}
+        </div>
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+    
+  </body>
+  <script>
+  	$('.page ul li').addClass('page-item');
+	$('.page ul li a').addClass('page-link');
+	$('.page ul li span').addClass('page-link');
+	$('.page ul li').each(function(i){
+		if($(this).find('a').attr('href')!=undefined){
+			href = $(this).find('a').attr('href');
+			$(this).find('a').attr('href',href+'&keywords='+$('#keywords').val()+'&chance='+$('#chance').val()+'&#paper');
+		}
+	})
+  </script>
+</html>

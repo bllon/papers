@@ -1,0 +1,38 @@
+{extend name="public:base"}
+		{block name="body"}
+		<div class="container container-fluid">
+			<div class="row">
+				<div class="col-md-8">
+					<div class="page-header" style="position:relative;">
+					  	{neq name="$userInfo.user_img" value=""}
+				        <img class="img-circle" src="{$userInfo.user_img}" style="width:100px;height:100px;margin:5px;">
+				        {/neq}
+				        {eq name="$userInfo.user_img" value=""}
+				        <img class="img-circle" src="/static/images/icon.jpg" style="width:100px;height:100px;margin:5px;">
+				        {/eq}
+					  <span class="h3" style="position:relative;left:15px;bottom:-30px;">{$userInfo.name}</span>
+					</div>
+					<div class="page-body">
+						<div class="form-group">
+							<label>学校:&nbsp;</label><span>{$userInfo.school_name}</span>
+						</div>
+						<div class="form-group">
+							<label>邮箱:&nbsp;</label><span>{$userInfo.email}</span>
+						</div>
+						<div class="form-group">
+							<label>注册时间:&nbsp;</label><span>{$userInfo.create_time}</span>
+						</div>
+						<div class="form-group">
+							<label>收藏论文:&nbsp;</label><span>{$collectNum}本</span>
+						</div>
+						<div class="form-group">
+							<label>累计借阅:&nbsp;</label><span>{$borrowNum}本</span>
+						</div>
+						<div class="form-group">
+							<label>累计查重:&nbsp;</label><span>{$borrowNum}次</span>
+						</div>
+					</div>
+				</div>		
+				   
+{/block}
+

@@ -1,0 +1,147 @@
+{extend name="public:base"}
+
+		{block name="body"}
+		  
+		
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-xs-12">
+						<div class="row" style="padding-bottom:20px;">
+							<div class="col-md-11 col-xs-12">
+								<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+								  
+								  <ol class="carousel-indicators">
+								    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+								    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+								    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+								  </ol>
+					
+								 
+								  <div class="carousel-inner" role="listbox">
+								    <div class="item active">
+								      <img src="/static/images/1.jpg" class="img-responsive" alt="..." style="max-width:685px;max-height:374.6px;">
+								    </div>
+								    <div class="item">
+								      <img src="/static/images/2.jpg" class="img-responsive" alt="..." style="max-width:685px;max-height:374.6px;">
+								    </div>
+								    <div class="item">
+								      <img src="/static/images/3.jpg" class="img-responsive" alt="..." style="max-width:685px;max-height:374.6px;">
+								    </div>
+								  </div>
+					
+								  
+								  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+								    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+								    <span class="sr-only">Previous</span>
+								  </a>
+								  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+								    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+								    <span class="sr-only">Next</span>
+								  </a>
+								</div>
+							</div>
+						</div>
+						<div class="clear"></div>
+						{neq name="$Think.cookie.notice" value="1"}
+						{if $noticeInfo}
+						{switch name="$noticeInfo.type"}
+						{case 0}
+							<div class="alert alert-info alert-dismissible" role="alert" style="width:90%;">
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  <strong><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;通知!</strong> {$noticeInfo.content}
+							</div>
+						{/case}
+						{case 1}
+							<div class="alert alert-warning alert-dismissible" role="alert" style="width:90%;">
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  <strong><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;注意!</strong> {$noticeInfo.content}
+							</div>
+						{/case}
+						{case 2}
+							<div class="alert alert-danger alert-dismissible" role="alert" style="width:90%;">
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  <strong><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;警告!</strong> {$noticeInfo.content}
+							</div>
+						{/case}
+						
+						{/switch}
+						{/if}
+						{/neq}
+						<div class="page-header">
+						  <h3>{$rankName|default="论文展示"} <span class="glyphicon glyphicon-book" style="color:#cc8c39;"></span></h3>
+						</div>
+						
+						<div class="row">
+							{volist name="lunwenList" id="lunwen" empty="$empty"}
+							<div class="pull-left" style="width:140px;height:auto;padding:0px 0px 30px 10px;">
+								<a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank" style="display:block;width:110px;height:130px;margin:0 auto;position:relative;">
+									<img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/>
+									<div class="lv img-rounded" style="width:110px;height:130px;margin:0 auto;background:rgba(145,112,54,0.2);position:absolute;top:0;" title="{$lunwen.lunwen_title}"></div>
+								</a>
+								<div style="padding:0px 2px;">
+									<h6 style="height:30px;"><a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank">{$lunwen.lunwen_title|subTitle}</a></h6>
+									<p class="small" style="margin:0;">作者:{$lunwen.writer}</p>
+									<p class="small" style="margin:0;">阅读量:{$lunwen.pv}</p>
+									<p class="small" style="margin:0;">发布时间:<span class="text-primary">{$lunwen.addtime|date="Y/m/d"}</span></p>
+								</div>
+							</div>
+							{/volist}
+						</div>
+						
+						<div class="clearfix"></div>
+						<div class="text-center page">{$lunwenList|raw}</div>
+					</div>
+				
+				
+				<script>
+
+					//轮播左右按钮隐藏
+					$('#carousel-example-generic').hover(
+						function(){
+							//鼠标移进
+							$('a.left').css('display','block');
+							$('a.right').css('display','block');							
+						},
+						function(){
+							//鼠标移出
+							$('a.left').css('display','none');
+							$('a.right').css('display','none');
+						}
+					)
+
+					//关闭通告
+					$('.close').on('click',function(){
+						$.get("{:url('index/closeNotice')}",{},function(data){
+						})
+						
+					})
+					
+					//论文封面滤镜
+					$('.lv').hover(
+						function(){
+							$(this).css('background','rgba(145,112,54,0.4)');
+						},
+						function(){
+							$(this).css('background','rgba(145,112,54,0.2)');
+						}
+					)
+
+					//搜索关键词
+					function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
+					var keywords = trimStr($("input[name='keywords']").val())
+					
+					if(keywords!==''){
+						$('.page ul li').addClass('page-item');
+						$('.page ul li a').addClass('page-link');
+						$('.page ul li span').addClass('page-link');
+						$('.page ul li').each(function(i){
+							
+							if($(this).find('a').attr('href')!=undefined){
+								href = $(this).find('a').attr('href');
+								$(this).find('a').attr('href',href+'&keywords='+keywords);
+							}
+						})
+					}
+					
+				</script>
+{/block}

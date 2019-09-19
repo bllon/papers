@@ -1,0 +1,75 @@
+{extend name="public:base2"}
+		{block name="body"}
+		<div class="clear"></div>
+		<div class="container container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header" id="tit">
+					  <h2>
+					  	音乐列表
+					  </h2>
+					</div>
+					
+					<div class="list-group">
+					{volist name="songList" id="song"}
+				  	<li class="list-group-item item" style="text-align:left;">
+						<div style="float:left;width:20px;text-align:center;">
+							<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
+						</div>										
+						<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
+						<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
+						<span style="margin-left:15px;width:150px;float:right;">
+							<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+								<span class="glyphicon glyphicon glyphicon-play"></span>
+							</a>
+							<a class="download" href="javascript:void(0);" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+								<span class="glyphicon glyphicon-cloud-download"></span>
+							</a>
+							<a class="collect" href="javascript:void(0);" title="收藏" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+								<span class="glyphicon glyphicon-heart"></span>
+							</a>
+						</span>
+						<!-- <video class="media" controls="controls" style="display:none;">
+							<source src="{$song.url}" type="audio/mpeg">
+						</video> -->
+					</li>
+					{/volist}	
+					</div>
+
+					<video class="media" controls="controls" style="display:none;">
+						<source src="" type="audio/mpeg">
+					</video>
+			</div>	
+		  		
+			<script>
+				//音乐控件
+				$('.play').click(function(){
+					console.log($(this).parent('li'));
+					$('.item').css('background','#fff');
+					$(this).parent().parent().css('background','#ff6666');
+
+					$('.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play').css('color','#44afd1');
+
+					var url = $(this).attr('data-url');
+
+					if($('.media')[0].src != url){
+						$('.media')[0].src = url;
+					}
+
+
+					var paused = $('.media')[0].paused;
+					if(paused){
+						$('.media')[0].play();
+						$(this).find('span').removeClass('glyphicon-play').addClass('glyphicon-pause').css('color','pink');
+						return false;
+					}else{
+						$('.media')[0].pause();
+						$(this).find('span').removeClass('glyphicon-pause').addClass('glyphicon-play').css('color','#44afd1');
+						return false;
+					}
+
+				})
+			</script>
+{/block}
+
+

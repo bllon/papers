@@ -1,0 +1,47 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 权限管理</h1>
+          <p>power maneger</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">权限管理</li>
+          <li class="breadcrumb-item"><a href="{:url('role/editPower')}">编辑权限</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+           	<div class="row">
+           		<div class="col-md-4"></div>
+              	<div class="col-md-4">
+              		<form action="{:url('role/doEditPower')}" method="post">
+              			<div class="form-group">
+              				<label for="">权限名称</label>
+              				<input type="text" class="form-control" name="name" id="" value="{$powerInfo.name}" placeholder="输入权限名称"/>
+              			</div>
+              			<div class="form-group">
+              				<label for="">对应模块控制器及方法(如: index/index/index)</label>
+              				<input type="text" class="form-control" name="url" id="" value="{$powerInfo.url}" placeholder="输入对应方法"/>
+              			</div>
+              			<input type="hidden" name="id" id="id" value="{$powerInfo.id}" />
+              			<center>
+              				<button class="btn btn-warning btn-sm">修改</button>
+              			</center>
+              		</form>
+              	</div>
+              	<div class="col-md-4"></div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+  </body>
+</html>

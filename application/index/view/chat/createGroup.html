@@ -1,0 +1,36 @@
+{extend name="public:base2"}
+		{block name="body"}
+		<div class="clear"></div>
+		<div class="container container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header" id="tit">
+					  <h4>创建房间</h4>
+					</div>					
+					<div class="text-center" style="padding-bottom:50px;">
+						<div class="col-md-4"></div>
+						<div class="col-md-4" style="margin-top:50px;">
+							<form action="{:url('chat/doCreateGroup')}" method="post">
+								<div class="form-group">
+									<label for="groupName">房间名</label>
+									<input type="text" class="form-control" name="groupName" id="groupName" value="{$groupName}" />
+								</div>
+								<input type="hidden" name="creator" id="creator" value="{$Think.Session.user_name}" />
+								<input type="hidden" name="roomKey" value="{$roomKey}" />
+								<button type="submit" class="btn btn-success">创建</button>
+							</form>	
+						</div>
+						<div class="col-md-4"></div>
+						
+				
+					</div>
+						
+				</div>
+				
+		<script type="text/javascript">
+
+		</script> 		
+
+		  
+			
+{/block}

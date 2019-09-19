@@ -1,0 +1,58 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 角色管理</h1>
+          <p>role maneger</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">角色管理</li>
+          <li class="breadcrumb-item"><a href="{:url('role/editRole')}">编辑角色</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+           	<div class="row">
+           		<div class="col-md-4"></div>
+              	<div class="col-md-4">
+              		<form action="{:url('role/doEditRole')}" method="post">
+              			<div class="form-group">
+              				<label for="">角色名称</label>
+              				<input type="text" class="form-control" name="name" id="" value="{$roleInfo.name}" placeholder="输入角色名称"/>
+              			</div>
+              			
+              			<div class="form-group">
+              				<label for="">选择权限</label>
+              				<div class="box">
+	              				{volist name="powerList" id="power"}
+	              				<div class="animated-checkbox" style="display:inline;margin-right:5px;">
+					              <label>
+					                <input type="checkbox" name="power_id[]" value="{$power.id}" {:in_array($power.id,$hasRole) ? 'checked':''}><span class="label-text">{$power.name}</span>
+					              </label>
+					            </div>	
+			                	{/volist}
+	              			</div>
+              			</div>
+              			<input type="hidden" name="defaultName" id="defaultName" value="{$roleInfo.name}" />
+                    <input type="hidden" name="id" value="{$roleInfo.roles_id}" />
+              			<center>
+              				<button type="submit" class="btn btn-info btn-sm">提交</button>
+              			</center>
+              		</form>
+              	</div>
+              	<div class="col-md-4"></div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+    
+  </body>
+</html>

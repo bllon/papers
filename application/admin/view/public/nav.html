@@ -1,0 +1,118 @@
+<div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+    <aside class="app-sidebar">
+      <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" style="max-width:48px;max-height:48px;" src="{$userInfo.user_img|default='https://s3.amazonaws.com/uifaces/faces/twitter/jsa/48.jpg'}" alt="User Image">
+        <div>
+          <p class="app-sidebar__user-name">{$Think.session.admin_name|default="管理员"}</p>
+          <p class="app-sidebar__user-designation">
+          	{if $Think.session.admin_level}	
+          	<small class="text-light">{$Think.session.school}</small>
+          	<br>
+          	<small class="text-danger">超级管理员</small>
+          	{else /}
+          	<small class="text-light">{$Think.session.school}</small>
+          	<br>
+          	<small  class="text-warning">普通管理员</small>
+          	{/if}
+          </p>
+        </div>
+      </div>
+      <ul class="app-menu">
+      	
+        <li><a class="app-menu__item 
+        	{eq name="navActive" value="0"}
+        	active
+        	{/eq}
+        	" href="{:url('index/index')}"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">首页</span></a></li>
+        	
+        	
+        <li class="treeview"><a class="app-menu__item 
+        	{eq name="navActive" value="1"}
+        	active
+        	{/eq}
+        	
+        	" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-laptop"></i><span class="app-menu__label">论文管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" href="{:url('paper/lunwenList')}"><i class="icon fa fa-circle-o"></i> 论文列表</a></li>
+            <li><a class="treeview-item" href="{:url('paper/rankList')}"><i class="icon fa fa-circle-o"></i> 分类列表</a></li>
+            <li><a class="treeview-item" href="{:url('paper/search')}"><i class="icon fa fa-circle-o"></i> 论文搜索</a></li>
+            <li><a class="treeview-item" href="{:url('paper/uploadLunwen')}"><i class="icon fa fa-circle-o"></i> 上传论文</a></li>
+          </ul>
+        </li>
+        
+        <li class="treeview"><a class="app-menu__item 
+        	{eq name="navActive" value="2"}
+        	active
+        	{/eq}
+        	
+        	" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-edit"></i><span class="app-menu__label">借阅管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" href="{:url('borrow/borrowList')}"><i class="icon fa fa-circle-o"></i> 借阅列表</a></li>
+            <!--<li><a class="treeview-item" href="form-custom.html"><i class="icon fa fa-circle-o"></i> 归还列表</a></li>
+            <li><a class="treeview-item" href="form-samples.html"><i class="icon fa fa-circle-o"></i> 借阅记录</a></li>-->
+          </ul>
+        </li>
+        <li class="treeview"><a class="app-menu__item 
+        	{eq name="navActive" value="3"}
+        	active
+        	{/eq}
+        	
+        	" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-th-list"></i><span class="app-menu__label">用户管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" href="{:url('consumer/consumerList')}"><i class="icon fa fa-circle-o"></i> 用户列表</a></li>
+            <li><a class="treeview-item" href="{:url('consumer/consumerSearch')}"><i class="icon fa fa-circle-o"></i> 搜索用户</a></li>
+          </ul>
+        </li>
+        
+        
+        <li class="treeview"><a class="app-menu__item 
+        	{eq name="navActive" value="6"}
+        	active
+        	{/eq}
+        	
+        	" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-laptop"></i><span class="app-menu__label">贴子管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" href="{:url('user/putList')}"><i class="icon fa fa-circle-o"></i> 贴子列表</a></li>
+            <li><a class="treeview-item" href="{:url('user/putPost')}"><i class="icon fa fa-circle-o"></i> 发布贴子</a></li>
+          </ul>
+        </li>
+        
+        <!--超级管理员才能管理-->
+        {eq name="$Think.session.admin_level" value="1"}
+        <li class="treeview"><a class="app-menu__item 
+        	{eq name="navActive" value="4"}
+        	active
+        	{/eq}
+
+        	" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span class="app-menu__label">入驻管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" href="{:url('school/schoolList')}"><i class="icon fa fa-circle-o"></i> 学校列表</a></li>
+            <li><a class="treeview-item" href="{:url('school/userList')}"><i class="icon fa fa-circle-o"></i> 管理员列表</a></li>
+          </ul>
+        </li>
+        <li class="treeview"><a class="app-menu__item 
+        	{eq name="navActive" value="5"}
+        	active
+        	{/eq}
+        	
+        	" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span class="app-menu__label">系统管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" href="{:url('site/index')}"><i class="icon fa fa-circle-o"></i> 系统设置</a></li>
+            <li><a class="treeview-item" href="{:url('site/cacheSet')}"><i class="icon fa fa-circle-o"></i> 缓存设置</a></li>
+            <li><a class="treeview-item" href="{:url('site/addPaper')}"><i class="icon fa fa-circle-o"></i> 添加论文</a></li>
+          </ul>
+        </li>
+        <li class="treeview"><a class="app-menu__item 
+        	{eq name="navActive" value="7"}
+        	active
+        	{/eq}
+        	
+        	" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span class="app-menu__label">权限管理</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+          <ul class="treeview-menu">
+            <li><a class="treeview-item" href="{:url('role/powerList')}"><i class="icon fa fa-circle-o"></i> 权限管理</a></li>
+            <li><a class="treeview-item" href="{:url('role/roleList')}"><i class="icon fa fa-circle-o"></i> 角色管理</a></li>
+            <li><a class="treeview-item" href="{:url('role/userRoleList')}"><i class="icon fa fa-circle-o"></i> 用户角色管理</a></li>
+          </ul>
+        </li>
+        {/eq}
+      </ul>
+    </aside>

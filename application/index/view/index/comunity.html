@@ -1,0 +1,326 @@
+{extend name="public:base2"}
+		{block name="body"}
+		<div class="clear"></div>
+		<div class="menu">
+			<ul>
+				<li>讨论频道</li>
+				<li>在线音乐</li>
+				<li>娱乐视频</li>
+			</ul>			
+		</div>
+		<div class="container container-fluid">
+			<div class="row">
+
+				<!-- 讨论频道 -->
+				<div class="col-md-12">
+					<div class="page-header">
+					  <h4 id="chat">
+					  	讨论频道 <span style="display:block;float:right;">
+					  	<span style="font-size:13px;color:#e39d9d;margin-right:20px;">当前数量:1000</span>
+					  	<a href="" style="font-size:13px;color:#645f5f;">更多&nbsp;&gt;</a>
+					  </span></h4>
+					</div>					
+					<div class="text-center">
+						<div class="row">
+							{volist name="$groupList" id="group" key="i"}
+							<div class="col-md-3">
+								<div class="box" style="width:100%;height:150px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
+									<h4 style="margin-top:40px;">{$group.name}</h4>
+									<p>一场优异的答辩...</p>
+									<a href="{:url('chat/room',['id'=>$group.id])}" target="_blank" id="come" class="btn btn-info btn-sm">加入</a>
+								</div>
+							</div>
+							{/volist}
+							<div class="col-md-3">
+								<div class="box" style="width:100%;height:150px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
+									<h3 style="margin-top:50px;"><span class="glyphicon glyphicon-plus"></span></h3>
+									<a href="{:url('chat/createGroup')}" target="_blank" class="btn btn-success btn-sm">创建</a>
+								</div>
+							</div>
+						</div>
+						<input type="hidden" id="userId" value="{$Think.session.user_id}"/>
+				
+					</div>
+						
+				</div>
+
+				<!-- http://www.333ttt.com/up/s.php?q=%E5%BC%A0%E6%9D%B0&type=kuwo -->
+				<!-- http://www.htqyy.com/top/hot -->
+				<!-- 在线音乐 -->
+				<div class="col-md-12">
+					<div class="page-header">
+					  <h4 id="music">
+					  	在线音乐 <span style="display:block;float:right;">
+					  	<span style="font-size:13px;color:#e39d9d;margin-right:20px;">当前数量:1000</span>
+					  	<a href="{:url('index/moreMusic')}" style="font-size:13px;color:#645f5f;">更多&nbsp;&gt;</a>
+					  </span></h4>
+					</div>					
+					<div class="text-center">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="list-group">
+									<li class="list-group-item" style="font-weight:bold;color:#616adf;">推荐榜</li>
+									{volist name="recommendList" id="song"}
+								  	<li class="list-group-item item" style="text-align:left;">
+										<div style="float:left;width:20px;text-align:center;">
+											<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
+										</div>										
+										<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
+										<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
+										<span style="margin-left:15px;width:150px;float:right;">
+											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+												<span class="glyphicon glyphicon glyphicon-play"></span>
+											</a>
+											<a class="download" href="javascript:void(0);" data-url="{$song.url}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+												<span class="glyphicon glyphicon-cloud-download"></span>
+											</a>
+											<a class="collect" href="javascript:void(0);" title="收藏" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+												<span class="glyphicon glyphicon-heart"></span>
+											</a>
+										</span>
+									</li>
+									{/volist}
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="list-group">
+									<li class="list-group-item" style="font-weight:bold;color:#e38171;">流行榜</li>
+								{volist name="songList" id="song"}
+								  <li class="list-group-item item" style="text-align:left;">
+										<div style="float:left;width:20px;text-align:center;">
+											<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
+										</div>										
+										<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
+										<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
+										<span style="margin-left:15px;width:150px;float:right;">
+											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+												<span class="glyphicon glyphicon glyphicon-play"></span>
+											</a>
+											<a class="download" href="javascript:void(0);" data-url="{$song.url}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+												<span class="glyphicon glyphicon-cloud-download"></span>
+											</a>
+											<a class="collect" href="javascript:void(0);" title="收藏" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+												<span class="glyphicon glyphicon-heart"></span>
+											</a>
+										</span>
+									</li>
+								{/volist}
+								</div>
+							</div>
+						</div>
+						<video class="media" controls="controls" style="display:none;">
+							<source src="" type="audio/mpeg">
+						</video>
+						<input type="hidden" id="userId" value="{$Think.session.user_id}"/>
+				
+					</div>
+						
+				</div>
+
+				<!-- 娱乐视频 -->
+				<div class="col-md-12">
+					<div class="page-header">
+					  <h4 id="video">
+					  	娱乐视频 <span style="display:block;float:right;">
+					  	<span style="font-size:13px;color:#e39d9d;margin-right:20px;">当前数量:1000</span>
+					  	<a href="" style="font-size:13px;color:#645f5f;">更多&nbsp;&gt;</a>
+					  </span></h4>
+					</div>					
+					<div class="text-center">
+						<div class="row">
+							<div class="col-md-4" style="padding:0 5px;">
+								<div style="width:100%;height:50px;text-align:left;padding:0 5px;line-height:50px;">
+									<span style="width:40px;height:50px;float:left;margin-left:15px;">
+										<img src="/static/images/cf.png" style="width:40px;height:40px;margin:5px 0;">
+									</span>
+									<span style="margin-left:10px;font-weight:bold;font-size:18px;">穿越火线</span>
+									<span style="margin-left:15px;font-size:12px;">三亿鼠标的枪战梦想</span>
+								</div>			
+								{volist name="$groupList" id="group" key="i"}
+								<div class="col-md-6" style="padding:0 5px;">
+									<div class="box" style="width:100%;height:138px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
+										<div class="img" style="width:100%;height:102px;position:relative;">
+											<img src="/static/images/3.jpg" style="width:100%;height:100%">
+											<div class="lv" style="color:#10ff02;line-height:102px;font-size:30px;">
+												<span class="glyphicon glyphicon-play-circle"></span>
+											</div>
+										</div>
+										<div class="desc" style="width:100%;height:36px;background:#fff;position:relative;z-index:11;">
+											<p style="height:100%;margin:0;line-height:36px;">8月5日世界赛</p>
+										</div>
+									</div>
+								</div>
+								{/volist}
+							</div>
+							<div class="col-md-4" style="padding:0 5px;">
+								<div style="width:100%;height:50px;text-align:left;padding:0 5px;line-height:50px;">
+									<span style="width:40px;height:50px;float:left;margin-left:15px;">
+										<img src="/static/images/ciji.png" style="width:40px;height:40px;margin:5px 0;">
+									</span>
+									<span style="margin-left:10px;font-weight:bold;font-size:18px;">绝地求生</span>
+									<span style="margin-left:15px;font-size:12px;">热血竞技大吉大利</span>
+								</div>			
+								{volist name="$groupList" id="group" key="i"}
+								<div class="col-md-6" style="padding:0 5px;">
+									<div class="box" style="width:100%;height:138px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
+										<div class="img" style="width:100%;height:102px;position:relative;">
+											<img src="/static/images/3.jpg" style="width:100%;height:100%">
+											<div class="lv" style="color:#10ff02;line-height:102px;font-size:30px;">
+												<span class="glyphicon glyphicon-play-circle"></span>
+											</div>
+										</div>
+										<div class="desc" style="width:100%;height:36px;background:#fff;position:relative;z-index:11;">
+											<p style="height:100%;margin:0;line-height:36px;">8月5日世界赛</p>
+										</div>
+									</div>
+								</div>
+								{/volist}
+							</div>
+							<div class="col-md-4" style="padding:0 5px;">
+								<div style="width:100%;height:50px;text-align:left;padding:0 5px;line-height:50px;">
+									<span style="width:40px;height:50px;float:left;margin-left:15px;">
+										<img src="/static/images/xinwen.png" style="width:40px;height:40px;margin:5px 0;">
+									</span>
+									<span style="margin-left:10px;font-weight:bold;font-size:18px;">新闻</span>
+									<span style="margin-left:15px;font-size:12px;">最新新闻</span>
+								</div>			
+								{volist name="$groupList" id="group" key="i"}
+								<div class="col-md-6" style="padding:0 5px;">
+									<div class="box" style="width:100%;height:138px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
+										<div class="img" style="width:100%;height:102px;position:relative;">
+											<img src="/static/images/3.jpg" style="width:100%;height:100%">
+											<div class="lv" style="color:#10ff02;line-height:102px;font-size:30px;">
+												<span class="glyphicon glyphicon-play-circle"></span>
+											</div>
+										</div>
+										<div class="desc" style="width:100%;height:36px;background:#fff;position:relative;z-index:11;">
+											<p style="height:100%;margin:0;line-height:36px;">8月5日世界赛</p>
+										</div>
+									</div>
+								</div>
+								{/volist}
+							</div>
+						</div>
+						<input type="hidden" id="userId" value="{$Think.session.user_id}"/>
+				
+					</div>
+						
+				</div>
+
+
+
+				
+
+				
+		<script type="text/javascript">
+			//加入房间
+			$('#come').on('click',function(){
+				if($('#userId').val() == ''){
+					alert('对不起，你还没有登录');
+					return false;
+				}
+				
+			})
+
+			//菜单
+			$('.menu li').on('click',function(){
+				$(this).css('background','#fff').siblings('li').css('background','none');
+				var index = $('.menu li').index(this);
+				// console.log($('.row .col-md-12 .page-header h4').eq(index).offset().top);
+				$("html,body").animate({scrollTop:$('.row .col-md-12 .page-header h4').eq(index).offset().top-60},1000);//1000是ms,也可以用slow代替ss
+			})
+
+
+			//监听滚动条
+			window.onscroll=function(){
+				var t =document.documentElement.scrollTop||document.body.scrollTop;
+				// console.log(t);
+				// console.log($('#chat').offset().top - 60);
+				// console.log($('#music').offset().top - 60);
+				// console.log($('#video').offset().top - 60);
+
+				// console.log($('#music').offset().top + parseInt($('.row .col-md-12 .text-center').eq(1).css('height')) - 160);
+
+
+				if(t <= ($('#chat').offset().top + parseInt($('.row .col-md-12 .text-center').eq(0).css('height')) - 160)){
+					$('.menu li').eq(0).css('background','#fff').siblings('li').css('background','none');
+					return;
+				}else if(t <= ($('#music').offset().top + parseInt($('.row .col-md-12 .text-center').eq(1).css('height')) - 160)){
+					$('.menu li').eq(1).css('background','#fff').siblings('li').css('background','none');
+					return;
+				}else if(t <= 886){
+					$('.menu li').eq(2).css('background','#fff').siblings('li').css('background','none');
+					return;
+				}
+			}
+
+			//音乐控件
+			$('.play').click(function(){
+				console.log($(this).parent('li'));
+				$('.item').css('background','#fff');
+				$(this).parent().parent().css('background','#ff6666');
+
+				$('.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play').css('color','#44afd1');
+
+				var url = $(this).attr('data-url');
+
+				if($('.media')[0].src != url){
+					$('.media')[0].src = url;
+				}
+
+
+				var paused = $('.media')[0].paused;
+				if(paused){
+					$('.media')[0].play();
+					$(this).find('span').removeClass('glyphicon-play').addClass('glyphicon-pause').css('color','pink');
+					return false;
+				}else{
+					$('.media')[0].pause();
+					$(this).find('span').removeClass('glyphicon-pause').addClass('glyphicon-play').css('color','#44afd1');
+					return false;
+				}
+
+			})
+
+			//下载控件
+			$('.download').click(function(){
+				var url = $(this).attr('data-url');	
+				url = {'link':url};
+				url = JSON.stringify(url);
+				console.log(url);
+				// window.location.href = "{:url('index/downloadMusic',['url'=>".url."])}";
+				$.post("{:url('index/downloadMusic')}",{data:url},function(data,err){
+					console.log(data);
+				})
+			})
+
+			// 视频滤镜
+			$('.lv').css({
+				'width':'100%',
+				'height':'100%',
+				'position':'absolute',
+				'background':'#000000',
+				'top':0,
+				'opacity':0.7,
+				'display':'none',
+			});
+
+			$('.box').css('cursor','pointer');
+			
+			$('.box').hover(
+				function(){
+					$(this).find('.lv').css('display','block');
+					$(this).find('.img img').css('transform','scale(1.2)');
+					$(this).find('.desc p').css('color','#e95d5d');
+				},
+				function(){
+					$(this).find('.lv').css('display','none');
+					$(this).find('.img img').css('transform','scale(1)');
+					$(this).find('.desc p').css('color','#000');
+				}
+			)
+		</script> 		
+		<link rel="stylesheet" type="text/css" href="/static/css/comunity.css">
+		  
+			
+{/block}

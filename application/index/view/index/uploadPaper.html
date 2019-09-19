@@ -1,0 +1,133 @@
+{extend name="public:base"}
+		{block name="body"}
+		<div class="container container-fluid">	
+			<div class="row">
+				<div class="col-md-8">
+					<div class="page-header">
+					  <h2>上传论文</h2>
+					</div>
+					
+					<form action="{:url('index/savePaper')}" method="post" enctype="multipart/form-data" id="form">
+					  
+					  <input type="hidden" name="user_id" id="user_id" value="{$Think.session.user_id}" />
+						
+						
+					  <div class="form-group">
+					    <label for="title" class="control-label">标题</label>
+					    <input type="text" name="title" class="form-control" id="title" placeholder="论文标题">
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="cate_id" class="control-label">分类</label>
+					    <div>
+					    	{volist name="$cateList" id="cate"}
+					    	<label class="checkbox-inline">
+							  <input type="radio" name="cate" value="{$cate.id}"> {$cate.name}
+							</label>
+							{/volist}
+					    </div>
+				      	
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="title_img" class="control-label">标题图片</label>
+    					<input type="file" name="title_img" id="title_img">
+					  </div>
+					  
+					  <div class="form-group">
+					    <label for="paper" class="control-label">论文文档(仅支持pdf格式)</label>
+    					<input type="file" name="paper" id="paper">
+					  </div>
+					  
+					  <div class="form-group">
+					    <button type="submit" class="btn btn-primary">上传</button>
+					  </div>
+					  
+					</form>
+				</div>
+				<script>
+					$('#upload').on('click',function(){
+						
+						var title = $('#title').val();
+						if($('#title').val() == ''){
+							alert('标题不能为空');
+							return false;
+						}
+						var cate = [];
+						
+						$('input:checked').each(function(){
+							cate.push($(this).val());
+						})
+						
+						if(cate == []){
+							alert('请选择分类');
+							return false;
+						}
+						
+						
+						var title_img = $('#title_img')[0].files[0];
+						var paper = $('#paper')[0].files[0];
+						
+						var imgext = ['jpeg','png','jpg','gif'];
+						var paperext = ['pdf'];
+						
+						if(title_img == undefined ||paper == undefined){
+							alert('请上传完整文件');
+						}
+						
+						if(imgext.indexOf(title_img.type.split('/')[1]) == -1){
+							
+							alert('请上传'+imgext.join(',')+'格式的图片');
+						}
+						
+						if(paperext.indexOf(paper.type.split('/')[1]) == -1){
+							
+							alert('请上传'+paperext.join(',')+'格式的文档');
+						}
+						
+						if(title_img.size < 0){
+							alert('请上传图片');
+							return false;
+						}
+						if(title_img.size > 40000){
+							alert('标题文件过大');
+							return false;
+						}
+						if(paper.size < 0){
+							alert('请上传文档');
+							return false;
+						}
+						if(paper.size > 4600000){
+							alert('文档文件过大');
+							return false;
+						}
+						var formData = new FormData();
+						formData.append('user_id',$('#user_id').val());
+						formData.append('title',title);
+						formData.append('cate',cate.join(','));
+						formData.append('title_img',title_img);
+						formData.append('paper',paper);
+						$.ajax({
+							type:"post",
+							url:"{:url('index/savePaper')}",
+							async:true,
+							contentType:false,
+							processData: false,
+							data:formData,
+							success:function(data){
+								alert(data);
+								console.log(data);
+								
+							},
+							error:function(data){
+								alert("ERROR");
+								console.log(data);
+							},
+						});
+					
+
+						
+						return false;
+					})
+				</script>
+{/block}

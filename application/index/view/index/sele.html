@@ -1,0 +1,63 @@
+{extend name="public:base"}
+		{block name="body"}
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-xs-12">
+						{neq name="$Think.cookie.notice" value="1"}
+						{if $noticeInfo}
+						{switch name="$noticeInfo.type"}
+						{case 0}
+							<div class="alert alert-info alert-dismissible" role="alert">
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  <strong>通知!</strong> {$noticeInfo.content}
+							</div>
+						{/case}
+						{case 1}
+							<div class="alert alert-warning alert-dismissible" role="alert">
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  <strong>注意!</strong> {$noticeInfo.content}
+							</div>
+						{/case}
+						{case 2}
+							<div class="alert alert-danger alert-dismissible" role="alert">
+							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  <strong>警告!</strong> {$noticeInfo.content}
+							</div>
+						{/case}
+						
+						{/switch}
+						{/if}
+						{/neq}
+						<div class="page-header">
+						  <h3>{$seleName|default="论文展示"}</h3>
+						</div>
+						
+						<div class="">
+							{volist name="lunwenList" id="lunwen" empty="$empty"}
+							<div class="pull-left" style="width:140px;height:auto;padding:0px 0px 30px 10px;">
+								<a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank"><img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/></a>
+								<div style="padding:0px 2px;">
+									<h6 style="height:30px;"><a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank">{$lunwen.lunwen_title}</a></h6>
+									<p class="small" style="margin:0;">作者:{$lunwen.writer}</p>
+									<p class="small" style="margin:0;">阅读量:{$lunwen.pv}</p>
+									<p class="small" style="margin:0;">发布时间:<span class="text-primary">{$lunwen.addtime|date="Y/m/d"}</span></p>
+								</div>
+							</div>
+							{/volist}
+							
+						</div>
+						
+						<div class="clearfix"></div>
+						<div class="text-center">{$lunwenList|raw}</div>
+					</div>
+				
+				
+				<script>
+					//关闭通告
+					$('.close').on('click',function(){
+						$.get("{:url('index/closeNotice')}",{},function(data){
+						})
+						
+					})
+				</script>
+{/block}

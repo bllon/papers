@@ -1,0 +1,155 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 网站设置</h1>
+          <p>site setting</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">网站管理</li>
+          <li class="breadcrumb-item"><a href="{:url('site/index')}">网站设置</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="row">
+              <div class="col-lg-6">
+                <form action="{:url('site/save')}" method="post">
+									<input type="hidden" name="id" id="id" value="{$siteInfo.id}" />
+                  <div class="form-group">
+                    <label for="exampleSelect2">网站名称</label>
+                    <input class="form-control" name="name" type="text" value="{$siteInfo.name}">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleSelect2">关键字</label>
+                    <input class="form-control" name="keywords" type="text" value="{$siteInfo.keywords}">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleTextarea">描述</label>
+                    <textarea class="form-control" name="content" rows="3">{$siteInfo.content}</textarea>
+                  </div>
+                  <div class="col-lg-3">
+		                <div class="toggle lg">
+		                	<b>网站是否关闭</b>
+		                  <div class="toggle-flip">
+					              <label>
+					                <input type="checkbox" 
+					                	{eq name="$siteInfo.is_open" value="1"}
+			                    	 checked="checked"
+			                    	{/eq} 
+					                	 name="is_open"><span class="flip-indecator" data-toggle-on="ON" data-toggle-off="OFF"></span>
+					              </label>
+					            </div>
+		                </div>
+		                {eq name="$siteInfo.is_open" value="1"}
+		                <div class="toggle lg">
+		                	<b>注册是否关闭</b>
+		                  	<div class="toggle-flip">
+				              	<label>
+				                <input type="checkbox" 
+				                	{eq name="$siteInfo.is_reg" value="1"}
+			                    	 checked="checked"
+			                    	{/eq} 
+				                	 name="is_reg"><span class="flip-indecator" data-toggle-on="ON" data-toggle-off="OFF"></span>
+				              	</label>
+				            </div>
+		                </div>
+		                {/eq} 
+		              </div>
+		              <div class="form-group text-right">
+                    <button type="submit" class="btn btn-info">保存</button>
+                  </div>
+		              
+                </form>
+              </div>
+              
+              <div class="col-lg-6">
+                <form action="{:url('site/addNotice')}" method="post">
+                  <div class="form-group">
+                    <label>发布通告</label>
+                    <textarea class="form-control" name="content" rows="3"></textarea>
+                  </div>
+                  <div class="form-group">
+	                  <div class="form-check">
+	                    <label class="form-check-label text-info">
+	                      <input class="form-check-input" type="radio" name="type" value="0" checked="checked">通知
+	                    </label>
+	                  </div>
+	                  <div class="form-check">
+	                    <label class="form-check-label text-warning">
+	                      <input class="form-check-input" type="radio" name="type" value="1">注意
+	                    </label>
+	                  </div>
+	                  <div class="form-check">
+	                    <label class="form-check-label text-danger">
+	                      <input class="form-check-input" type="radio" name="type" value="2">警告
+	                    </label>
+	                  </div>
+                  </div>
+		            <div class="form-group text-center">
+	                  <button type="submit" class="btn btn-outline-secondary btn-sm">发布</button>
+	               </div> 
+                </form>
+                <div class="tile">
+		            <h3 class="tile-title">最近通告</h3>
+		            {if $noticeList}
+		            <table class="table">
+		              <thead>
+		                <tr>
+		                  <th>ID</th>
+		                  <th>内容</th>
+		                  <th>发布时间</th>
+		                  <th>类型</th>
+		                  <th>状态</th>
+		                  <th>操作</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              	{volist name="noticeList" id="notice"}
+		                <tr>
+		                  <td>{$notice.id}</td>
+		                  <td>{$notice.content|substr=0,30}</td>
+		                  <td>{$notice.create_time}</td>
+		                  {switch $notice.type}
+			                  {case 0}<td class="text-info">通知</td>{/case}
+			                  {case 1}<td class="text-warning">注意</td>{/case}
+			                  {case 2}<td class="text-danger">警告</td>{/case}
+		                  {/switch}
+		                  
+		                  {if $notice.status}
+		                  <td class="text-success">显示</td>
+		                  {else /}
+		                  <td class="text-secondary">隐藏</td>
+		                  {/if}
+		                  <td>
+			                  {if $notice.status}
+			                  <a href="{:url('site/closeNotice',['id'=>$notice.id])}"><button class="btn btn-sm btn-secondary" type="button">隐藏</button></a>
+			                  {else /}
+			                  <a href="{:url('site/deleNotice',['id'=>$notice.id])}"><button class="btn btn-sm btn-danger" type="button">删除</button></a>
+			                  {/if}
+		                  </td>
+		                </tr>
+		                {/volist}
+		              </tbody>
+		            </table>
+		            {else /}
+		            <p class="text-center text-primary">暂无通告</p>
+		            {/if}
+		        </div>
+              </div>
+              
+            </div>
+           
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+  </body>
+</html>

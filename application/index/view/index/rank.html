@@ -1,0 +1,47 @@
+{extend name="public:base"}
+		{block name="body"}
+		<div class="container container-fluid">
+			<div class="row">
+				<div class="col-md-8">
+					<div class="page-header">
+					  <h2>所有类别</h2>
+					</div>
+					<div class="pape-body">
+						<div class="row">
+							<div class="col-md-10" style="padding:20px 30px;">
+								{if $schoolRank}
+								<p class="text-warning"><button class="btn btn-warning"></button>&nbsp;&nbsp;该颜色为本校所有分类</p>
+								{volist name="$schoolRank" id="rank" key="i"}
+								<a href="{:url('index/index',['rank_name'=>$rank.rank_name])}" class=""><button value="{$rank.rank_name}" class="btn btn-primary 
+								{eq name="$Think.session.user_school" value="$rank.school_name"}
+									btn-warning
+								{/eq}	
+									" style="margin:0px 5px 10px 5px;">{$i}. {$rank.rank_name}</button></a>
+								{/volist}
+								{/if}
+								{volist name="$allList" id="rank" key="i"}
+								<a href="{:url('index/index',['rank_name'=>$rank.rank_name])}" class=""><button value="{$rank.rank_name}" class="btn btn-primary 
+								
+									" style="margin:0px 5px 10px 5px;">{$i}. {$rank.rank_name}</button></a>
+								{/volist}
+							</div>
+							<div class="col-md-2"></div>
+						</div>
+						<div class="row">
+							<div class="col-md-10" style="margin-top:20px ;padding:20px 30px;border:1px dashed red;">
+								{volist name="$seleList" id="sele"}
+								<a href="{:url('index/sele',['sele_name'=>$sele.sele_name])}"><button class="btn btn-sm btn-info 
+								{eq name="$Think.session.user_school" value="$sele.school_name"}
+									btn-warning
+								{/eq}	
+									" style="margin:10px 10px;">{$sele.sele_name}</button></a>
+								{/volist}
+								
+							</div>
+							<div class="col-md-2"></div>
+						</div>
+					</div>
+				</div>
+				
+				
+{/block}

@@ -1,0 +1,131 @@
+{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-edit"></i> 上传论文</h1>
+          <p>upload for school</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">论文管理</li>
+          <li class="breadcrumb-item"><a href="{:url('paper/uploadLunwen')}">上传论文</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <h3 class="tile-title">上传信息</h3>
+            <div class="tile-body">
+              <form action="{:url('paper/doUploadLunwen')}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label class="control-label">标题</label>
+                  <input class="form-control" name="lunwen_title" type="text" placeholder="标题">
+                </div>
+                <div class="form-group">
+                  <label class="control-label">作者</label>
+                  <input class="form-control" name="writer" type="text" placeholder="作者">
+                </div>
+                <div class="form-group">
+                  <label class="control-label">专业</label>
+                  <input class="form-control" name="major" type="text" placeholder="专业">
+                </div>
+                <div class="form-group">
+	                <label for="exampleSelect1">一级分类</label>
+	                <select class="form-control" name="rank_type" id="rankselect">
+	                  {volist name="rankList" id="rank"}
+	                  <option value="{$rank.rank_name}">{$rank.rank_name}</option>
+	                  {/volist}
+	                </select>
+	            </div>
+	            <div class="form-group">
+	                <label for="exampleSelect1">二级分类</label>
+	                <select class="form-control" name="lunwen_rank" id="selelist">
+	                  {volist name="seleList" id="sele"}
+	                  <option value="{$sele.sele_name}">{$sele.sele_name}</option>
+	                  {/volist}
+	                </select>
+	            </div>
+                <div class="form-group">
+                  <label class="control-label">论文质量</label>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="biaoji" value="普通">普通
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="biaoji" value="优秀">优秀
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="biaoji" value="精选">精选
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label">封面</label>
+                  <input class="form-control" name="lunwen_img" type="file">
+                </div>
+                <!--<div class="form-group">
+                  <label class="control-label">论文文件 (图片形式)</label>
+                  <input class="form-control" name="thumb_img[]" type="file" multiple="multiple">
+                </div>-->
+                <div class="form-group">
+                  <label class="control-label">论文文件 (pdf文档)</label>
+                  <input class="form-control" name="lunwen_file" type="file">
+                </div>
+                <div class="form-group">
+                  <label class="control-label">上传时间</label>
+                  <input class="form-control" name="addtime" id="demoDate" type="text" placeholder="Select Date">
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary">上传</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+    
+    <script type="text/javascript" src="/static/docs/js/plugins/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="/static/docs/js/plugins/select2.min.js"></script>
+    <script type="text/javascript" src="/static/docs/js/plugins/bootstrap-datepicker.min.js"></script>
+    
+    <script type="text/javascript">
+      $('#sl').click(function(){
+      	$('#tl').loadingBtn();
+      	$('#tb').loadingBtn({ text : "Signing In"});
+      });
+      
+      $('#el').click(function(){
+      	$('#tl').loadingBtnComplete();
+      	$('#tb').loadingBtnComplete({ html : "Sign In"});
+      });
+      
+      $('#demoDate').datepicker({
+      	format: "yyyy/mm/dd",
+      	autoclose: true,
+      	todayHighlight: true
+      });
+      
+      $('#demoSelect').select2();
+      
+      $('#rankselect').change(function(){
+      	$.get("{:url('paper/getSele')}",{'rank_type':$(this).val()},function(data){
+      		var html='';
+      		for(n in data){
+      			html += "<option value="+data[n]['sele_name']+">"+data[n]['sele_name']+"</option>";
+      		}
+      		$('#selelist').html(html);
+      	})
+      })
+    </script>
+  </body>
+</html>

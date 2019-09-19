@@ -1,0 +1,125 @@
+   {include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-th-list"></i> 借阅列表</h1>
+          <p>all borrow list of school</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">借阅管理</li>
+          <li class="breadcrumb-item active"><a href="{:url('borrow/borrowList')}">借阅列表</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="tile-body">
+              <table class="table table-hover table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>论文</th>
+                    <th>借阅者</th>
+                    <th>借阅状态</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                	{volist name="borrowList" id="borrow" key="i"}
+                  <tr>
+                    <td>{$i}</td>
+                    <td>{$borrow.paper_id|getPaperName}</td>
+                    <td>{$borrow.user_id|getUserName}</td>
+                    <td>
+                    	{switch name="$borrow.status"}
+          						{case 0}
+          							<span style="color:#00e735;">已预约</span>
+          						{/case}
+          						{case 1}
+          							<span style="color:#1073dd;">已借阅</span>
+          						{/case}
+          						{case 2}
+          							<span style="color:#1073dd;">预约归还</span>
+          						{/case}
+                      {case 3}
+                        <span class="text-secondary">已归还</span>
+                      {/case}
+          						{/switch}
+                    	
+                    </td>
+                    <td>{$borrow.create_time|date='Y/m/d'}</td>
+                    <td class="text-center">
+                    	{switch name="$borrow.status"}
+          						{case 0}
+          							<a href="{:url('borrow/doborrow',['id'=>$borrow.id])}"><button class="btn btn-primary btn-sm" type="button">审核借阅</button></a>
+          							&nbsp;
+                              		<a href="#" class="deleborrow" borrowId="{$borrow.id}"><button class="btn btn-danger btn-sm" type="button">删除</button></a>
+          						{/case}
+          						{case 1}
+          							<span style="color:#fa1616;">等待归还</span>
+          						{/case}
+          						{case 2}
+          							<a href="{:url('borrow/doreturn',['id'=>$borrow.id])}"><button class="btn btn-warning btn-sm" type="button">审核归还</button></a>
+          						{/case}
+                      {case 3}
+                        <a href="#" class="deleborrow" borrowId="{$borrow.id}"><button class="btn btn-danger btn-sm" type="button">删除</button></a>
+                      {/case}
+          						{/switch}
+                    </td>
+                  </tr>
+                  {/volist}
+
+                </tbody>
+              </table>
+              <div class="page">{$borrowList|raw}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+	<script type="text/javascript" src="/static/docs/js/plugins/sweetalert.min.js"></script>
+    <script>
+		$('.page ul li').addClass('page-item');
+		$('.page ul li a').addClass('page-link');
+		$('.page ul li span').addClass('page-link');
+		
+		//删除借阅
+      $('.deleborrow').click(function(){
+      	var borrowId = $(this).attr('borrowId');
+      	swal({
+      		title: "确定要删除?",
+      		text: "删除后将不能恢复!",
+      		type: "warning",
+      		showCancelButton: true,
+      		confirmButtonText: "是的",
+      		cancelButtonText: "不可以",
+      		closeOnConfirm: false,
+      		closeOnCancel: false
+      	}, function(isConfirm) {
+      		if (isConfirm) {
+      			$.get("{:url('borrow/deleborrow')}",{id:borrowId},function(data){
+      				if(data.status == 0){
+      					swal(data.message, "未实施任何操作", "error");
+      				}else if(data.status == 1){
+      					swal("已删除!", "该借阅信息已被删除", "success");
+                setTimeout(function(){
+                  location.reload();
+                },1000);
+      				}
+      			})
+      		} else {
+      			swal("已取消", "未实施任何操作", "error");
+      		}
+      	});
+      });
+	  </script>
+
+    
+  </body>
+</html>

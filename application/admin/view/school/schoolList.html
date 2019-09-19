@@ -1,0 +1,76 @@
+   {include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-th-list"></i> 学校列表</h1>
+          <p>school list of school</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">入驻管理</li>
+          <li class="breadcrumb-item active"><a href="{:url('school/schoolList')}">学校列表</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="tile-body">
+              <table class="table table-hover table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>学校名称</th>
+                    <th>管理员</th>
+                    <th>邮箱</th>
+                    <th>手机</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                	{volist name="schoolList" id="school"}
+                  <tr>
+                    <td>{$school.id}</td>
+                    <td>{$school.school_name}</td>
+                    <td>{$school.school_admin}</td>
+                    <td>{$school.email}</td>
+                    <td>{$school.phone}</td>
+                    <td>
+                    	{if $school.status==0}
+                    	<span class="text-danger">关闭</span>
+                    	{else /}
+                    	<span class="text-success">开启</span>
+                    	{/if}
+                    </td>
+                    <td colspan="2" class="text-center">
+                    	{if $school.status==0}
+                    	<a href="{:url('school/giveTerms',['id'=>$school.id,'key'=>1])}"><button class="btn btn-success btn-sm" type="button">开启</button></a>
+                    	{else /}
+                    	<a href="{:url('school/giveTerms',['id'=>$school.id,'key'=>0])}"><button class="btn btn-danger btn-sm" type="button">关闭</button></a>
+                    	{/if}
+                   
+                    </td>
+                  </tr>
+                  {/volist}
+
+                </tbody>
+              </table>
+              <div class="page">{$schoolList|raw}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+    
+    
+  </body>
+  <script>
+	$('.page ul li').addClass('page-item');
+	$('.page ul li a').addClass('page-link');
+	$('.page ul li span').addClass('page-link');
+  </script>
+</html>

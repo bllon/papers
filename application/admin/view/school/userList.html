@@ -1,0 +1,78 @@
+   {include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-th-list"></i> 管理员列表</h1>
+          <p>user list of school</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb side">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">入驻管理</li>
+          <li class="breadcrumb-item active"><a href="{:url('school/userList')}">管理员列表</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="tile">
+            <div class="tile-body">
+              <table class="table table-hover table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>管理员</th>
+                    <th>学校</th>
+                    <th>邮箱</th>
+                    <th>手机</th>
+                    <th>注册时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                	{volist name="userList" id="user"}
+                  <tr>
+                    <td>{$user.id}</td>
+                    <td>{$user.username}</td>
+                    <td>{$user.school_name}</td>
+                    <td>{$user.email}</td>
+                    <td>{$user.phone}</td>
+                    <td>{$user.create_time}</td>
+                    <td>
+                    	{if $user.status==0}
+                    	<span class="text-danger">关闭</span>
+                    	{else /}
+                    	<span class="text-success">开启</span>
+                    	{/if}
+                    </td>
+                    <td colspan="2" class="text-center">
+                    	{if $user.status==0}
+                    	<a href="{:url('school/userStatus',['id'=>$user.id,'key'=>1])}"><button class="btn btn-success btn-sm" type="button">恢复</button></a>
+                    	{else /}
+                    	<a href="{:url('school/userStatus',['id'=>$user.id,'key'=>0])}"><button class="btn btn-danger btn-sm" type="button">冻结</button></a>
+                    	{/if}
+                   
+                    </td>
+                  </tr>
+                  {/volist}
+
+                </tbody>
+              </table>
+              <div class="page">{$userList|raw}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    {include file="public/footer2"}
+
+    
+  </body>
+  <script>
+	$('.page ul li').addClass('page-item');
+	$('.page ul li a').addClass('page-link');
+	$('.page ul li span').addClass('page-link');
+  </script>
+</html>

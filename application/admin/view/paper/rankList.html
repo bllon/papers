@@ -1,0 +1,443 @@
+		{include file="public/header"}
+    <!-- Sidebar menu-->
+   {include file="public/nav"}
+    
+    <main class="app-content">
+      <div class="app-title">
+        <div>
+          <h1><i class="fa fa-laptop"></i> 分类列表</h1>
+          <p>cate of school paper</p>
+        </div>
+        <ul class="app-breadcrumb breadcrumb">
+          <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+          <li class="breadcrumb-item">论文管理</li>
+          <li class="breadcrumb-item"><a href="{:url('paper/rankList')}">分类列表</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="tile">
+            <div class="tile-title-w-btn">
+              <h3 class="title">一级分类</h3>
+              <p><a class="btn btn-primary icon-btn" href="" data-toggle="modal" data-target=".rankmodel"><i class="fa fa-plus"></i>添加	</a></p>
+            </div>
+            <div class="tile-body">
+              <div class="tile">
+		            <h3 class="tile-title">所有分类</h3>
+		            <table class="table table-hover">
+		              <thead>
+		                <tr>
+		                  <th>序号</th>
+		                  <th>名称</th>
+		                  <th>操作</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              	{volist name="rankList" id="rank" key="i"}
+		                <tr>
+		                  <td>{$i}</td>
+		                  <td class="text-primary">{$rank.rank_name}</td>
+		                  <td>
+		                  	<a class="btn btn-secondary editRank" href="#" rankId="{$rank.id}" data-toggle="modal" data-target=".editmodel"><i class="fa fa-lg fa-edit"></i></a>
+        								<a class="btn btn-danger deleRank" href="#" rankId="{$rank.id}"><i class="fa fa-lg fa-trash"></i></a>
+		                  </td>
+		                </tr>
+		                {/volist}
+		              </tbody>
+		            </table>
+		          </div>
+              
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="tile">
+            <div class="tile-title-w-btn">
+              <h3 class="title">二级分类</h3>
+              <p><a class="btn btn-primary icon-btn" href="" data-toggle="modal" data-target=".selemodel"><i class="fa fa-plus"></i>添加	</a></p>
+            </div>
+            <div class="tile-body">
+              <div class="tile">
+		            <h3 class="tile-title">所有分类</h3>
+		            <table class="table table-hover">
+		              <thead>
+		                <tr>
+		                  <th>序号</th>
+		                  <th>名称</th>
+		                  <th>所属分类</th>
+		                  <th>操作</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		              	{volist name="seleList" id="sele" key="i"}
+		                <tr>
+		                  <td>{$i}</td>
+		                  <td>{$sele.sele_name}</td>
+		                  <td class="text-primary">{$sele.sele_type}</td>
+		                  <td>
+		                  	<a class="btn btn-secondary editSele" href="#" seleId="{$sele.id}" data-toggle="modal" data-target=".editselemodel"><i class="fa fa-lg fa-edit"></i></a>
+        								<a class="btn btn-danger deleSele" href="#" seleId="{$sele.id}"><i class="fa fa-lg fa-trash"></i></a>
+		                  </td>
+		                </tr>
+		                {/volist}
+		              </tbody>
+		            </table>
+		          </div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+        
+      </div>
+    </main>
+    
+    
+		<!--添加一级分类模态框-->
+	      <div class="modal fade rankmodel" tabindex="-1" role="dialog">
+	        <div class="modal-dialog" role="document">
+	          <div class="modal-content">
+	            <div class="modal-header">
+	              <h5 class="modal-title">添加一级分类</h5>
+	              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	            </div>
+	            <div class="modal-body">
+	              <form action="">
+	              	<div class="form-group">
+	              		<label for="">分类名称</label>
+	              		<input class="form-control" type="text" name="rank_type" id="rank" value="" />
+	              	</div>
+	              </form>
+	            </div>
+	            <div class="modal-footer">
+	              <button class="btn btn-primary" type="button" id="addRank">提交</button>
+	              <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	      
+	      
+	      
+	      
+	      
+	      <!--添加二级分类模态框-->
+	      <div class="modal fade selemodel" tabindex="-1" role="dialog">
+	        <div class="modal-dialog" role="document">
+	          <div class="modal-content">
+	            <div class="modal-header">
+	              <h5 class="modal-title">添加二级分类</h5>
+	              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	            </div>
+	            <div class="modal-body">
+	              <form action="">
+	              	<div class="form-group">
+		                <label for="exampleSelect1">一级分类</label>
+		                <select class="form-control" name="sele_type" id="sele_type">
+		                	{volist name="rankList" id="rank" key="i"}
+		                  	<option value="{$rank.rank_name}">{$rank.rank_name}</option>
+		                  	{/volist}
+		                </select>
+		            </div>
+	              	<div class="form-group">
+	              		<label for="">分类名称</label>
+	              		<input class="form-control" type="text" name="sele_name" id="sele_name" value="" />
+	              	</div>
+	              </form>
+	            </div>
+	            <div class="modal-footer">
+	              <button class="btn btn-primary" type="button" id="addSele">提交</button>
+	              <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	      
+	      <!--编辑一级分类模态框-->
+	      <div class="modal fade editmodel" tabindex="-1" role="dialog">
+	        <div class="modal-dialog" role="document">
+	          <div class="modal-content">
+	            <div class="modal-header">
+	              <h5 class="modal-title">编辑分类</h5>
+	              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	            </div>
+	            <div class="modal-body">
+	              <form action="">
+	              	<input type="hidden" name="editRankId" id="editRankId" value="" />
+	              	<input type="hidden" name="default_rank" id="default_rank" value="" />
+	              	<div class="form-group">
+	              		<label for="">分类名称</label>
+	              		<input class="form-control" type="text" name="editrank_name" id="editrank_name" value="" />
+	              	</div>
+	              </form>
+	            </div>
+	            <div class="modal-footer">
+	              <button class="btn btn-primary" type="button" id="editRank">提交</button>
+	              <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	      <!--编辑二级分类模态框-->
+	      <div class="modal fade editselemodel" tabindex="-1" role="dialog">
+	        <div class="modal-dialog" role="document">
+	          <div class="modal-content">
+	            <div class="modal-header">
+	              <h5 class="modal-title">编辑分类</h5>
+	              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+	            </div>
+	            <div class="modal-body">
+	              <form action="">
+	              	<div class="form-group">
+		                <label for="exampleSelect1">一级分类</label>
+		                <select class="form-control" name="editsele_type" id="editsele_type">
+		                	{volist name="rankList" id="rank" key="i"}
+		                  	<option value="{$rank.rank_name}">{$rank.rank_name}</option>
+		                  	{/volist}
+		                </select>
+		            </div>
+	              	<input type="hidden" name="editseleId" id="editseleId" value="" />
+	              	<input type="hidden" name="default_sele" id="default_sele" value="" />
+	              	<div class="form-group">
+	              		<label for="">分类名称</label>
+	              		<input class="form-control" type="text" name="editsele_name" id="editsele_name" value="" />
+	              	</div>
+	              </form>
+	            </div>
+	            <div class="modal-footer">
+	              <button class="btn btn-primary" type="button" id="editSele">提交</button>
+	              <button class="btn btn-secondary" type="button" data-dismiss="modal">取消</button>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	  
+    {include file="public/footer2"}
+    
+    <script type="text/javascript" src="/static/docs/js/plugins/sweetalert.min.js"></script>
+    
+    <script>
+    	
+    	//编辑一级分类
+      $('.editRank').click(function(){
+      	var rankId = $(this).attr('rankId');
+      	var rank_name = $(this).parent('td').siblings('td').eq(1).html();
+        $('#editrank_name').val(rank_name);
+        $('#default_rank').val(rank_name);
+        $('#editRankId').val(rankId);
+      });
+      $('#editRank').click(function(){
+        $.ajax({
+      			type:"post",
+      			url:"{:url('paper/editRank')}",
+      			data:{
+      				'default_rank':$('#default_rank').val(),
+      				'id': $('#editRankId').val(),
+      				'rank_type':$('#editrank_name').val()
+      			},
+      			async:true,
+      			success:function(data){
+      				switch(data.status){
+      					case 0:
+      							swal ( "no" ,  "修改失败: "+data.message ,  "error" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      					case 1:
+      							swal ( "nice" ,  "修改成功: "+data.message ,  "success" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      				}
+      				
+      			},
+      			error:function(data){
+      				swal ( "imposible" ,  "修改失败: "+data.message ,  "error" );
+      				break;
+      			}
+      		});
+      });
+      
+      //编辑二级分类
+      $('.editSele').click(function(){
+      	swal('暂不提供修改二级分类');
+      	return false;
+      	var seleId = $(this).attr('seleId');
+      	var sele_name = $(this).parent('td').siblings('td').eq(1).html();
+        $('#editsele_name').val(sele_name);
+        $('#default_sele').val(sele_name);
+        $('#editseleId').val(seleId);
+      });
+      
+      $('#editSele').click(function(){
+        $.ajax({
+      			type:"post",
+      			url:"{:url('paper/editSele')}",
+      			data:{
+      				'default_sele':$('#default_sele').val(),
+      				'id': $('#editSeleId').val(),
+      				'sele_name':$('#editsele_name').val()
+      			},
+      			async:true,
+      			success:function(data){
+      				switch(data.status){
+      					case 0:
+      							swal ( "no" ,  "修改失败: "+data.message ,  "error" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      					case 1:
+      							swal ( "nice" ,  "修改成功: "+data.message ,  "success" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      				}
+      				
+      			},
+      			error:function(data){
+      				swal ( "imposible" ,  "修改失败: "+data.message ,  "error" );
+      				break;
+      			}
+      		});
+      });
+    	
+    	
+    	//添加一级分类
+      	$('#addRank').click(function(){
+      		$.ajax({
+      			type:"post",
+      			url:"{:url('paper/addRank')}",
+      			data:{
+      				'rank_type':$('#rank').val()
+      			},
+      			async:true,
+      			success:function(data){
+      				switch(data.status){
+      					case 0:
+      							swal ( "no" ,  "添加失败: "+data.message ,  "error" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      					case 1:
+      							swal ( "nice" ,  "成功添加分类: "+data.message ,  "success" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      				}
+      				
+      			},
+      			error:function(data){
+      				swal ( "imposible" ,  "添加失败: "+data.message ,  "error" );
+      				break;
+      			}
+      		});
+      		
+      });
+      
+      //添加二级分类
+      $('#addSele').click(function(){
+      		$.ajax({
+      			type:"post",
+      			url:"{:url('paper/addSele')}",
+      			data:{
+      				'sele_name':$('#sele_name').val(),
+      				'sele_type':$('#sele_type').val(),
+      			},
+      			async:true,
+      			success:function(data){
+      				switch(data.status){
+      					case 0:
+      							swal ( "no" ,  "添加失败: "+data.message ,  "error" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      					case 1:
+      							swal ( "nice" ,  "成功添加分类: "+data.message ,  "success" );
+                    setTimeout(function(){
+                      location.reload();
+                    },1000);
+      							break;
+      				}
+      				
+      			},
+      			error:function(data){
+      				swal ( "imposible" ,  "添加失败: "+data.message ,  "error" );
+      				break;
+      			}
+      		});
+      		
+      });
+      
+      //删除一级分类
+      $('.deleRank').click(function(){
+      	var rankId = $(this).attr('rankId');
+      	swal({
+      		title: "确定要删除?",
+      		text: "删除后将不能恢复!",
+      		type: "warning",
+      		showCancelButton: true,
+      		confirmButtonText: "是的",
+      		cancelButtonText: "不可以",
+      		closeOnConfirm: false,
+      		closeOnCancel: false
+      	}, function(isConfirm) {
+      		if (isConfirm) {
+      			$.get("{:url('paper/deleRank')}",{id:rankId},function(data){
+      				if(data.status == 0){
+      					swal(data.message, "未实施任何操作", "error");
+      				}else if(data.status == 1){
+      					swal("已删除!", "所有分类下的论文都将删除", "success");
+                setTimeout(function(){
+                  location.reload();
+                },1000);
+      				}
+      			})
+      		} else {
+      			swal("已取消", "未实施任何操作", "error");
+      		}
+      	});
+      });
+      
+      //删除二级分类
+      $('.deleSele').click(function(){
+      	var seleId = $(this).attr('seleId');
+      	swal({
+      		title: "确定要删除?",
+      		text: "删除后将不能恢复!",
+      		type: "warning",
+      		showCancelButton: true,
+      		confirmButtonText: "是的",
+      		cancelButtonText: "不可以",
+      		closeOnConfirm: false,
+      		closeOnCancel: false
+      	}, function(isConfirm) {
+      		if (isConfirm) {
+      			$.get("{:url('paper/deleSele')}",{id:seleId},function(data){
+      				if(data.status == 0){
+      					swal(data.message, "未实施任何操作", "error");
+      				}else if(data.status == 1){
+      					swal("已删除!", "所有分类下的论文都将删除", "success");
+      					setTimeout(function(){
+                  location.reload();
+                },1000);
+      				}
+      			})
+      		} else {
+      			swal("已取消", "未实施任何操作", "error");
+      		}
+      	});
+      });
+
+      
+  </script>
+  </body>
+</html>
