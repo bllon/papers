@@ -4,14 +4,11 @@
 */
 namespace app\index\controller;
 use app\common\controller\Base;//导入公共控制器
-use app\index\controller\Comunity;
 use app\index\controller\SocketRoom;
-use app\index\controller\Lock;
 use app\common\model\Cate;
 use app\common\model\Rank;
 use app\common\model\Sele;
 use app\common\model\Lunwen;
-use app\common\model\Word;
 use app\admin\common\model\Notice;
 use app\admin\common\model\Post as PostModel;
 use app\common\model\Comment;
@@ -215,6 +212,17 @@ class Index extends Base
 			$paperInfo['content'] = $content;
 		}
 		
+		
+		$this->view->assign('title',$paperInfo['lunwen_title']);
+		$this->view->assign('paperInfo',$paperInfo);
+//		$this->view->assign('paperfile',substr($paperInfo['lunwen_file'],1));
+		return $this->buildHtml('paperDetail');
+//		return $this->view->fetch('paperDetail');
+	}
+
+	//获取收藏和借阅状态
+	public function paperStatu(){
+		$id = Request::param('id');
 		//是否收藏过
 		$collect = Collect::where('user_id',Session::get('user_id'))->where('paper_id',$id)->find();
 		$collectaction = 0;
@@ -227,13 +235,9 @@ class Index extends Base
 		if($borrow !==null && $borrow['status']!==3){
 			$borrowaction = 1;
 		}
-		$this->view->assign('title',$paperInfo['lunwen_title']);
-		$this->view->assign('paperInfo',$paperInfo);
-		$this->view->assign('collectaction',$collectaction);
-		$this->view->assign('borrowaction',$borrowaction);
-//		$this->view->assign('paperfile',substr($paperInfo['lunwen_file'],1));
-		return $this->buildHtml('paperDetail');
-//		return $this->view->fetch('paperDetail');
+
+		$data = ['collectaction'=>$collectaction,'borrowaction'=>$borrowaction];
+		return ['status'=>1,'message'=>json_encode($data)];
 	}
 	
 	//添加阅读量
@@ -1045,7 +1049,7 @@ class Index extends Base
 		
 		if($data['action'] == 0){
 			if(Borrow::create($data)){
-				return ['status'=>1,'message'=>'借阅成功'];
+				return ['status'=>1,'message'=>'预约成功,等待管理员通知'];
 			}else{
 				return ['status'=>0,'message'=>'借阅失败'];
 			}

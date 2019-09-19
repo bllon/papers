@@ -35,6 +35,30 @@ class Borrow extends Base
 		//完成借阅，修改状态
 		$data = ['status'=>1];
 		if(borrowModel::where('id',$borrowId)->update($data)){
+			$borrowInfo = borrowModel::where('id',$borrowId)->find();
+
+			//修改用户积分
+			$map = [];
+			$map[] = ['consumer_id','=',$borrowInfo['user_id']];
+			$map[] = ['paper_id','=',$borrowInfo['paper_id']];
+			$integral_Info = Db::table('paper_integral')->where($map)->find();
+			if($integral_Info){
+				$action = json_decode($integral_Info['action'],true);
+
+				if($action[4] < 3){
+					$action[4] += 1;
+
+					$data = [
+						'id' => $integral_Info['id'],
+						'integral' => (float)($integral_Info['integral'] + 2),
+						'action' => json_encode($action),
+						'update_time' => time()
+					];
+					Db::table('paper_integral')->where($map)->update($data);
+				}
+
+			}
+
 			$this->success('审核成功');
 		}else{
 			$this->error('审核失败,请联系超级管理员');
