@@ -30,6 +30,7 @@ class Index extends Base
 	//sphinx测试
 	public function sphinx()
 	{
+
 		//搜索关键字
 		$key = Request::param('key');
 
@@ -54,7 +55,7 @@ class Index extends Base
 	//首页
     public function index()
     {			
-			
+
 			$map = [];
 			$map2 = [];
 			//显示公开论文

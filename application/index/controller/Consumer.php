@@ -52,6 +52,7 @@ class Consumer extends Base
 					Session::set('user_name',$result['name']);
 					Session::set('user_school',$result['school_name']);
 
+					Cookie::set('user_id',$result['id']);
 					Cookie::set('user_name',$result['name']);
 					Cookie::set('user_img',$result['user_img']);
 					return ['status'=>1,'message'=>'登录成功'];
@@ -96,6 +97,7 @@ class Consumer extends Base
 					Session::set('user_name',$res->name);
 					Session::set('user_school',$res->school_name);
 
+					Cookie::set('user_id',$res->id);
 					Cookie::set('user_name',$res->name);
 					Cookie::set('user_img',$res->user_img);
 					return ['status'=>1,'message'=>'注册成功'];	
@@ -116,8 +118,10 @@ class Consumer extends Base
 		Session::delete('user_name');
 		Session::delete('user_school');
 
+		Cookie::set('user_id','',time()-3600);
 		Cookie::set('user_name','',time()-3600);
 		Cookie::set('user_img','',time()-3600);
+
 		return ['status'=>1,'message'=>'退出成功'];
 	}
 
