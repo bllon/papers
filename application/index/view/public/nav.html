@@ -54,12 +54,9 @@
 		        <li><a href="" data-toggle="modal" data-target=".registermodel">注册</a></li>
 		        {/if}
 		        {if $Think.Session.user_name}
-		        {neq name="$Think.Cookie.user_name" value=""}
-		        <li><img src="{$Think.Cookie.user_img}" class="img-circle user_img hide" style="width:40px;height:40px;margin:5px;"/></li>
-		        {/neq}
-		        {eq name="$Think.Cookie.user_img" value=""}
-		        <li><img src="/static/images/userimg/1.jpg" class="img-circle user_img hide" style="width:40px;height:40px;margin:5px;"/></li>
-		        {/eq}
+
+		        <li><img src="" data-src="/static/images/userimg/1.jpg" class="img-circle user_img" style="width:40px;height:40px;margin:5px;visibility:hidden;"/></li>
+
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span id="user_name">{$Think.Cookie.user_name}</span><span class="caret"></span></a>
 		          <ul class="dropdown-menu">
@@ -111,7 +108,12 @@
 
   	//设置用户cookie
 	$('#user_name').html(getCookie('user_name'));
-	$('.user_img').attr('src',getCookie('user_img'));
-	$('.user_img').removeClass('hide');
+	var user_img = getCookie('user_img')
+	if(user_img){
+		$('.user_img').attr('src',user_img);
+	}else{
+		$('.user_img').attr('src',$('.user_img').attr('data-src'));
+	}
+	$('.user_img').css('visibility','visible');
 
 </script>
