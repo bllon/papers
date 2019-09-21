@@ -119,35 +119,39 @@
 		    			//成功获取推荐论文
 		    			//渲染论文
 		    			var paperList = JSON.parse(data.data);
-		    			var html = '<div class="col-md-4" style="position:fixed;top:230px;right:0;" id="recommend"><div class="list-group"><li class="list-group-item text-center"><span>推荐论文</span><button class="btn btn-sm btn-warning" id="sizeClick" style="margin-left:20px;">收起</button></li>';
+		    			if(paperList.length > 0){
+		    				var html = '<div class="col-md-4" style="position:fixed;top:230px;right:0;" id="recommend"><div class="list-group"><li class="list-group-item text-center"><span>推荐论文</span><button class="btn btn-sm btn-warning" id="sizeClick" style="margin-left:20px;">收起</button></li>';
 
-		    			for(var i=0;i<paperList.length;i++){
-		    				html += '<a href="javascript:void(0);" data-id="'+paperList[i].id+'" target="_blank" class="list-group-item recom" style="padding:10px 5px;max-height:160px;overflow:hidden;"><h4 class="list-group-item-heading"><span>'+paperList[i].lunwen_title+'</span></h4><p class="text-right" style="margin:0;"><span class="pull-left"><small>专业: '+paperList[i].major+'</small></span><small>作者: '+paperList[i].writer+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>分类: '+paperList[i].lunwen_rank+'->'+paperList[i].rank_type+'</small></span><small style="color:#dfa600;">'+paperList[i].school_name+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>阅读量：'+paperList[i].pv+'</small></span><small style="color:#dfa600;">发布时间:'+paperList[i].addtime+'</small></p></a>';
-		    			}
+			    			for(var i=0;i<paperList.length;i++){
+			    				html += '<a href="javascript:void(0);" data-id="'+paperList[i].id+'" target="_blank" class="list-group-item recom" style="padding:10px 5px;max-height:160px;overflow:hidden;"><h4 class="list-group-item-heading"><span>'+paperList[i].lunwen_title+'</span></h4><p class="text-right" style="margin:0;"><span class="pull-left"><small>专业: '+paperList[i].major+'</small></span><small>作者: '+paperList[i].writer+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>分类: '+paperList[i].lunwen_rank+'->'+paperList[i].rank_type+'</small></span><small style="color:#dfa600;">'+paperList[i].school_name+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>阅读量：'+paperList[i].pv+'</small></span><small style="color:#dfa600;">发布时间:'+paperList[i].addtime+'</small></p></a>';
+			    			}
 
-		    			html += '</div></div>';
-		    			$('body').append(html);
+			    			html += '</div></div>';
+			    			$('body').append(html);
 
-		    			$('.recom').click(function(){
-		    				var id = $(this).attr('data-id');
-		    				// window.location.href = "http://www.papers.com/index/index/paperdetail/id/"+id+".html";
-		    				window.open("http://www.papers.com/index/index/paperdetail/id/"+id+".html", '_blank');
-		    			})
+			    			$('.recom').click(function(){
+			    				var id = $(this).attr('data-id');
+			    				// window.location.href = "http://www.papers.com/index/index/paperdetail/id/"+id+".html";
+			    				window.open("http://www.papers.com/index/index/paperdetail/id/"+id+".html", '_blank');
+			    			})
 
-		    			$('#sizeClick').click(function(){
+			    			//收起按钮
+			    			$('#sizeClick').click(function(){
 
-		    				$('#recommend').animate({
-		    					'right':'-500px'
-		    				});
-		    				$('body').append('<div class="openRecommend" style="width:24px;height:100px;text-align:center;line-height:24px;writing-mode:lr-tb;background:#c8bfbf;position:fixed;top:50%;right:0;cursor:pointer;">打开推荐</div>');
-
-		    				$('.openRecommend').click(function(){
-		    					$('#recommend').animate({
-			    					'right':'0px'
+			    				$('#recommend').animate({
+			    					'right':'-500px'
 			    				});
-			    				$(this).remove();
-		    				})
-		    			})
+			    				$('body').append('<div class="openRecommend" style="width:24px;height:100px;text-align:center;line-height:24px;writing-mode:lr-tb;background:#c8bfbf;position:fixed;top:50%;right:0;cursor:pointer;">打开推荐</div>');
+
+			    				$('.openRecommend').click(function(){
+			    					$('#recommend').animate({
+				    					'right':'0px'
+				    				});
+				    				$(this).remove();
+			    				})
+			    			})
+			    			//渲染结束
+		    			}
 		    		}
 		    	})
 
