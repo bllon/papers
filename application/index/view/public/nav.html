@@ -55,7 +55,7 @@
 		        {/if}
 		        {if $Think.Session.user_name}
 
-		        <li><img src="" data-src="/static/images/userimg/1.jpg" class="img-circle user_img" style="width:40px;height:40px;margin:5px;visibility:hidden;"/></li>
+		        <li><a href="" class="user_id" style="cursor:pointer;padding:0px;"><img src="" data-src="/static/images/userimg/1.jpg" class="img-circle user_img" style="width:40px;height:40px;margin:5px;visibility:hidden;"/></a></li>
 
 		        <li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span id="user_name">{$Think.Cookie.user_name}</span><span class="caret"></span></a>
@@ -113,6 +113,11 @@
 		$('.user_img').attr('src',user_img);
 	}else{
 		$('.user_img').attr('src',$('.user_img').attr('data-src'));
+	}
+
+	var user_id = getCookie('user_id')
+	if(user_id){
+		$('.user_id').attr('href','/index/index/userDetail/id/'+user_id);
 	}
 	$('.user_img').css('visibility','visible');
 
