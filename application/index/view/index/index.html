@@ -144,6 +144,31 @@
 							}
 						})
 					}
+
+
+					//获取分页内容
+
+					// var AjaxPage = function(page){
+			  //           $.ajax({
+			  //               url:"{:url('index/getPage')}",
+			  //               type:'post',
+			  //               dataType:'json',
+			  //               data: {currentPage:page,keywords:$("input[name='keywords']").val()},
+			  //               success:function(data){
+			  //               	console.log(data);
+			  //                   var html = '';
+			  //                   var list = data.data.list;
+			  //                   for(var i=0;i<list.length;i++){
+			  //                   	html += '<div class="pull-left" style="width:140px;height:auto;padding:0px 0px 30px 10px;"><a href="/index/index/paperDetail/id/'+list[i].id+'" target="_blank" style="display:block;width:110px;height:130px;margin:0 auto;position:relative;"><img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/><div class="lv img-rounded" style="width:110px;height:130px;margin:0 auto;background:rgba(145,112,54,0.2);position:absolute;top:0;" title="'+list[i].lunwen_title+'"></div></a><div style="padding:0px 2px;"><h6 style="height:30px;"><a href="/index/index/paperDetail/id/'+list[i].id+'" target="_blank">'+list[i].lunwen_title+'</a></h6><p class="small" style="margin:0;">作者:'+list[i].writer+'</p><p class="small" style="margin:0;">阅读量:'+list[i].pv+'</p><p class="small" style="margin:0;">发布时间:<span class="text-primary">'+list[i].addtime+'</span></p></div></div>';
+			  //                   }
+			  //                   $('#list').html(html);
+			  //                   $('.page').html(data.data.pages);
+			  //               }
+			  //           });
+			  //       }
+
+			  //       AjaxPage(1);
+
 					
 				</script>
 {/block}

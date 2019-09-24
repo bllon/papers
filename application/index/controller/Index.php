@@ -75,13 +75,6 @@ class Index extends Base
 				}else{
 					$id = [];
 				}
-				
-				// var_dump($id);
-				// //查询出所有文章
-				// $lunwenList = Db::table('paper_lunwen')
-				// 						->whereOr('id','in',$id)
-				// 						->order('addtime','asc')
-				// 						->select();
 
 				$map[] = ['id','in',$id];
 				$map2[] = ['id','in',$id];
@@ -91,11 +84,6 @@ class Index extends Base
 			
 			//没登陆
 			if(Session::get('user_id') == null){
-				//实现搜索功能
-		    	// $keywords = trim(Request::get('keywords'));
-				// if(!empty($keywords)){
-				// 	$map[] = ['lunwen_title','like',"%{$keywords}%"];
-				// }
 				
 		    	$rank_name = Request::param('rank_name');
 				
@@ -123,12 +111,6 @@ class Index extends Base
 			}else{
 				//既显示公开论文，也显示学校的
 				$map2[] = ['school_name','=',Session::get('user_school')];
-				//实现搜索功能
-		  //   	$keywords = trim(Request::get('keywords'));
-				// if(!empty($keywords)){
-				// 	$map[] = ['lunwen_title','like',"%{$keywords}%"];
-				// 	$map2[] = ['lunwen_title','like',"%{$keywords}%"];
-				// }
 				
 		    	$rank_name = Request::param('rank_name');
 				
@@ -142,10 +124,8 @@ class Index extends Base
 					$lunwenList = Db::table('paper_lunwen')
 								->whereOr([$map,$map2])
 								->order('addtime','asc')
-//								->select();
 								->paginate(15);
-//					dump($rank_name);
-//					dump($lunwenList);		
+
 					$this->view->assign('rankName',$rank_name);
 					
 				}else{
@@ -154,10 +134,8 @@ class Index extends Base
 					$lunwenList = Db::table('paper_lunwen')
 								->whereOr([$map,$map2])
 								->order('addtime','asc')
-//								->select();
 								->paginate(15);
 								
-//								dump($lunwenList);
 				}
 			}			
 			
@@ -177,6 +155,94 @@ class Index extends Base
 			}			
 			
 	    	return $this->view->fetch('index');
+    }
+
+    //获取分页论文
+    public function getPage()
+    {
+    	$page = Request::param('currentPage') ? Request::param('currentPage'):1;
+
+    	$map = [];
+		$map2 = [];
+		//显示公开论文
+		$map[] = ['lunwen_terms','=',1];
+
+		$keywords = trim(Request::param('keywords'));
+		if(!empty($keywords)){
+			//搜索sphinx
+			require_once '../extend/sphinx/sphinxapi.php';
+			$sph = new \SphinxClient();
+			$sph->SetServer('localhost', 9312);
+			//第二个参数，默认是*，要查询的索引名字
+			$ret = $sph->Query($keywords, 'papers');
+			//提取出所有文章id
+			if(isset($ret['matches'])){
+				$id = array_keys($ret['matches']);
+			}else{
+				$id = [];
+			}
+
+			$map[] = ['id','in',$id];
+			$map2[] = ['id','in',$id];
+		}
+
+    	//没登陆
+		if(Session::get('user_id') == null){
+			
+	    	$rank_name = Request::param('rank_name');
+			
+			
+			if(isset($rank_name)){
+				
+				$map[] = ['rank_type','=',$rank_name];
+				
+				$lunwenList = Db::table('paper_lunwen')
+							->where($map)
+							->order('addtime','asc')
+							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+						
+				$this->view->assign('rankName',$rank_name);
+				
+			}else{
+				
+				$this->view->assign('rankName','全部论文');
+				$lunwenList = Db::table('paper_lunwen')
+							->where($map)
+							->order('addtime','asc')
+							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+			}
+			
+		}else{
+			//既显示公开论文，也显示学校的
+			$map2[] = ['school_name','=',Session::get('user_school')];
+			
+	    	$rank_name = Request::param('rank_name');
+			
+			
+			if(isset($rank_name)){
+				//条件3
+				
+				$map[] = ['rank_type','=',$rank_name];
+				$map2[] = ['rank_type','=',$rank_name];
+				
+				$lunwenList = Db::table('paper_lunwen')
+							->whereOr([$map,$map2])
+							->order('addtime','asc')
+							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+
+				$this->view->assign('rankName',$rank_name);
+				
+			}else{
+				
+				$this->view->assign('rankName','全部论文');
+				$lunwenList = Db::table('paper_lunwen')
+							->whereOr([$map,$map2])
+							->order('addtime','asc')
+							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+			}
+		}
+
+		return ['status'=>1,'message'=>'成功获取分页','data'=>['list'=>$lunwenList->items(),'pages'=>$lunwenList->render()]];
     }
 
 	
