@@ -995,6 +995,10 @@ class Index extends Base
 		$pass = Db::table('paper_pass')->where('user_id',$id)->select();
 		$passNum = count($pass);
 
+		//用户收藏歌单
+		$songList = Db::table('paper_collectMusic')->where('consumer_id',$id)->select();
+		$musicNum = count($songList);
+
 		unset($collect);
 		unset($comment);
 		unset($$borrow);
@@ -1003,7 +1007,9 @@ class Index extends Base
 		$this->view->assign('userInfo',$userInfo);
 		$this->view->assign('collectNum',$collectNum);
 		$this->view->assign('borrowNum',$borrowNum);
-		$this->view->assign('borrowNum',$passNum);
+		$this->view->assign('passNum',$passNum);
+		$this->view->assign('musicNum',$musicNum);
+		$this->view->assign('songList',$songList);
 		return $this->view->fetch('userDetail');
 	}
 	
@@ -1574,7 +1580,8 @@ class Index extends Base
 			}
 			file_put_contents($path.'music.txt', json_encode($data));
 		}
-		
+
+		$this->view->assign('title','音乐列表');
 		$this->view->assign('songList',$data);
 		return $this->view->fetch('moreMusic');
 	}
@@ -1583,10 +1590,8 @@ class Index extends Base
 	public function downloadMusic()
 	{
 		$data = Request::param();
-		$data = json_decode($data['data'],true);
-		// var_dump("http://sq.sycdn.kuwo.cn/ad28f8ee60e115a8a30409ddf6f2df6f/5d74c0b4/resource/n2/49/69/2154608137.mp3");
-		// var_dump($data['link']);exit;
-		$url = $data['link'];
+
+		$url = $data['url'];
 		$url = trim($url);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -1597,15 +1602,51 @@ class Index extends Base
     	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		$content = curl_exec($ch);
 
-		$content=mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1,ASCII,UTF-8,GB2312,GBK,BIG5');//使用该函数对结果进行转码
-		// $content= iconv( 'GBK','UTF-8',$content);
-		// var_dump($content);
-		// exit;
+		//把mp3写入文件
+		$path = dirname(dirname(dirname(__DIR__))).'/public/uploads/song/mp3/';
+
+		if(!is_dir($path)){
+			mkdir($path,0777,true);
+		}
+
+		$file = $path.$data['name'].'.mp3';
+		file_put_contents($file, $content);
+
+		$this->downFile($file);
+		unlink($file);
 		
 		curl_close($ch);
-		preg_match('/<source src="([\s\S]*)" type=\"audio\/mpeg\">/',$content,$match);
-		var_dump($match);
 
+	}
+
+	//收藏音乐
+	public function collectMusic()
+	{
+		$data = Request::param();
+
+		if(Session::get('user_id') == null)
+		{
+			//没登录
+			return ['status'=>0,'message'=>'请先登录'];
+		}
+
+		$data['consumer_id'] = Session::get('user_id');
+
+		$map = [];
+		$map[] = ['consumer_id','=',$data['consumer_id']];
+		$map[] = ['name','=',$data['name']];
+
+		$collectInfo = Db::table('paper_collectMusic')->where($map)->find();
+
+		if($collectInfo){
+			return ['status'=>2,'message'=>'已收藏'];
+		}
+
+		if(Db::table('paper_collectMusic')->insert($data)){
+			return ['status'=>1,'message'=>'收藏成功'];
+		}else{
+			return ['status'=>0,'message'=>'收藏失败'];
+		}
 	}
 
 	//更多mv

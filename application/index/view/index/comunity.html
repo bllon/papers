@@ -68,13 +68,13 @@
 										<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
 										<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
 										<span style="margin-left:15px;width:150px;float:right;">
-											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
 												<span class="glyphicon glyphicon glyphicon-play"></span>
 											</a>
 											<a class="download" href="javascript:void(0);" data-url="{$song.url}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
 												<span class="glyphicon glyphicon-cloud-download"></span>
 											</a>
-											<a class="collect" href="javascript:void(0);" title="收藏" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+											<a class="collect" href="javascript:void(0);" data-url="{$song.url}" data-song="{$song.name}" data-singer="{$song.singer}" title="收藏" style="margin-left:15px;color:#edb331;text-decoration:none;">
 												<span class="glyphicon glyphicon-heart"></span>
 											</a>
 										</span>
@@ -93,13 +93,13 @@
 										<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
 										<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
 										<span style="margin-left:15px;width:150px;float:right;">
-											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
 												<span class="glyphicon glyphicon glyphicon-play"></span>
 											</a>
-											<a class="download" href="javascript:void(0);" data-url="{$song.url}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+											<a class="download" href="javascript:void(0);" data-url="{$song.url|urlencode}" data-song="{$song.name}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
 												<span class="glyphicon glyphicon-cloud-download"></span>
 											</a>
-											<a class="collect" href="javascript:void(0);" title="收藏" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+											<a class="collect" href="javascript:void(0);" data-url="{$song.url}" data-song="{$song.name}" data-singer="{$song.singer}" title="收藏" style="margin-left:15px;color:#edb331;text-decoration:none;">
 												<span class="glyphicon glyphicon-heart"></span>
 											</a>
 										</span>
@@ -203,13 +203,13 @@
 				}
 			}
 
-			//音乐控件
+			//播放控件
 			$('.play').click(function(){
-				console.log($(this).parent('li'));
+				// console.log($(this).parent('li'));
 				$('.item').css('background','#fff');
 				$(this).parent().parent().css('background','#ff6666');
 
-				$('.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play').css('color','#44afd1');
+				$('.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play');
 
 				var url = $(this).attr('data-url');
 
@@ -221,11 +221,11 @@
 				var paused = $('.media')[0].paused;
 				if(paused){
 					$('.media')[0].play();
-					$(this).find('span').removeClass('glyphicon-play').addClass('glyphicon-pause').css('color','pink');
+					$(this).find('span').removeClass('glyphicon-play').addClass('glyphicon-pause');
 					return false;
 				}else{
 					$('.media')[0].pause();
-					$(this).find('span').removeClass('glyphicon-pause').addClass('glyphicon-play').css('color','#44afd1');
+					$(this).find('span').removeClass('glyphicon-pause').addClass('glyphicon-play');
 					return false;
 				}
 
@@ -233,13 +233,26 @@
 
 			//下载控件
 			$('.download').click(function(){
-				var url = $(this).attr('data-url');	
-				url = {'link':url};
-				url = JSON.stringify(url);
-				console.log(url);
-				// window.location.href = "{:url('index/downloadMusic',['url'=>".url."])}";
-				$.post("{:url('index/downloadMusic')}",{data:url},function(data,err){
-					console.log(data);
+				alert('服务器带宽不够，暂停下载服务');
+				return false;
+				var url = $(this).attr('data-url');
+				var name = $(this).attr('data-song');	
+
+				window.location.href = '/index/index/downloadMusic?name='+name+'&url='+url;
+
+			})
+
+			//收藏控件
+			$('.collect').click(function(e){
+				var that = this;
+				var url = $(this).attr('data-url');
+				var name = $(this).attr('data-song');
+				var singer = $(this).attr('data-singer');
+
+				$.post("{:url('index/collectMusic')}",{'url':url,'name':name,'singer':singer},function(data,err){
+					if(data.status){
+						$(that).css('color','red');
+					}
 				})
 			})
 

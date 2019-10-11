@@ -31,8 +31,94 @@
 						<div class="form-group">
 							<label>累计查重:&nbsp;</label><span>{$borrowNum}次</span>
 						</div>
+
+						<div class="form-group">
+							<label>收藏歌单:&nbsp;</label><span>{$musicNum}首</span>
+						</div>
+						<div class="col-md-10" style="padding:0;">
+							<div class="list-group collect-music" style="max-height:300px;overflow-y:scroll;">
+								{volist name="songList" id="song"}
+							  	<li class="list-group-item item" style="text-align:left;">
+									<div style="float:left;width:20px;text-align:center;">
+										<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
+									</div>										
+									<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
+									<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
+									<span style="margin-left:15px;width:150px;float:right;">
+										<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
+											<span class="glyphicon glyphicon glyphicon-play"></span>
+										</a>
+										<a class="download" href="javascript:void(0);" data-url="{$song.url|urlencode}" data-song="{$song.name}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+											<span class="glyphicon glyphicon-cloud-download"></span>
+										</a>
+										<a class="collect" href="javascript:void(0);" data-url="{$song.url}" data-song="{$song.name}" data-singer="{$song.singer}" title="收藏" style="margin-left:15px;color:#edb331;text-decoration:none;">
+											<span class="glyphicon glyphicon-heart"></span>
+										</a>
+									</span>
+								</li>
+								{/volist}
+							</div>
+							<video class="media" controls="controls" style="display:none;">
+								<source src="" type="audio/mpeg">
+							</video>
+						</div>
+						
 					</div>
 				</div>		
-				   
+				 
+				<script type="text/javascript">
+					//播放控件
+					$('.play').click(function(){
+						// console.log($(this).parent('li'));
+						$('.item').css('background','#fff');
+						$(this).parent().parent().css('background','#ff6666');
+
+						$('.glyphicon-pause').removeClass('glyphicon-pause').addClass('glyphicon-play');
+
+						var url = $(this).attr('data-url');
+
+						if($('.media')[0].src != url){
+							$('.media')[0].src = url;
+						}
+
+
+						var paused = $('.media')[0].paused;
+						if(paused){
+							$('.media')[0].play();
+							$(this).find('span').removeClass('glyphicon-play').addClass('glyphicon-pause');
+							return false;
+						}else{
+							$('.media')[0].pause();
+							$(this).find('span').removeClass('glyphicon-pause').addClass('glyphicon-play');
+							return false;
+						}
+
+					})
+
+					//下载控件
+					$('.download').click(function(){
+						alert('服务器带宽不够，暂停下载服务');
+						return false;
+						var url = $(this).attr('data-url');
+						var name = $(this).attr('data-song');	
+
+						window.location.href = '/index/index/downloadMusic?name='+name+'&url='+url;
+
+					})
+
+					//收藏控件
+					$('.collect').click(function(e){
+						var that = this;
+						var url = $(this).attr('data-url');
+						var name = $(this).attr('data-song');
+						var singer = $(this).attr('data-singer');
+
+						$.post("{:url('index/collectMusic')}",{'url':url,'name':name,'singer':singer},function(data,err){
+							if(data.status){
+								$(that).css('color','red');
+							}
+						})
+					})
+				</script> 
 {/block}
 
