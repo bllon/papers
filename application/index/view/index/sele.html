@@ -38,7 +38,7 @@
 								<a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank"><img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/></a>
 								<div style="padding:0px 2px;">
 									<h6 style="height:30px;"><a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank">{$lunwen.lunwen_title}</a></h6>
-									<p class="small" style="margin:0;">作者:{$lunwen.writer}</p>
+									<!-- <p class="small" style="margin:0;">作者:{$lunwen.writer}</p> -->
 									<p class="small" style="margin:0;">阅读量:{$lunwen.pv}</p>
 									<p class="small" style="margin:0;">发布时间:<span class="text-primary">{$lunwen.addtime|date="Y/m/d"}</span></p>
 								</div>

@@ -40,7 +40,7 @@
     }
 	
 	//页面静态化
-	protected function buildHtml($templateFile,$path='/runtime/cache') {
+	protected function buildHtml($templateFile,$info,$path='/runtime/cache') {
 
         $content = $this->view->fetch($templateFile);
 //		var_dump($_SERVER['REQUEST_URI']);exit;
@@ -53,7 +53,23 @@
         	mkdir($path,0777,true);
         }  
 		try{
-			file_put_contents($file, $content);
+			//写入缓存
+			file_put_contents($file, $content,LOCK_EX);
+
+			//写入缓存时间
+			$file = dirname($path).'/expire.txt';
+			if(file_exists($file)){
+				$data = file_get_contents($file);
+				$data = json_decode($data,true);
+				$data[$info['id']] = time() + 43200;
+				file_put_contents($file, json_encode($data),LOCK_EX);
+			}else{
+				$data = [];
+				$data[$info['id']] = time() + 43200;
+
+				file_put_contents($file, json_encode($data),LOCK_EX);
+			}
+
 			return $content;
 		}catch(\Exception $e){
 			return $content;
@@ -62,9 +78,31 @@
     }
 	
 	//直接获取静态文件
-	protected function getCacheHtml($path='/runtime/cache'){
+	protected function getCacheHtml($info,$path='/runtime/cache'){
 		//兼容网站域名
 		$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] == '/' ? '/index/index/index.html':$_SERVER['REQUEST_URI'];
+		$file = Env::get('root_path').$path.rtrim($_SERVER['REQUEST_URI'],'/');
+
+		//读取缓存时间
+		$file = dirname(dirname($file)).'/expire.txt';
+		if(!file_exists($file)){
+			//不存在缓存文件
+			return false;
+		}
+
+		$data = file_get_contents($file);
+		$data = json_decode($data,true);
+
+		if(!isset($data[$info['id']])){
+			//不存在缓存
+			return false;
+		}
+
+		if(time() > $data[$info['id']]){
+			//缓存失效
+			return false;
+		}
+
 		$file = Env::get('root_path').$path.rtrim($_SERVER['REQUEST_URI'],'/');
 		try{
 			$content = @file_get_contents($file);
@@ -105,22 +143,39 @@
 			});
 			$schoolRank = [];
 		}else{
-			$rankList = Rank::all(function($query){
-				$query->where('school_name',Session::get('user_school'))
-					->limit(6);
-			});
-			
-			$schoolRank = Rank::all(function($query){
-				$query->where('school_name',Session::get('user_school'));
-			});
-			
-			$data = [];
-			foreach($schoolRank as $school){
-				$data[] = $school['rank_name'];
+			if(Session::get('user_school') == '未指定学校'){
+				$rankList = Rank::all(function($query){
+					$query->distinct(true)->field('rank_name')
+						->limit(6);
+				});
+				$allList = Rank::all(function($query){
+					$query->distinct(true)->field('rank_name');
+				});
+				$schoolRank = [];
+			}else{
+				$rankList = Rank::all(function($query){
+					$query->where('school_name',Session::get('user_school'))
+						->limit(6);
+				});
+
+				
+				$schoolRank = Rank::all(function($query){
+					$query->where('school_name',Session::get('user_school'));
+				});
+
+				
+				$data = [];
+				foreach($schoolRank as $school){
+					$data[] = $school['rank_name'];
+				}
+
+				$allList = Rank::all(function($query) use ($data){
+					$query->where('rank_name','NOT IN',$data)->distinct(true)->field('rank_name');
+				});
+
 			}
-			$allList = Rank::all(function($query) use ($data){
-				$query->where('rank_name','NOT IN',$data)->distinct(true)->field('rank_name');
-			});
+			
+			
 			
 		}
 		

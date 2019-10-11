@@ -22,10 +22,119 @@ use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\Db;
+use think\facade\Env;
 
 
 class Index extends Base
 {
+	//qq登录
+	public function qqLogin()
+	{
+		$app_id = "101807120";
+        //回调地址
+        $redirect_uri = urlencode("http://xubeixyz123.com/index/index/qq_callback");
+        $url = "https://graph.qq.com/oauth2.0/authorize?response_type=code&client_id=".$app_id."&redirect_uri=".$redirect_uri."&scope=get_user_info&state=text";
+        //跳转到$url
+ 
+        //Step1：获取Authorization Code
+ 
+        // header("location".$url);
+        $this->redirect($url);
+	}
+
+	public function qq_callback()
+	{
+		// appid
+        $app_id = "101807120";
+        //appkey
+        $app_secret = "045eafc38d5d3077b9ef9d07a9f7b5bd";
+        //成功授权后的回调地址
+        $my_url = urlencode("http://xubeixyz123.com/index/index/qq_callback");
+        //获取code
+        $code = $_GET['code'];
+ 
+        //Step2：通过Authorization Code获取Access Token
+ 
+        $token_url = "https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&client_id=".$app_id."&redirect_uri=".$my_url."&client_secret=".$app_secret."&code=".$code."";
+        //file_get_contents() 把整个文件读入一个字符串中。
+        $response = file_get_contents($token_url);
+ 
+        //Step3:在上一步获取的Access Token，得到对应用户身份的OpenID。
+ 
+        $params = array();
+        //parse_str() 函数把查询字符串（'a=x&b=y'）解析到变量中。
+        parse_str($response,$params);
+        $graph_url = "https://graph.qq.com/oauth2.0/me?access_token=".$params['access_token']."";
+        $str = file_get_contents($graph_url);
+        // dump($str);die;
+        // --->找到了字符串：callback( {"client_id":"YOUR_APPID","openid":"YOUR_OPENID"} )
+        //
+        // strpos() 函数查找字符串在另一字符串中第一次出现的位置，从0开始
+        if(strpos($str,"callback")!==false)
+        {
+            $lpos = strpos($str,"(");
+            // strrpos() 函数查找字符串在另一字符串中最后一次出现的位置。
+            $rpos = strrpos($str,")");
+            //substr(string,start,length) 截取字符串某一位置
+            $str = substr($str,$lpos+1,$rpos-$lpos-1);
+        }
+        // json_decode() 函数用于对 JSON 格式-->{"a":1,"b":2,"c":3,"d":4,"e":5}<--的字符串进行解码，并转换为 PHP 变量,默认返回对象
+        $user = json_decode($str);
+        // dump($user->openid);die;
+        session('openid',$user->openid);
+ 
+        //Step4: 调用OpenAPI接口,得到json数据，要转换为数组
+ 
+        $huiyuan = "https://graph.qq.com/user/get_user_info?access_token=".$params['access_token']."&oauth_consumer_key=".$app_id."&openid=".$user->openid."";
+        //加上true，得到数组，否则默认得到对象
+        $res = json_decode(file_get_contents($huiyuan),true);
+        // dump($res['nickname']);dump($res);die;
+
+        $re = Consumer::where('openid',$user->openid)->find();
+
+        //如果没有找到，进行注册
+        if(!$re){
+            if($res['gender']=="男"){
+                $res['gender'] = 0;
+            }else{
+                $res['gender'] = 1;
+            }
+            $data = [
+                'openid'=>$user->openid,
+                'name'=>$res['nickname'],
+                'school_name'=>'未指定学校',
+                'email'=>'未指定邮箱',
+                'password'=>'',
+                'passnum'=>0,
+                'status'=>1,
+                'user_img'=>$res['figureurl_qq_2'],
+                'role_id'=>23,
+                'gender'=>$res['gender'],
+            ];
+            if($user = Consumer::create($data)){
+				$res = Consumer::get($user->id);
+				Session::set('user_id',$res->id);
+				Session::set('user_name',$res->name);
+				Session::set('user_school',$res->school_name);
+
+				Cookie::set('user_id',$res->id);
+				Cookie::set('user_name',$res->name);
+				Cookie::set('user_img',$res->user_img);
+				$this->redirect('index');
+			}else{				
+				$this->redirect('index');
+			}
+        }else{
+        	Session::set('user_id',$re['id']);
+			Session::set('user_name',$re['name']);
+			Session::set('user_school',$re['school_name']);
+
+			Cookie::set('user_id',$re['id']);
+			Cookie::set('user_name',$re['name']);
+			Cookie::set('user_img',$re['user_img']);
+            $this->redirect('index');
+        }
+	}
 
 	//sphinx测试
 	public function sphinx()
@@ -111,6 +220,7 @@ class Index extends Base
 			}else{
 				//既显示公开论文，也显示学校的
 				$map2[] = ['school_name','=',Session::get('user_school')];
+				
 				
 		    	$rank_name = Request::param('rank_name');
 				
@@ -250,26 +360,30 @@ class Index extends Base
 	public function paperDetail()
 	{
 		$this->hasPower(Session::get('user_id'), 'index/index/paperDetail');
+
+		$id = Request::param('id');
 		
 		//获取缓存文件
-		$content = $this->getCacheHtml();
+		$content = $this->getCacheHtml(['id'=>$id]);
 		if($content){
 			return $content;
 		}
 
 
-		$id = Request::param('id');
+		
 		$paperInfo = Lunwen::get(function($query) use ($id){
 			$query->where('id',$id);
 		});
 //		var_dump($paperInfo);exit;
-		$content = Paper($id);
+
+		//获取redis缓存论文
+		// $content = Paper($id);
 		if(null == $content){
 			if($paperInfo['lunwen_file'] !== null){
 				$paperInfo['content'] = parserPdf(substr($paperInfo['lunwen_file'],1));
 				
 				//设置缓存
-				setCache("paper:id:".$paperInfo['id'].":content",serialize(parserPdf(substr($paperInfo['lunwen_file'],1))),86400);
+				// setCache("paper:id:".$paperInfo['id'].":content",serialize(parserPdf(substr($paperInfo['lunwen_file'],1))),86400);
 			}else{
 				$arr = [];
 				$arr[] = $paperInfo['content'];
@@ -283,7 +397,7 @@ class Index extends Base
 		$this->view->assign('title',$paperInfo['lunwen_title']);
 		$this->view->assign('paperInfo',$paperInfo);
 //		$this->view->assign('paperfile',substr($paperInfo['lunwen_file'],1));
-		return $this->buildHtml('paperDetail');
+		return $this->buildHtml('paperDetail',['id'=>$id]);
 //		return $this->view->fetch('paperDetail');
 	}
 
@@ -933,11 +1047,11 @@ class Index extends Base
 
 			if($comment['lv'] == 1){
 				$str .= '<li class="list-group-item">
-							    <h5 class="list-group-item-heading"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<a href="'.'/index/index/userDetail/id/'.$comment['id'].'">'.$comment['reply_user'].'</a>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
+							    <h5 class="list-group-item-heading"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['id'].'">'.$comment['reply_user'].'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
 							    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';				
 			}else{
 					$str .= '<div style="width:93%;margin:0 auto;border-top:1px solid #ddd;">
-									    <h5 style="margin:0;"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<a href="'.'/index/index/userDetail/id/'.$comment['id'].'">'.$comment['reply_user'].'</a>&nbsp;<small>回复</small>&nbsp;<a href="/index/index/userDetail/id/'.$comment['reply_id'].'">'.getPostUser($comment['reply_id']).'</a>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
+									    <h5 style="margin:0;"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['id'].'">'.$comment['reply_user'].'</a></small>&nbsp;<small>回复</small>&nbsp;<img src="'.getConsumerImg($comment['reply_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="/index/index/userDetail/id/'.$comment['reply_id'].'">'.getPostUser($comment['reply_id']).'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
 									    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';
 			}	
 
@@ -1216,7 +1330,9 @@ class Index extends Base
 		// $groupList = $comunity->getAllGroup();
 
 		//数据库读取
-		$groupList = Db::table('paper_group')->limit(10)->select();
+		$groupList = Db::table('paper_group')->select();
+		$this->view->assign('groupCount',count($groupList));
+		$groupList = array_slice($groupList, 0,8);
 		// var_dump($groupList);exit;
 
 
@@ -1258,18 +1374,87 @@ class Index extends Base
 			file_put_contents($path.'music.txt', json_encode($data));
 		}
 		
-		
+		$this->view->assign('songNum',count($data));
+
 		$data1 = array_slice($data, 0,10);
 		$data2 = array_slice($data, 10,10);
+
+
+		//获取mv
+		$path = Env::get('root_path').'/runtime/cache/mvHtml';
+		$filename = $path.'/mvUrl.json';
+		if(file_exists($filename)){
+			$content = file_get_contents($filename);
+		}
+		if($content){
+			$mvList = json_decode($content,true);
+		}else{
+			$mvList = $this->MusicMv();
+		}
+		$this->view->assign('mvCount',count($mvList));
+		$mvList = array_slice($mvList, 0,8);
 
 		$this->view->assign('title','社区首页');
 		$this->view->assign('groupList',$groupList);
 		$this->view->assign('songList',$data1);
 		$this->view->assign('recommendList',$data2);
+		$this->view->assign('mvList',$mvList);
 		return $this->view->fetch('comunity');
 	}
 
-	//爬取流行音乐列表
+	//爬取腾讯音乐最火MV
+	public function MusicMv()
+	{
+		$path = Env::get('root_path').'/runtime/cache/mvHtml';
+		$filename = $path.'/mv.json';
+		if(file_exists($filename)){
+			$content = file_get_contents($filename);
+		}else{
+			$content = $this->getUrlContent('https://u.y.qq.com/cgi-bin/musicu.fcg?-=mvlib578643394250538&g_tk=5381&loginUin=1192475069&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&data=%7B%22comm%22%3A%7B%22ct%22%3A24%7D%2C%22mv_tag%22%3A%7B%22module%22%3A%22MvService.MvInfoProServer%22%2C%22method%22%3A%22GetAllocTag%22%2C%22param%22%3A%7B%7D%7D%2C%22mv_list%22%3A%7B%22module%22%3A%22MvService.MvInfoProServer%22%2C%22method%22%3A%22GetAllocMvInfo%22%2C%22param%22%3A%7B%22start%22%3A0%2C%22size%22%3A20%2C%22version_id%22%3A7%2C%22area_id%22%3A15%2C%22order%22%3A0%7D%7D%7D');
+			if(!is_dir($path)){
+	        	// 如果静态目录不存在 则创建
+	        	mkdir($path,0777,true);
+	        }
+	        file_put_contents($filename, $content);
+		}
+		$content = json_decode($content,true);
+
+		$list = $content['mv_list']['data']['list'];
+		$data = [];
+		foreach($list as $row){
+			// var_dump($row);
+			$one = [];
+			$one['vid'] = $row['vid'];
+			$one['title'] = $row['title'];
+			$one['picurl'] = $row['picurl'];
+			
+			$mvContent = $this->getUrlContent('https://u.y.qq.com/cgi-bin/musicu.fcg?data=%7B%22getMvUrl%22%3A%7B%22module%22%3A%22gosrf.Stream.MvUrlProxy%22%2C%22method%22%3A%22GetMvUrls%22%2C%22param%22%3A%7B%22vids%22%3A%5B%22'.$row['vid'].'%22%5D%2C%22request_typet%22%3A10001%7D%7D%7D&g_tk=5381&callback=jQuery11230544967815282688_1570755728410&loginUin=0&hostUin=0&format=jsonp&inCharset=utf8&outCharset=GB2312&notice=0&platform=yqq&needNewCode=0');
+			$mvContent = trim($mvContent,')');
+			$start = strrpos($mvContent, '(');
+			$mvContent = substr($mvContent, 41);
+			// var_dump($mvContent);
+			$mvUrl = json_decode($mvContent,true);
+
+			$mvUrl = $mvUrl['getMvUrl']['data'][$row['vid']]['mp4'];
+
+			$one['mvUrl'] = [];
+			foreach($mvUrl as $url){
+				// var_dump($url['freeflow_url']);
+				if($url['freeflow_url']){
+					$one['mvUrl'][] = $url['freeflow_url'][0];
+				}
+			}
+
+			$data[] = $one;
+		}
+
+		$filename = $path.'/mvUrl.json';
+		file_put_contents($filename, json_encode($data));
+		// var_dump($content['mv_list']['data']['list']);
+		return $data;
+	}
+
+	//爬取链接内容
 	public function getUrlContent($url)
 	{
 		$url = trim($url);
@@ -1422,5 +1607,35 @@ class Index extends Base
 		var_dump($match);
 
 	}
+
+	//更多mv
+	public function moreMv()
+	{
+		//获取mv
+		$path = Env::get('root_path').'/runtime/cache/mvHtml';
+		$filename = $path.'/mvUrl.json';
+		if(file_exists($filename)){
+			$content = file_get_contents($filename);
+		}
+		if($content){
+			$mvList = json_decode($content,true);
+		}else{
+			$mvList = $this->MusicMv();
+		}
+
+		$this->view->assign('title','MV列表');
+		$this->view->assign('mvList',$mvList);
+		return $this->view->fetch('moreMv');
+	}
 	
+	//更多讨论列表
+	public function moreGroup()
+	{
+		//数据库读取
+		$groupList = Db::table('paper_group')->select();
+
+		$this->view->assign('title','讨论列表');
+		$this->view->assign('groupList',$groupList);
+		return $this->view->fetch('moreGroup');
+	}
 }

@@ -10,6 +10,7 @@ use think\Db;
 
 class Recommend
 {
+	//推送推荐论文
 	public function push()
 	{
 		$consumer_id = Request::param('consumer_id');
@@ -64,12 +65,15 @@ class Recommend
 		}
 		arsort($similarity_info);
 		
-		//除去小于0.5的相似用户
-		foreach($similarity_info as $k=>$v){
-			if($v < 0.5){
-				unset($similarity_info[$k]);
+		if(count($similarity_info) > 3){
+			//除去小于0.5的相似用户
+			foreach($similarity_info as $k=>$v){
+				if($v < 0.5){
+					unset($similarity_info[$k]);
+				}
 			}
 		}
+		
 
 		//保存要推荐的论文id
 		$push = [];

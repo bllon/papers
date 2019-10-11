@@ -9,6 +9,8 @@ use app\common\model\School;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cookie;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 
 class Consumer extends Base
@@ -108,6 +110,44 @@ class Consumer extends Base
     	}else{
     		return ['status'=>-1,'message'=>'请求异常'];
     	}
+	}
+
+	//发送邮件
+	public function sendMail()
+	{
+		$mail = new PHPMailer(true);
+		$mail->CharSet='UTF-8';
+
+		try {
+		    //Server settings
+		    $mail->SMTPDebug = 2;                                       // Enable verbose debug output
+		    $mail->isSMTP();                                            // Set mailer to use SMTP
+		    $mail->Host       = 'smtp.163.com';  // Specify main and backup SMTP servers
+		    $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+		    $mail->Username   = 'papers_xubei@163.com';                     // SMTP username
+		    $mail->Password   = 'xubei1998526';                               // SMTP password
+		    $mail->SMTPSecure = 'tls';
+		                                     // Enable TLS encryption, `ssl` also accepted
+		    $mail->Port       = 25;                                    // TCP port to connect to
+
+		    //Recipients
+		    $mail->setFrom('papers_xubei@163.com', 'papers.com');
+		    $mail->addAddress('papers_xubei@163.com');               // Name is optional
+		    
+
+		    
+
+		    // Content
+		    $mail->isHTML(true);                                  // Set email format to HTML
+		    $mail->Subject = 'papers.com';
+		    $mail->Body    = '你的验证码为:123456';
+		    // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+		    $mail->send();
+		    echo 'Message has been sent';
+		} catch (Exception $e) {
+		    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+		}
 	}
 	
 	
