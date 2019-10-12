@@ -32,8 +32,7 @@ class Recommend
 			}
 
 			//推送3个大家看得最多的论文
-			$len = count($push)-5;
-			for($i=0;$i<$len;$i++){
+			for($i=0;$i<3;$i++){
 				array_pop($push);
 			}
 
@@ -99,6 +98,9 @@ class Recommend
 		return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($pushList)];
 		
 	}
+
+	//推荐相似论文
+	
 
 
 	//获取积分表

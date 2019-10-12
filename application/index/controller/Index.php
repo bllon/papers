@@ -979,9 +979,8 @@ class Index extends Base
 		$this->hasPower(Session::get('user_id'), 'index/index/userDetail');
 
 		$id = Request::param('id');
-		$comment = Comment::where('id',$id)->find();
-		$user = $comment['reply_user'];
-		$userInfo = Consumer::where('name',$user)->find();
+		
+		$userInfo = Consumer::where('id',$id)->find();
 
 		//查询收藏论文
 		$collect = Collect::where('user_id',$userInfo['id'])->select();
@@ -1003,7 +1002,7 @@ class Index extends Base
 		unset($comment);
 		unset($$borrow);
 		unset($id);
-		$this->view->assign('title',"{$user}的详情信息");
+		$this->view->assign('title',"{$userInfo['name']}的详情信息");
 		$this->view->assign('userInfo',$userInfo);
 		$this->view->assign('collectNum',$collectNum);
 		$this->view->assign('borrowNum',$borrowNum);
@@ -1021,7 +1020,7 @@ class Index extends Base
 		$postId = Request::param('id');
 		$postInfo = PostModel::get($postId);
 
-		// $commentList = Comment::where('post_id',$postId)->select();
+		$commentList = Comment::where('post_id',$postId)->select();
 
 		// $commentList = $this->getCommlist($postId);
 
@@ -1030,7 +1029,7 @@ class Index extends Base
 		// $this->view->assign('postHtml',$html);
 
 		$this->view->assign('postInfo',$postInfo);
-		// $this->view->assign('commentList',$commentList);
+		$this->view->assign('commentNum',count($commentList));
 		$this->view->assign('title',$postInfo['title']);
 		return $this->view->fetch('postDetail');
 	}
@@ -1053,11 +1052,11 @@ class Index extends Base
 
 			if($comment['lv'] == 1){
 				$str .= '<li class="list-group-item">
-							    <h5 class="list-group-item-heading"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['id'].'">'.$comment['reply_user'].'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
+							    <h5 class="list-group-item-heading"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['user_id'].'">'.$comment['reply_user'].'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
 							    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';				
 			}else{
 					$str .= '<div style="width:93%;margin:0 auto;border-top:1px solid #ddd;">
-									    <h5 style="margin:0;"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['id'].'">'.$comment['reply_user'].'</a></small>&nbsp;<small>回复</small>&nbsp;<img src="'.getConsumerImg($comment['reply_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="/index/index/userDetail/id/'.$comment['reply_id'].'">'.getPostUser($comment['reply_id']).'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
+									    <h5 style="margin:0;"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['user_id'].'">'.$comment['reply_user'].'</a></small>&nbsp;<small>回复</small>&nbsp;<img src="'.getConsumerImg(getPostUserId($comment['reply_id'])).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="/index/index/userDetail/id/'.getPostUserId($comment['reply_id']).'">'.getPostUser($comment['reply_id']).'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
 									    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';
 			}	
 

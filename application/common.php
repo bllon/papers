@@ -106,6 +106,15 @@ if(!function_exists('getPostUser'))
 	}
 }
 
+if(!function_exists('getPostUserId'))
+{
+	function getPostUserId($id)
+	{
+		$userInfo = Comment::get($id);
+		return $userInfo['user_id'];
+	}
+}
+
 if(!function_exists('getConsumerImg'))
 {
 	function getConsumerImg($id)

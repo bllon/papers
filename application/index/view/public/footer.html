@@ -33,7 +33,7 @@
 	      	<div class="otherLogin" style="float:left;letter-spacing:1px;">
 	      		<span>其他方式 :</span>
 	      		<a href="{:url('index/qqLogin')}">
-	      			<img src="/static/images/Connect_logo_1.png" style="cursor:pointer;">
+	      			<img src="/static/images/Connect_logo_1.png" style="width:cursor:pointer;">
 	      		</a>
 	      		<!-- <img src="/static/images/Connect_logo_1.png" onclick="toLogin();" style="cursor:pointer;"> -->
 	      	</div>
@@ -58,35 +58,56 @@
 	          	<label for="message-text" class="control-label">用户名</label>
 	            <div class="input-group">
 				  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-				  <input type="text" class="form-control" id="reg_name" placeholder="用户名" aria-describedby="sizing-addon2">
+				  <input type="text" class="form-control" id="reg_name" autocomplete="off" placeholder="用户名" aria-describedby="sizing-addon2">
 				</div>
 	          </div>
-	          <div class="form-group">
+	          <div class="form-group" style="position:relative;">
 	          	<label for="message-text" class="control-label">学校名</label>
 	            <div class="input-group">
 				  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-				  <input type="text" class="form-control" id="reg_schoolname" placeholder="学校名" aria-describedby="sizing-addon2">
+				  <input type="text" class="form-control" id="reg_schoolname" autocomplete="off" placeholder="学校名" aria-describedby="sizing-addon2">
+				  <ul id="auto_school" style="position:absolute;top:35px;max-height:200px;overflow-y:scroll;padding:0;margin:0;z-index:999;box-shadow:0px 1px 4px 0px #cac4c4;">
+				  	<!-- <li style="list-style:none;background:#ebeaea;padding:5px 15px;">景德镇陶瓷大学</li>
+				  	<li style="list-style:none;background:#ebeaea;padding:5px 15px;">景德镇陶瓷科技艺术学院</li> -->
+				  </ul>
 				</div>
 	          </div>
-	          <div class="form-group">
-	          	<label for="message-text" class="control-label">邮箱</label>
-	            <div class="input-group">
-				  <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
-				  <input type="email" class="form-control" id="reg_email" placeholder="邮箱" aria-describedby="sizing-addon2">
-				</div>
+	          <div class="row">
+	          	<div class="col-md-6 col-xs-12">
+	          		<div class="form-group">
+			          	<label for="message-text" class="control-label">邮箱</label>
+			            <div class="input-group">
+						  <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span></span>
+						  <input type="email" class="form-control" id="reg_email" autocomplete="off" placeholder="邮箱" aria-describedby="sizing-addon2">
+						</div>
+			        </div>
+	          	</div>
+	          	<div class="col-md-2 col-sm-3 col-xs-4">
+	          		<div class="form-group">
+	          			<label for="message-text" class="control-label" style="width:28px;height:20px;"></label><br>
+			          	<button type="button" class="btn btn-primary btn-sm" id="sendEmail">验证邮箱</button>
+			        </div>
+	          	</div>
+	          	<div class="col-md-3 col-sm-4 col-xs-6">
+	          		<div class="form-group">
+	          			<label for="message-text" class="control-label">验证码</label>
+			          	<input type="email" class="form-control" id="reg" autocomplete="off" placeholder="" aria-describedby="sizing-addon2">
+			        </div>
+	          	</div>
 	          </div>
+	          
 	          <div class="form-group">
 	            <label for="message-text" class="control-label">密码</label>
 	            <div class="input-group">
 				  <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-				  <input type="password" class="form-control" id="reg_password" placeholder="密码" aria-describedby="sizing-addon2">
+				  <input type="password" class="form-control" id="reg_password" autocomplete="off" placeholder="密码" aria-describedby="sizing-addon2">
 				</div>
 	          </div>
 	          <div class="form-group">
 	            <label for="message-text" class="control-label">确认密码</label>
 	            <div class="input-group">
 				  <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-				  <input type="password" class="form-control" id="confirm_password" placeholder="确认密码" aria-describedby="sizing-addon2">
+				  <input type="password" class="form-control" id="confirm_password" autocomplete="off" placeholder="确认密码" aria-describedby="sizing-addon2">
 				</div>
 	          </div>
 	        </form>
@@ -100,6 +121,7 @@
 	</div><!-- /.modal -->
 </html>
 
+<script type="text/javascript" src="/static/js/campus.js"></script>
 <script>
 //	alert(document.body.scrollHeight);
 	$('#footer').css({
@@ -107,7 +129,76 @@
 		'top':$(document).height()+30+'px'
 	});
 	
+
+	// 提示输入
+	function search(item){
+		var input = $('#reg_schoolname').val();
+
+		return item.indexOf(input) >= 0;
+	}
+
+	$('#reg_schoolname').on('input',function(){
+		var input = $('#reg_schoolname').val();
+
+		var data = campus.filter(search);
+		if(data.length > 0 && input!=''){
+
+			var html = '';
+			for(var i=0;i<data.length;i++){
+				html += '<li class="autoItem" style="list-style:none;background:#ebeaea;padding:5px 15px;border-bottom:1px solid #bcb6b6;cursor:pointer;">'+data[i]+'</li>';
+			}
+
+			$('#auto_school').html(html);
+
+			$('.autoItem').hover(function(){
+				$(this).css('background','#cec3c3');
+			},function(){
+				$(this).css('background','#ebeaea');
+			})
+
+
+			$('.autoItem').on('click',function(){
+				$('#reg_schoolname').val($(this).html());
+				$('#auto_school').html('');
+			})
+
+		}else{
+			$('#auto_school').html('');
+		}
+
+	})
 	
+	//点击其他地方关闭
+	$('body').on('click',function(){
+		$('#auto_school').html('');
+	})
+
+	//提示输入结束
+
+
+	//验证邮箱
+	$('#sendEmail').on('click',function(){
+		var email  = $('#reg_email').val();
+
+		var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+        if(!myreg.test(email))
+        {
+            alert('请输入正确的邮箱格式');
+            return false;
+        }
+		$.get("{:url('consumer/mailValidation')}",{'email':email},function(data){
+			if(!data.status){
+				alert(data.message);
+			}else{
+				alert(data.message);
+				$('#sendEmail').attr('disabled','disabled');
+				$('#sendEmail').html('已发送');
+			}
+		})
+	})
+
+
+
 	$('#logout').on('click',function(e){
 		e.preventDefault();
 		$.ajax({
@@ -159,6 +250,7 @@
 		var name  = $('#reg_name').val();
 		var schoolname  = $('#reg_schoolname').val();
 		var email  = $('#reg_email').val();
+		var reg =  $('#reg').val();
 		var pass = $('#reg_password').val();
 		var confirm_pass = $('#confirm_password').val();
 		
@@ -170,6 +262,7 @@
 				'name':name,
 				'school_name':schoolname,
 				'email':email,
+				'reg':reg,
 				'password':pass,
 				'password_confirm':confirm_pass,
 			},
@@ -207,6 +300,10 @@
 	            $("#register").click();
 	       }
 	});
+
+	// $.post("{:url('index/consumer/campus')}",{},function(data,err){
+	// 	console.log(data);
+	// })
 
 
 
