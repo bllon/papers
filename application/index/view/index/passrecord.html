@@ -9,7 +9,7 @@
 					</div>
 					
 					<div class="list-group">
-					{volist name="passList" id="pass"}
+					{volist name="passList" id="pass" empty="<p class='text-warning'>暂无记录 , 赶紧去查重一下吧 !</p>"}
 					  <a href="{:url('index/passRsult',['id'=>$pass.id])}" target="_blank" class="list-group-item" style="padding:10px 5px;max-height:160px;overflow:hidden;">
 					    <h4 class="list-group-item-heading">{$pass.title} <span class="glyphicon glyphicon-book"></span></h4>
 					    <p class="text-right" style="margin:0;color:#dfa600;"><small>{$pass.user_id|getschool}</small></p>

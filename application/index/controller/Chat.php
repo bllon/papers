@@ -34,6 +34,20 @@ class Chat extends Base
 		//接收参数
 		$data = Request::param();
 
+		// var_dump(mb_strlen($data['groupName']),mb_strlen($data['title']));exit;
+
+		if(trim($data['groupName']) == '' || trim($data['title']) == ''){
+			$this->error('房间名称或主题不能为空');
+		}
+
+		if(mb_strlen($data['groupName']) > 20){
+			$this->error('房间名称过长');
+		}
+
+		if(mb_strlen($data['title']) > 30){
+			$this->error('房间主题过长');
+		}
+
 		//初始化成员
 		$person = [
 			'normal'=>[],
@@ -43,6 +57,7 @@ class Chat extends Base
 			
 		$data = [
 			'name'=>$data['groupName'],
+			'title'=>$data['title'],
 			'creator'=>$data['creator'],
 			'person'=>$person,
 			'roomKey'=>$data['roomKey'],
@@ -111,6 +126,9 @@ class Chat extends Base
 
 		//房主
 		$creator = $roomInfo['creator'];
+
+		//房间标语
+		$roomWord = $roomInfo['title'];
 				
 		//获取当前房间的所有消息
 		
@@ -126,6 +144,7 @@ class Chat extends Base
 		$this->view->assign('roomTitle',$roomTitle);
 		$this->view->assign('roomKey',$roomKey);
 		$this->view->assign('creator',$creator);
+		$this->view->assign('roomWord',$roomWord);
 		$this->view->assign('blackList',$blackList);
 		return $this->view->fetch('room');
 	}

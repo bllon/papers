@@ -23,26 +23,25 @@ class Consumer extends Base
     		
     		$data = Request::param();
 			$rule=[
-				'name|账号'=>'require|length:1,20|chsAlphaNum',
+				'email|邮箱'=>'require|email',
 		 		'password|密码'=>'require|length:5,20|alphaNum',
 			];
-			//754794f1c04f29f2119ed6fb128ab076e6e60a87
-			// return ['status'=>-1,'message'=>sha1($data['password'])];
+
 			$res = $this->validate($data,$rule);
 			if(true !== $res){
 				return ['status'=>-1,'message'=>$res];
 			}else{
 				$result = ConsumerModel::get(function ($query) use ($data){
-					$query->where('name',$data['name'])
+					$query->where('email',$data['email'])
 						->where('password',sha1($data['password']));
 				});
 
 				if(empty($result)){
-					return ['status'=>-1,'message'=>'账号或密码错误'];
+					return ['status'=>-1,'message'=>'邮箱或密码错误'];
 				}
 				
 				if($result['status'] == 0){
-					return ['status'=>-1,'message'=>'账号被冻结'];
+					return ['status'=>-1,'message'=>'账户被冻结'];
 				}
 
 				$school = School::where('school_name',$result['school_name'])->find();

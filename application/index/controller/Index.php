@@ -165,92 +165,10 @@ class Index extends Base
     public function index()
     {			
 
-			$map = [];
-			$map2 = [];
-			//显示公开论文
-			$map[] = ['lunwen_terms','=',1];
-
-			$keywords = trim(Request::get('keywords'));
-			if(!empty($keywords)){
-				//搜索sphinx
-				require_once '../extend/sphinx/sphinxapi.php';
-				$sph = new \SphinxClient();
-				$sph->SetServer('localhost', 9312);
-				//第二个参数，默认是*，要查询的索引名字
-				$ret = $sph->Query($keywords, 'papers');
-				//提取出所有文章id
-				if(isset($ret['matches'])){
-					$id = array_keys($ret['matches']);
-				}else{
-					$id = [];
-				}
-
-				$map[] = ['id','in',$id];
-				$map2[] = ['id','in',$id];
-			}
-
+						
 			
 			
-			//没登陆
-			if(Session::get('user_id') == null){
-				
-		    	$rank_name = Request::param('rank_name');
-				
-				
-				if(isset($rank_name)){
-					
-					$map[] = ['rank_type','=',$rank_name];
-					
-					$lunwenList = Db::table('paper_lunwen')
-								->where($map)
-								->order('addtime','asc')
-								->paginate(15);
-							
-					$this->view->assign('rankName',$rank_name);
-					
-				}else{
-					
-					$this->view->assign('rankName','全部论文');
-					$lunwenList = Db::table('paper_lunwen')
-								->where($map)
-								->order('addtime','asc')
-								->paginate(15);
-				}
-				
-			}else{
-				//既显示公开论文，也显示学校的
-				$map2[] = ['school_name','=',Session::get('user_school')];
-				
-				
-		    	$rank_name = Request::param('rank_name');
-				
-				
-				if(isset($rank_name)){
-					//条件3
-					
-					$map[] = ['rank_type','=',$rank_name];
-					$map2[] = ['rank_type','=',$rank_name];
-					
-					$lunwenList = Db::table('paper_lunwen')
-								->whereOr([$map,$map2])
-								->order('addtime','asc')
-								->paginate(15);
-
-					$this->view->assign('rankName',$rank_name);
-					
-				}else{
-					
-					$this->view->assign('rankName','全部论文');
-					$lunwenList = Db::table('paper_lunwen')
-								->whereOr([$map,$map2])
-								->order('addtime','asc')
-								->paginate(15);
-								
-				}
-			}			
-			
-			
-			
+			$rank_name = Request::param('rank_name');
 		
 			//查询最新通告
 			$noticeInfo = Notice::where('status',1)->order('create_time','desc')->find();
@@ -258,19 +176,59 @@ class Index extends Base
 			
 			$this->view->assign('empty','<h3>没有论文</h3>');
 			$this->view->assign('title','paper');
-			$this->view->assign('lunwenList',$lunwenList);
+			// $this->view->assign('lunwenList',$lunwenList);
 			
 			if(!empty($keywords)){
 				$this->view->assign('keywords',trim($keywords));
+			}
+
+			//显示方式
+			if(Cookie::get('displayFunc') == null){
+				$displayFunc = 3;
+			}else{
+				$displayFunc = Cookie::get('displayFunc');
+			}
+			$this->view->assign('displayFunc',$displayFunc);
+
+			//上一次一级分类的页码数
+			if(Cookie::get('currentPage') == null){
+				$currentPage = 1;
+			}else{
+				$currentPage = Cookie::get('currentPage');
+			}
+			
+			//上一次点击分分类名
+			if($rank_name == Cookie::get('lastRank')){
+				$currentPage = Cookie::get('currentPage');
+			}else{
+				$currentPage = 1;
+				Cookie::set('lastRank',$rank_name);
 			}			
+
+			$this->view->assign('rankName',$rank_name);
+			$this->view->assign('currentPage',$currentPage);
 			
 	    	return $this->view->fetch('index');
+    }
+
+    //显示方式
+    public function displayFunc()
+    {
+    	if(Request::isAjax()){
+    		$data = Request::param();
+	    	$type = intval($data['type']);//1方格，2列表
+
+	    	Cookie::set('displayFunc',$type);
+    	}
+    	
     }
 
     //获取分页论文
     public function getPage()
     {
     	$page = Request::param('currentPage') ? Request::param('currentPage'):1;
+    	$page = intval($page);
+    	Cookie::set('currentPage',$page);
 
     	$map = [];
 		$map2 = [];
@@ -278,6 +236,9 @@ class Index extends Base
 		$map[] = ['lunwen_terms','=',1];
 
 		$keywords = trim(Request::param('keywords'));
+
+		//每页数量
+		$num = Request::param('num');
 		if(!empty($keywords)){
 			//搜索sphinx
 			require_once '../extend/sphinx/sphinxapi.php';
@@ -302,24 +263,21 @@ class Index extends Base
 	    	$rank_name = Request::param('rank_name');
 			
 			
-			if(isset($rank_name)){
+			if($rank_name != '全部论文'){
 				
 				$map[] = ['rank_type','=',$rank_name];
 				
 				$lunwenList = Db::table('paper_lunwen')
 							->where($map)
 							->order('addtime','asc')
-							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
-						
-				$this->view->assign('rankName',$rank_name);
-				
+							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+
 			}else{
 				
-				$this->view->assign('rankName','全部论文');
 				$lunwenList = Db::table('paper_lunwen')
 							->where($map)
 							->order('addtime','asc')
-							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
 			}
 			
 		}else{
@@ -329,29 +287,72 @@ class Index extends Base
 	    	$rank_name = Request::param('rank_name');
 			
 			
-			if(isset($rank_name)){
+			if($rank_name != '全部论文'){
 				//条件3
-				
 				$map[] = ['rank_type','=',$rank_name];
 				$map2[] = ['rank_type','=',$rank_name];
 				
 				$lunwenList = Db::table('paper_lunwen')
 							->whereOr([$map,$map2])
 							->order('addtime','asc')
-							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
-
-				$this->view->assign('rankName',$rank_name);
+							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
 				
 			}else{
-				
-				$this->view->assign('rankName','全部论文');
 				$lunwenList = Db::table('paper_lunwen')
 							->whereOr([$map,$map2])
 							->order('addtime','asc')
-							->paginate(15,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
 			}
 		}
+		return ['status'=>1,'message'=>'成功获取分页','data'=>['list'=>$lunwenList->items(),'pages'=>$lunwenList->render()]];
+    }
 
+
+    //获取sele分页
+    public function getSelePage()
+    {
+    	// var_dump(Request::param());exit;
+    	$page = Request::param('currentPage') ? Request::param('currentPage'):1;
+
+    	Cookie::set('selePage',$page);
+
+    	$map = [];
+		$map2 = [];
+		//显示公开论文
+		$map[] = ['lunwen_terms','=',1];
+
+		//每页数量
+		$num = Request::param('num');
+
+		$sele_name = Request::param('sele_name');
+
+		//没登陆
+		if(Session::get('user_id') == null){
+			if($sele_name != '全部论文'){
+				$map[] = ['lunwen_rank','=',$sele_name];
+			}			
+			
+			$lunwenList = Db::table('paper_lunwen')
+						->where($map)
+						->order('addtime','desc')
+						->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+			
+		}else{
+			//既显示公开论文，也显示学校的
+			$map2[] = ['school_name','=',Session::get('user_school')];	
+			
+			if($sele_name != '全部论文'){
+				$map[] = ['lunwen_rank','=',$sele_name];
+				$map2[] = ['lunwen_rank','=',$sele_name];
+			}	
+
+			$lunwenList = Db::table('paper_lunwen')
+						->whereOr([$map,$map2])
+						->order('addtime','desc')
+						->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
+				
+		}				
+	
 		return ['status'=>1,'message'=>'成功获取分页','data'=>['list'=>$lunwenList->items(),'pages'=>$lunwenList->render()]];
     }
 
@@ -530,47 +531,47 @@ class Index extends Base
 	//显示二级分类论文
 	public function sele()
 	{
-		$map = [];
+// 		$map = [];
 		
-		//显示公开论文
-		$map[] = ['lunwen_terms','=',1];
-		$map2 = [];
-		//没登陆
-		if(Session::get('user_id') == null){
+// 		//显示公开论文
+// 		$map[] = ['lunwen_terms','=',1];
+// 		$map2 = [];
+// 		//没登陆
+// 		if(Session::get('user_id') == null){
 
-			$sele_name = Request::param('sele_name');
+// 			$sele_name = Request::param('sele_name');
 				
-				$map[] = ['lunwen_rank','=',$sele_name];
+// 				$map[] = ['lunwen_rank','=',$sele_name];
 				
-				$lunwenList = Db::table('paper_lunwen')
-							->where($map)
-							->order('addtime','desc')
-							->paginate(15);
+// 				$lunwenList = Db::table('paper_lunwen')
+// 							->where($map)
+// 							->order('addtime','desc')
+// 							->paginate(15);
 						
-				$this->view->assign('seleName',$sele_name);
+// 				$this->view->assign('seleName',$sele_name);
 			
-		}else{
-			//既显示公开论文，也显示学校的
-			$map2[] = ['school_name','=',Session::get('user_school')];
+// 		}else{
+// 			//既显示公开论文，也显示学校的
+// 			$map2[] = ['school_name','=',Session::get('user_school')];
 			
 			
-	    	$sele_name = Request::param('sele_name');	
+// 	    	$sele_name = Request::param('sele_name');	
 				
-				$map[] = ['lunwen_rank','=',$sele_name];
-				$map2[] = ['lunwen_rank','=',$sele_name];
+// 				$map[] = ['lunwen_rank','=',$sele_name];
+// 				$map2[] = ['lunwen_rank','=',$sele_name];
 				
-				$lunwenList = Db::table('paper_lunwen')
-							->whereOr([$map,$map2])
-							->order('addtime','desc')
-//								->select();
-							->paginate(15);
+// 				$lunwenList = Db::table('paper_lunwen')
+// 							->whereOr([$map,$map2])
+// 							->order('addtime','desc')
+// //								->select();
+// 							->paginate(15);
 
-				$this->view->assign('seleName',$sele_name);
+// 				$this->view->assign('seleName',$sele_name);
 				
-		}			
+// 		}			
 		
 		
-		
+		$sele_name = Request::param('sele_name');
 	
 		//查询最新通告
 		$noticeInfo = Notice::where('status',1)->order('create_time','desc')->find();
@@ -578,9 +579,36 @@ class Index extends Base
 		
 		$this->view->assign('empty','<h3>没有论文</h3>');
 		$this->view->assign('title','paper');
-		$this->view->assign('lunwenList',$lunwenList);
+		// $this->view->assign('lunwenList',$lunwenList);
+
+		//显示方式
+		if(Cookie::get('displayFunc') == null){
+			$displayFunc = 3;
+		}else{
+			$displayFunc = Cookie::get('displayFunc');
+		}
+		$this->view->assign('displayFunc',$displayFunc);
+
+		//上一次二级分类的页码数
+		if(Cookie::get('selePage') == null){
+			$currentPage = 1;
+		}else{
+			$currentPage = Cookie::get('selePage');
+		}
+		$this->view->assign('currentPage',$currentPage);
+
+
+		//获取上一次点击的二级分类
+		if($sele_name == Cookie::get('lastSele')){
+			$currentPage = Cookie::get('selePage');
+		}else{
+			$currentPage = 1;
+			Cookie::set('lastSele',$sele_name);
+		}			
+
+		$this->view->assign('seleName',$sele_name);
+		$this->view->assign('currentPage',$currentPage);
 		
-//		halt(count($lunwenList));
     	return $this->view->fetch('sele');
 	}
 
@@ -849,7 +877,7 @@ class Index extends Base
 		
 		
 		// set default header data
-		$pdf->SetHeaderData('', PDF_HEADER_LOGO_WIDTH, 'YI论文', 'paper.com');
+		$pdf->SetHeaderData('', PDF_HEADER_LOGO_WIDTH, '论文库', 'paper.com');
 		
 		// set header and footer fonts
 		$pdf->setHeaderFont(Array('stsongstdlight', '', PDF_FONT_SIZE_MAIN));
@@ -1150,6 +1178,7 @@ class Index extends Base
 		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 					
 		$passList = Db::table('paper_pass')
+							->where('user_id',Session::get('user_id'))
 							->order('create_time','desc')
 							->paginate(10);
 		
@@ -1390,11 +1419,24 @@ class Index extends Base
 		$filename = $path.'/mvUrl.json';
 		if(file_exists($filename)){
 			$content = file_get_contents($filename);
+
+			$data = json_decode($content,true);
+
+			if($data['expire'] + 86400 > time()){
+				$content = $data['content'];
+			}else{
+				//缓存过期
+				$content = [];
+			}
+		}else{
+			$content = [];
 		}
+
 		if($content){
-			$mvList = json_decode($content,true);
+			$mvList = $content;
 		}else{
 			$mvList = $this->MusicMv();
+			$mvList = $mvList['content'];
 		}
 		$this->view->assign('mvCount',count($mvList));
 		$mvList = array_slice($mvList, 0,8);
@@ -1407,6 +1449,7 @@ class Index extends Base
 		return $this->view->fetch('comunity');
 	}
 
+
 	//爬取腾讯音乐最火MV
 	public function MusicMv()
 	{
@@ -1414,13 +1457,28 @@ class Index extends Base
 		$filename = $path.'/mv.json';
 		if(file_exists($filename)){
 			$content = file_get_contents($filename);
+			$data = json_decode($content,true);
+			if($data['expire'] + 86400 > time()){
+				$content = $data['content'];
+			}else{
+				//缓存过期
+				$content = $this->getUrlContent('https://u.y.qq.com/cgi-bin/musicu.fcg?-=mvlib578643394250538&g_tk=5381&loginUin=1192475069&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&data=%7B%22comm%22%3A%7B%22ct%22%3A24%7D%2C%22mv_tag%22%3A%7B%22module%22%3A%22MvService.MvInfoProServer%22%2C%22method%22%3A%22GetAllocTag%22%2C%22param%22%3A%7B%7D%7D%2C%22mv_list%22%3A%7B%22module%22%3A%22MvService.MvInfoProServer%22%2C%22method%22%3A%22GetAllocMvInfo%22%2C%22param%22%3A%7B%22start%22%3A0%2C%22size%22%3A20%2C%22version_id%22%3A7%2C%22area_id%22%3A15%2C%22order%22%3A0%7D%7D%7D');
+
+				$data = ['expire'=>time(),'content'=>$content];
+
+	        	file_put_contents($filename, json_encode($data));
+			}
+
 		}else{
 			$content = $this->getUrlContent('https://u.y.qq.com/cgi-bin/musicu.fcg?-=mvlib578643394250538&g_tk=5381&loginUin=1192475069&hostUin=0&format=json&inCharset=utf8&outCharset=utf-8&notice=0&platform=yqq.json&needNewCode=0&data=%7B%22comm%22%3A%7B%22ct%22%3A24%7D%2C%22mv_tag%22%3A%7B%22module%22%3A%22MvService.MvInfoProServer%22%2C%22method%22%3A%22GetAllocTag%22%2C%22param%22%3A%7B%7D%7D%2C%22mv_list%22%3A%7B%22module%22%3A%22MvService.MvInfoProServer%22%2C%22method%22%3A%22GetAllocMvInfo%22%2C%22param%22%3A%7B%22start%22%3A0%2C%22size%22%3A20%2C%22version_id%22%3A7%2C%22area_id%22%3A15%2C%22order%22%3A0%7D%7D%7D');
+
 			if(!is_dir($path)){
 	        	// 如果静态目录不存在 则创建
 	        	mkdir($path,0777,true);
 	        }
-	        file_put_contents($filename, $content);
+	        $data = ['expire'=>time(),'content'=>$content];
+
+	        file_put_contents($filename, json_encode($data));
 		}
 		$content = json_decode($content,true);
 
@@ -1454,6 +1512,9 @@ class Index extends Base
 		}
 
 		$filename = $path.'/mvUrl.json';
+
+		$data = ['expire'=>time(),'content'=>$data];
+
 		file_put_contents($filename, json_encode($data));
 		// var_dump($content['mv_list']['data']['list']);
 		return $data;
@@ -1656,11 +1717,24 @@ class Index extends Base
 		$filename = $path.'/mvUrl.json';
 		if(file_exists($filename)){
 			$content = file_get_contents($filename);
+
+			$data = json_decode($content,true);
+
+			if($data['expire'] + 86400 > time()){
+				$content = $data['content'];
+			}else{
+				//缓存过期
+				$content = [];
+			}
+		}else{
+			$content = [];
 		}
+
 		if($content){
-			$mvList = json_decode($content,true);
+			$mvList = $content;
 		}else{
 			$mvList = $this->MusicMv();
+			$mvList = $mvList['content'];
 		}
 
 		$this->view->assign('title','MV列表');

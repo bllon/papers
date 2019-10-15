@@ -3,61 +3,372 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-8 col-xs-12">
+						<div class="row" style="padding-bottom:20px;">
+							<div class="col-md-11 col-xs-12">
+								<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+								  
+								  <ol class="carousel-indicators">
+								    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+								    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+								    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+								  </ol>
+					
+								 
+								  <div class="carousel-inner" role="listbox">
+								    <div class="item active">
+								      <img src="/static/images/1.jpg" class="img-responsive" alt="..." style="max-width:685px;max-height:374.6px;">
+								    </div>
+								    <div class="item">
+								      <img src="/static/images/2.jpg" class="img-responsive" alt="..." style="max-width:685px;max-height:374.6px;">
+								    </div>
+								    <div class="item">
+								      <img src="/static/images/3.jpg" class="img-responsive" alt="..." style="max-width:685px;max-height:374.6px;">
+								    </div>
+								  </div>
+					
+								  
+								  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+								    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+								    <span class="sr-only">Previous</span>
+								  </a>
+								  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+								    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+								    <span class="sr-only">Next</span>
+								  </a>
+								</div>
+							</div>
+						</div>
+						<div class="clear"></div>
 						{neq name="$Think.cookie.notice" value="1"}
 						{if $noticeInfo}
 						{switch name="$noticeInfo.type"}
 						{case 0}
-							<div class="alert alert-info alert-dismissible" role="alert">
+							<div class="alert alert-info alert-dismissible" role="alert" style="width:90%;">
 							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  <strong>通知!</strong> {$noticeInfo.content}
+							  <strong><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;通知!</strong> {$noticeInfo.content}
 							</div>
 						{/case}
 						{case 1}
-							<div class="alert alert-warning alert-dismissible" role="alert">
+							<div class="alert alert-warning alert-dismissible" role="alert" style="width:90%;">
 							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  <strong>注意!</strong> {$noticeInfo.content}
+							  <strong><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;注意!</strong> {$noticeInfo.content}
 							</div>
 						{/case}
 						{case 2}
-							<div class="alert alert-danger alert-dismissible" role="alert">
+							<div class="alert alert-danger alert-dismissible" role="alert" style="width:90%;">
 							  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  <strong>警告!</strong> {$noticeInfo.content}
+							  <strong><span class="glyphicon glyphicon-bullhorn"></span>&nbsp;警告!</strong> {$noticeInfo.content}
 							</div>
 						{/case}
 						
 						{/switch}
 						{/if}
 						{/neq}
-						<div class="page-header">
-						  <h3>{$seleName|default="论文展示"}</h3>
+						<div class="page-header" style="width:90%;">
+						  <h3>
+						  	<span id="seleName">{$seleName|default="全部论文"}</span><span class="glyphicon glyphicon-book" style="color:#cc8c39;"></span>
+						  	<p class="pull-right">
+						  		{switch name="$displayFunc"}
+								{case 1}
+									<button class="btn btn-warning btn-sm" style="outline:none" id="square_display">
+							  			<span class="glyphicon glyphicon-th"></span>
+							  		</button>
+							  		<button class="btn btn-info btn-sm" style="outline:none" id="list_display">
+							  			<span class="glyphicon glyphicon-menu-hamburger"></span>
+							  		</button>
+								{/case}
+								{case 2}
+									<button class="btn btn-info btn-sm" style="outline:none" id="square_display">
+							  			<span class="glyphicon glyphicon-th"></span>
+							  		</button>
+							  		<button class="btn btn-warning btn-sm" style="outline:none" id="list_display">
+							  			<span class="glyphicon glyphicon-menu-hamburger"></span>
+							  		</button>
+								{/case}
+								{case 3}
+									<button class="btn btn-info btn-sm" style="outline:none" id="square_display">
+							  			<span class="glyphicon glyphicon-th"></span>
+							  		</button>
+							  		<button class="btn btn-info btn-sm" style="outline:none" id="list_display">
+							  			<span class="glyphicon glyphicon-menu-hamburger"></span>
+							  		</button>
+								{/case}
+								
+								{/switch}
+						  		
+						  	</p>
+						  </h3>
 						</div>
 						
-						<div class="">
-							{volist name="lunwenList" id="lunwen" empty="$empty"}
-							<div class="pull-left" style="width:140px;height:auto;padding:0px 0px 30px 10px;">
-								<a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank"><img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/></a>
-								<div style="padding:0px 2px;">
-									<h6 style="height:30px;"><a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank">{$lunwen.lunwen_title}</a></h6>
-									<!-- <p class="small" style="margin:0;">作者:{$lunwen.writer}</p> -->
-									<p class="small" style="margin:0;">阅读量:{$lunwen.pv}</p>
-									<p class="small" style="margin:0;">发布时间:<span class="text-primary">{$lunwen.addtime|date="Y/m/d"}</span></p>
-								</div>
-							</div>
-							{/volist}
+						<div class="row" id="list">
 							
 						</div>
 						
 						<div class="clearfix"></div>
-						<div class="text-center">{$lunwenList|raw}</div>
+						<div class="text-center page"></div>
+						<input type="hidden" id="view" value="{$displayFunc}">
+						<input type="hidden" id="currentPage" value="{$currentPage}">
 					</div>
 				
 				
 				<script>
+
+					//轮播左右按钮隐藏
+					$('#carousel-example-generic').hover(
+						function(){
+							//鼠标移进
+							$('a.left').css('display','block');
+							$('a.right').css('display','block');							
+						},
+						function(){
+							//鼠标移出
+							$('a.left').css('display','none');
+							$('a.right').css('display','none');
+						}
+					)
+
 					//关闭通告
 					$('.close').on('click',function(){
 						$.get("{:url('index/closeNotice')}",{},function(data){
 						})
 						
 					})
+					
+					//论文封面滤镜
+					$('.lv').hover(
+						function(){
+							$(this).css('background','rgba(145,112,54,0.4)');
+						},
+						function(){
+							$(this).css('background','rgba(145,112,54,0.2)');
+						}
+					)
+
+					//搜索关键词
+					function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
+					var keywords = trimStr($("input[name='keywords']").val())
+					
+					if(keywords!==''){
+						$('.page ul li').addClass('page-item');
+						$('.page ul li a').addClass('page-link');
+						$('.page ul li span').addClass('page-link');
+						$('.page ul li').each(function(i){
+							
+							if($(this).find('a').attr('href')!=undefined){
+								href = $(this).find('a').attr('href');
+								$(this).find('a').attr('href',href+'&keywords='+keywords);
+							}
+						})
+					}
+
+
+					//时间戳转日期格式
+				  	/** 
+					 * 时间戳转化为年 月 日 时 分 秒 
+					 * number: 传入时间戳 
+					 * format：返回格式，支持自定义，但参数必须与formateArr里保持一致 
+					*/  
+					function formatTime(number,format) {  
+					  
+					  var formateArr  = ['Y','M','D','h','m','s'];  
+					  var returnArr   = [];  
+					  
+					  var date = new Date(number * 1000);  
+					  returnArr.push(date.getFullYear());  
+					  returnArr.push(formatNumber(date.getMonth() + 1));  
+					  returnArr.push(formatNumber(date.getDate()));  
+					  
+					  returnArr.push(formatNumber(date.getHours()));  
+					  returnArr.push(formatNumber(date.getMinutes()));  
+					  returnArr.push(formatNumber(date.getSeconds()));  
+					  
+					  for (var i in returnArr)  
+					  {  
+					    format = format.replace(formateArr[i], returnArr[i]);  
+					  }  
+					  return format;  
+					} 
+
+					//数据转化  
+					function formatNumber(n) {  
+					  n = n.toString()  
+					  return n[1] ? n : '0' + n  
+					}
+
+					function LimitNumber(txt) {
+				        var str = txt;
+				        str = str.substr(0,20) + '...' ;
+				        return str;
+				    }
+
+					//创建列表
+					function createList(list,type){
+						var html = '';
+						if(type == 1){
+		                    for(var i=0;i<list.length;i++){
+
+		                    	html += '<div class="pull-left" title="'+list[i].lunwen_title+'" style="width:175px;height:auto;padding:0px 0px 30px 20px;position:relative;"><a href="/index/index/paperDetail/id/'+list[i].id+'" target="_blank" style="display:block;width:145px;height:130px;margin:0 auto;"><img class="img-rounded" src="/static/images/paper.jpg" style="width:145px;height:130px;margin:0 auto;"/></a><a href="/index/index/paperDetail/id/'+list[i].id+'" target="_blank"><div class="lv img-rounded" style="width:155px;height:219.6px;background:rgba(145,112,54,0.2);position:absolute;top:0;cursor:pointer;" title="'+list[i].lunwen_title+'"></div></a><div style="width:145px;margin:-4px auto;padding:5px;background:#fff;border-radius:0 0 5px 5px;"><h6 style="height:30px;"><a href="/index/index/paperDetail/id/'+list[i].id+'" target="_blank">'+LimitNumber(list[i].lunwen_title)+'</a></h6><p class="small" style="margin:0;">阅读量 : '+list[i].pv+'</p><p class="small" style="margin:0;">发布时间 : <span class="text-primary">'+formatTime(list[i].addtime,'Y/M/D')+'</span></p></div></div>';
+
+		                    }
+
+		                    return html;
+						}
+
+						if(type == 2){
+							for(var i=0;i<list.length;i++){
+
+		                    	html += '<div class="col-md-10"><a href="/index/index/paperDetail/id/'+list[i].id+'" style="text-decoration:none;"><div class="paperItem" style="width:100%;height:140px;background:#b4cdce;margin-bottom:15px;border-bottom:1px solid #c8bcbc;border-radius:10px;box-shadow:0px 4px 10px 0px #cac4c4;position:relative;"><p style="margin:0;padding:5px 10px;font-size:16px;color:#935c00;"><span style="color:#82807f;">题目 : </span><strong>'+list[i].lunwen_title+'</strong></p><p class="text-warning" style="margin:0;padding:5px 10px;font-size:12px;"><span style="color:#82807f;">学校 : </span>'+list[i].school_name+'&nbsp;&nbsp;&nbsp;<span style="color:#82807f;">作者 : </span>'+list[i].writer+'&nbsp;&nbsp;&nbsp;<span style="color:#82807f;">专业 : </span>'+list[i].major+'</p><p class="text-warning" style="margin:0;padding:5px 10px;font-size:12px;"><span style="color:#82807f;">分类 : </span>'+list[i].rank_type+'&nbsp;&nbsp;&nbsp;<span style="color:#82807f;">二级分类 : </span>'+list[i].lunwen_rank+'&nbsp;&nbsp;&nbsp;<span style="color:#82807f;">质量 : </span>'+list[i].biaoji+'</p><div style="position:absolute;bottom:0;right:0;"><p class="small" style="margin:0;padding:0px 15px;color:#82807f;">阅读量 : <span style="color:#8a6d3b;">'+list[i].pv+'</span>&nbsp;&nbsp;点赞量 : <span style="color:#8a6d3b;">'+list[i].likenum+'</span></p><p class="small" style="margin:0;padding:3px 15px;color:#82807f;">发布时间 : <span style="color:#8a6d3b;">'+formatTime(list[i].addtime,'Y/M/D')+'</span></p></div></div></a></div>';
+
+		                    }
+		                    
+		                    return html;
+						}
+
+						if(type == 3){
+							for(var i=0;i<list.length;i++){
+
+		                    	html += '<div class="pull-left" style="width:140px;height:auto;padding:0px 0px 30px 10px;"><a href="/index/index/paperDetail/id/'+list[i].id+'" target="_blank" style="display:block;width:110px;height:130px;margin:0 auto;position:relative;"><img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/><div class="lv img-rounded" style="width:110px;height:130px;margin:0 auto;background:rgba(145,112,54,0.2);position:absolute;top:0;" title="'+list[i].lunwen_title+'"></div></a><div style="padding:0px 2px;"><h6 style="height:30px;"><a href="/index/index/paperDetail/id/'+list[i].id+'" target="_blank" title="'+list[i].lunwen_title+'">'+LimitNumber(list[i].lunwen_title)+'</a></h6><p class="small" style="margin:0;">作者:'+list[i].writer+'</p><p class="small" style="margin:0;">阅读量:'+list[i].pv+'</p><p class="small" style="margin:0;">发布时间:<span class="text-primary">'+formatTime(list[i].addtime,'Y/M/D')+'</span></p></div></div>';
+
+		                    }
+		                    
+		                    return html;
+						}
+					}
+
+
+					//获取分页内容
+					//页码
+					var AjaxPage = function(page){
+						var type = $('#view').val();
+						if(type == 1){
+							var number = 12;
+						}else if(type == 2){
+							var number = 8;
+						}
+
+			            $.ajax({
+			                url:"{:url('index/getSelePage')}",
+			                type:'post',
+			                dataType:'json',
+			                data: {currentPage:page,sele_name:$('#seleName').html(),num:number},
+			                success:function(data){
+			                    
+			                    var list = data.data.list;
+
+			                    if(list.length > 0){
+			                    	var html = createList(list,type);
+			                    }else{
+			                    	var html = '<p class="text-danger" style="padding:0px 20px;">暂无论文</p>';
+			                    }
+
+			                    $('#list').html(html);
+			                    $('.page').html(data.data.pages);
+
+			                    //论文封面滤镜
+								$('.lv').hover(
+									function(){
+										$(this).css('background','rgba(145,112,54,0.4)');
+									},
+									function(){
+										$(this).css('background','rgba(145,112,54,0.2)');
+									}
+								)
+								$('#footer').css({
+									'position':'absolute',
+									'top':$(document).height()+30+'px'
+								});
+			                }
+			            });
+			        }
+
+
+			        //方格显示
+					$('#square_display').on('click',function(){
+						// console.log('方格显示');
+						$('#list_display').removeClass('btn-warning').addClass('btn-info');
+						
+
+						//获取当前显示方式
+						var view = $('#view').val();
+						//获取当前页码
+						var page = $('.pagination .active span').html();
+
+						console.log(view);
+						if(view != 1){
+							console.log('方格显示');
+							$(this).removeClass('btn-info').addClass('btn-warning');
+							//发送请求
+							$.get("{:url('index/displayFunc')}",{'type':1},function(data){
+								$('#view').val(1);
+								AjaxPage(page);
+							})
+
+							return false;
+						}else{
+							console.log('普通显示');
+							$(this).removeClass('btn-warning').addClass('btn-info');
+
+							//发送请求
+							$.get("{:url('index/displayFunc')}",{'type':3},function(data){
+								$('#view').val(3);
+								AjaxPage(page);
+								
+							})
+						}
+
+						
+
+					})
+
+
+					//列表显示
+					$('#list_display').on('click',function(){
+						$('#square_display').removeClass('btn-warning').addClass('btn-info');
+						
+						
+						//获取当前显示方式
+						var view = $('#view').val();
+						console.log(view);
+						//获取当前页码
+						var page = $('.pagination .active span').html();
+
+						if(view != 2){
+							console.log('列表显示');
+							$(this).removeClass('btn-info').addClass('btn-warning');
+							//发送请求
+							$.get("{:url('index/displayFunc')}",{'type':2},function(data){
+								$('#view').val(2);
+								AjaxPage(page);
+							})
+							return false;
+						}else{
+							console.log('普通显示');
+							$(this).removeClass('btn-warning').addClass('btn-info');
+							//发送请求
+							$.get("{:url('index/displayFunc')}",{'type':3},function(data){
+								$('#view').val(3);
+								AjaxPage(page);
+								
+							})
+						}
+
+					})
+
+
+			        //初始化显示方式
+					var view = $('#view').val();
+					// console.log(view);
+					//获取当前页码
+					var page = $('#currentPage').val();
+					// console.log(page);
+
+					if(view == 1){
+						AjaxPage(page);
+					}else if(view == 2){
+						AjaxPage(page);
+					}else if(view == 3){
+						AjaxPage(page);
+					}
+					
 				</script>
 {/block}

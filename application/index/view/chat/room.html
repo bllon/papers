@@ -1,11 +1,17 @@
 {extend name="public:base2"}
 		{block name="body"}
 		<div class="clear"></div>
-		<div class="container container-fluid">
+		<div class="container container-fluid" id="wrap">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="page-header" id="tit">
-					  <h4>{$roomTitle}&nbsp;&nbsp;&nbsp;人数:<span class="pcount"></span>人&nbsp;&nbsp;&nbsp;消息:<span class="mcount">0</span>条</h4>
+						<span class="pull-right"><button class="btn btn-info btn-sm" id="chat_iframe">纯净模式</button></span>
+					  	<h4>{$roomTitle}&nbsp;&nbsp;&nbsp;人数:<span class="text-info pcount" style="font-size:16px;padding:0 10px;"></span>人&nbsp;&nbsp;&nbsp;消息:<span class="text-info mcount" style="font-size:16px;padding:0 10px;">0</span>条	
+						  	<p class="text-warning" style="margin-top:10px;padding:0px 20px;font-size:14px;">
+						  	<span>({$roomWord})</span>
+						  	</p>
+						  	
+						</h4>
 					</div>
 
 						{eq name="$creator" value="$Think.session.user_name"}
@@ -21,7 +27,7 @@
 								
 								<div class="form-group">
 									<input type="text" style="width:89%;float:left;" class="form-control" name="message" id="message" value="" />
-									<button id="send" type="button" class="btn btn-info btn-sm" style="outline:none;">发送</button>
+									<button id="send" type="button" class="btn btn-info btn-sm" style="width:9%;outline:none;padding:7px 0px;">发送</button>
 								</div>
 							</div>
 							<div class="col-md-3" style="margin-left:10px;">
@@ -54,10 +60,40 @@
 		
 		<!-- <script type="text/javascript" src="/static/js/chat.js"></script> -->
 		<script type="text/javascript">
+
+				$('#chat_iframe').on('click',function(){
+					if($(this).html() == '纯净模式'){
+						$('nav').css('display','none');
+						$('body').css({
+							'paddingTop':'0',
+							'background':'#dde5c5'
+						});
+						$(this).removeClass('btn-info').addClass('btn-default');
+						$(this).html('普通模式');
+						return false;
+					}else{
+						$('nav').css('display','block');
+						$('body').css('paddingTop','70px');
+						$(this).removeClass('btn-default').addClass('btn-info');
+						$(this).html('纯净模式');
+					}
+					// console.log('开启纯净模式');
+
+					// var url = 'http://xubeixyz123.com';
+
+					// var scnWidth = screen.availWidth;//浏览器的屏幕的可用宽度
+
+					// var scnHeight = screen.availHeight;
+
+					// window.open(url,'','height=400,width=600,top=50,left=100,channelmode=yes,fullscreen=yes,location=no,menubar=no,resizable=no,scrollbars=no,status=no,titlebar=no,toolbar=no');
+					
+
+				})
+
 				$(".box").scrollTop($(".box")[0].scrollHeight);
 
 				//连接websocket服务端
-				var ws = new WebSocket("ws://119.29.96.243:1998");
+				var ws = new WebSocket("ws://127.0.0.1:1998");
 
 				ws.onopen = function(evt){
 					// alert('连接成功');
@@ -115,6 +151,16 @@
 				//渲染消息
 				function renderMessage(msg){
 					var msg =JSON.parse(msg);
+
+					//用户已存在该房间
+					if(msg.type == -1){
+						if($('#userName').val() == msg.data){
+							ws.close();
+							// alert('你的会话已转移到新窗口');
+							// window.location.href = "{:url('index/comunity')}";
+
+						}
+					}
 
 					//房间用户发送消息	type=0
 					if(msg.type == 0){
@@ -325,7 +371,8 @@
 						}
 					})
 				})
-			
+				
+
 			
 		</script> 		
 		

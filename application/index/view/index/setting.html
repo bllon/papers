@@ -10,19 +10,30 @@
 					  <input type="hidden" name="pass" id="pass" value="{$userInfo.password}" />
 					  <div class="form-group">
 					  	<label for="">用户名</label>
-					  	<input type="text" class="form-control" name="name" id="" value="{$userInfo.name}"/>
+					  	<input type="text" class="form-control" name="name" value="{$userInfo.name}"/>
+					  </div>
+					  <div class="form-group">
+					  	<label for="">性别</label>
+						<span>
+						  <input type="radio" name="gender" value="男" {if !$userInfo.gender} checked {/if}>
+						  男
+						</span>&nbsp;&nbsp;
+						<span>
+						  <input type="radio" name="gender" value="女" {if $userInfo.gender} checked {/if}>
+						  女
+						</span>
 					  </div>
 					  <div class="form-group">
 					  	<label for="">学校</label>
-					  	<input type="text" class="form-control" name="school_name" id="" value="{$userInfo.school_name}" disabled="disabled"/>
+					  	<input type="text" class="form-control" value="{$userInfo.school_name}" disabled="disabled"/>
 					  </div>
 					  <div class="form-group">
 					  	<label for="">邮箱</label>
-					  	<input type="text" class="form-control" name="email" id="" value="{$userInfo.email}"/>
+					  	<input type="text" class="form-control" name="email" value="{$userInfo.email}"/>
 					  </div>
 					  <div class="form-group">
 					  	<label for="">密码</label>
-					  	<input type="password" class="form-control" name="password" id="" value="{$userInfo.password}"/>
+					  	<input type="password" class="form-control" name="password" value="{$userInfo.password}"/>
 					  </div>
 					  <div class="form-group" style="width:30%;">
 					  	<label for="">头像</label>
@@ -81,6 +92,12 @@
                         drDestroy.init();
                     }
                 })
+
+                $('.dropify-filename').remove();
+                $('.dropify-infos-message').html('Drag or click to replace');
+
+                $('.dropify').attr('title','');
+                
             });
         </script>
         

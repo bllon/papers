@@ -6,7 +6,7 @@
 </body>
 	<div class="modal fade loginmodel" tabindex="-1" role="dialog">
 	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
+	    <div class="modal-content" style="background:#e3dede;">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        <h4 class="modal-title" id="exampleModalLabel">用户登录</h4>
@@ -14,10 +14,10 @@
 	      <div class="modal-body">
 	        <form>
 	          <div class="form-group">
-	          	<label for="message-text" class="control-label">用户名</label>
+	          	<label for="message-text" class="control-label">邮箱</label>
 	            <div class="input-group">
-				  <span class="input-group-addon" id="sizing-addon2"><span class="glyphicon glyphicon-user"></span></span>
-				  <input type="text" class="form-control" id="name" placeholder="用户名" aria-describedby="sizing-addon2">
+				  <span class="input-group-addon" id="sizing-addon2"><span class="glyphicon glyphicon-envelope"></span></span>
+				  <input type="text" class="form-control" id="email" placeholder="邮箱" aria-describedby="sizing-addon2">
 				</div>
 	          </div>
 	          <div class="form-group">
@@ -32,13 +32,16 @@
 	      <div class="modal-footer">
 	      	<div class="otherLogin" style="float:left;letter-spacing:1px;">
 	      		<span>其他方式 :</span>
-	      		<a href="{:url('index/qqLogin')}">
-	      			<img src="/static/images/Connect_logo_1.png" style="width:cursor:pointer;">
+	      		<a href="{:url('index/qqLogin')}" style="text-decoration:none;">
+	      			<img src="/static/images/Connect_logo_1.png" title="QQ登录" style="width:cursor:pointer;">
+	      		</a>
+	      		<a href="" style="font-size:13px;color:#a50606;padding-left:10px;">
+	      			找回密码?
 	      		</a>
 	      		<!-- <img src="/static/images/Connect_logo_1.png" onclick="toLogin();" style="cursor:pointer;"> -->
 	      	</div>
-	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-	        <button type="button" class="btn btn-info" id="login">登录</button>
+	        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-info btn-sm" id="login">登录</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
@@ -47,7 +50,7 @@
 	
 	<div class="modal fade registermodel" tabindex="-1" role="dialog">
 	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
+	    <div class="modal-content" style="background:#e3dede;">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        <h4 class="modal-title" id="exampleModalLabel">用户注册</h4>
@@ -64,7 +67,7 @@
 	          <div class="form-group" style="position:relative;">
 	          	<label for="message-text" class="control-label">学校名</label>
 	            <div class="input-group">
-				  <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+				  <span class="input-group-addon"><span class="glyphicon glyphicon-dashboard"></span></span>
 				  <input type="text" class="form-control" id="reg_schoolname" autocomplete="off" placeholder="学校名" aria-describedby="sizing-addon2">
 				  <ul id="auto_school" style="position:absolute;top:35px;max-height:200px;overflow-y:scroll;padding:0;margin:0;z-index:999;box-shadow:0px 1px 4px 0px #cac4c4;">
 				  	<!-- <li style="list-style:none;background:#ebeaea;padding:5px 15px;">景德镇陶瓷大学</li>
@@ -91,7 +94,7 @@
 	          	<div class="col-md-3 col-sm-4 col-xs-6">
 	          		<div class="form-group">
 	          			<label for="message-text" class="control-label">验证码</label>
-			          	<input type="email" class="form-control" id="reg" autocomplete="off" placeholder="" aria-describedby="sizing-addon2">
+			          	<input type="email" class="form-control" id="reg" autocomplete="off" placeholder="输入验证码" aria-describedby="sizing-addon2">
 			        </div>
 	          	</div>
 	          </div>
@@ -106,15 +109,15 @@
 	          <div class="form-group">
 	            <label for="message-text" class="control-label">确认密码</label>
 	            <div class="input-group">
-				  <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+				  <span class="input-group-addon"><span class="glyphicon glyphicon-repeat"></span></span>
 				  <input type="password" class="form-control" id="confirm_password" autocomplete="off" placeholder="确认密码" aria-describedby="sizing-addon2">
 				</div>
 	          </div>
 	        </form>
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-	        <button type="button" class="btn btn-info" id="register">注册</button>
+	        <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-warning btn-sm" id="register">注册</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
@@ -123,6 +126,11 @@
 
 <script type="text/javascript" src="/static/js/campus.js"></script>
 <script>
+	//调整body离nav的位置
+	if(window.screen.width < 1200){
+		$('body').css('paddingTop','120px');
+	}
+	
 //	alert(document.body.scrollHeight);
 	$('#footer').css({
 		'position':'absolute',
@@ -219,14 +227,14 @@
 
 	$('#login').on('click',function(e){
 		e.preventDefault();
-		var name  = $('#name').val();
+		var email  = $('#email').val();
 		var pass = $('#password').val();
 		$.ajax({
 			type:"post",
 			url:"{:url('index/consumer/login')}",
 			async:true,
 			data:{
-				'name':name,
+				'email':email,
 				'password':pass
 			},
 			success:function(data){
@@ -301,17 +309,19 @@
 	       }
 	});
 
-	// $.post("{:url('index/consumer/campus')}",{},function(data,err){
-	// 	console.log(data);
-	// })
 
+	// 小设备去掉页脚
+	if(window.screen.width < 500){
+		$('#footer').remove();
+	}
 
-
-	 function toLogin()
-	 {
+	$('#footer').remove();
+	//qq登录
+	function toLogin()
+	{
 	   //以下为按钮点击事件的逻辑。注意这里要重新打开窗口
 	   //否则后面跳转到QQ登录，授权页面时会直接缩小当前浏览器的窗口，而不是打开新窗口
 	   var A=window.open("extend/Connect2.1/index.php","TencentLogin",
 	   "width=450,height=320,menubar=0,scrollbars=1,resizable=1,status=1,titlebar=0,toolbar=0,location=1");
-	 }
+	}
 </script>
