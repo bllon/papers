@@ -126,6 +126,7 @@
 
 <script type="text/javascript" src="/static/js/campus.js"></script>
 <script>
+
 	//调整body离nav的位置
 	if(window.screen.width < 1200){
 		$('body').css('paddingTop','120px');
@@ -313,6 +314,26 @@
 	// 小设备去掉页脚
 	if(window.screen.width < 500){
 		$('#footer').remove();
+		$('*').css({
+			'font-size':'20px'
+		});
+		$('.container').css({
+			'margin':'0px',
+			'width':'100%'
+		});
+		$('.item img').css({
+			// 'margin':'0 auto',
+			'max-width':'',
+			'width':'100%'
+		});
+
+		$('.list-group *').css({
+			'font-size':'20px',
+		});
+
+		$('#list').css({
+			'font-size':'14px',
+		});
 	}
 
 	$('#footer').remove();

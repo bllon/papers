@@ -58,10 +58,10 @@
 									<li class="list-group-item" style="font-weight:bold;color:#616adf;">推荐榜</li>
 									{volist name="recommendList" id="song"}
 								  	<li class="list-group-item item" style="text-align:left;">
-										<div style="float:left;width:20px;text-align:center;">
+										<div style="float:left;width:auto;0px;text-align:center;">
 											<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
 										</div>										
-										<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
+										<span style="margin-left:15px;width:200px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
 										<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
 										<span style="margin-left:15px;width:150px;float:right;">
 											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
@@ -83,10 +83,10 @@
 									<li class="list-group-item" style="font-weight:bold;color:#e38171;">流行榜</li>
 								{volist name="songList" id="song"}
 								  <li class="list-group-item item" style="text-align:left;">
-										<div style="float:left;width:20px;text-align:center;">
+										<div style="float:left;width:auto;text-align:center;">
 											<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
 										</div>										
-										<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
+										<span style="margin-left:15px;width:200px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
 										<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
 										<span style="margin-left:15px;width:150px;float:right;">
 											<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
@@ -127,7 +127,7 @@
 							{volist name="$mvList" id="mv" key="i"}
 							<div class="col-md-3 col-xs-6" style="margin-bottom:20px;">
 								<div class="box" style="width:100%;height:150px;border-radius:1px;background:#c3e5d1;overflow:hidden;" onclick="playMv(this);" data-url="{$mv['mvUrl'][2]}">
-									<div class="img" style="width:100%;height:150px;position:relative;">
+									<div class="img" style="width:100%;height:100%;position:relative;">
 										<img src="{$mv.picurl}" style="width:100%;height:100%">
 										<div class="lv" style="color:#10ff02;line-height:150px;font-size:30px;">
 											<span class="glyphicon glyphicon-play-circle"></span>
@@ -153,6 +153,13 @@
 
 				
 		<script type="text/javascript">
+
+			if(window.screen.width < 500){
+				$('.box').css({
+					'height':'250px'
+				});
+			}
+
 			//加入房间
 			$('#come').on('click',function(){
 				if($('#userId').val() == ''){

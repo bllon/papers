@@ -13,11 +13,11 @@
 					<div class="list-group">
 					{volist name="songList" id="song"}
 				  	<li class="list-group-item item" style="text-align:left;">
-						<div style="float:left;width:20px;text-align:center;">
+						<div style="float:left;width:auto;text-align:center;">
 							<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
 						</div>										
-						<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
-						<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
+						<span style="margin-left:15px;width:200px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
+						<span style="margin-left:15px;width:150px;text-overflow:ellipsis;white-space:nowrap;" title="{$song.singer}">{$song.singer}</span>
 						<span style="margin-left:15px;width:150px;float:right;">
 							<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
 								<span class="glyphicon glyphicon glyphicon-play"></span>
@@ -42,6 +42,11 @@
 			</div>	
 		  		
 			<script>
+				if(window.screen.width < 500){
+					$('.box').css({
+						'height':'200px'
+					});
+				}
 				//音乐控件
 				$('.play').click(function(){
 					console.log($(this).parent('li'));

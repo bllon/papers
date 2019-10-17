@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="user-scalable=no;">
 <title>{$title|default="页面标题"}</title>
 <!--<link rel="stylesheet" type="text/css" href="/php/zh/public/static/css/bootstrap.css"/>
 <script src="/php/zh/public/static/js/jquery-3.3.1.min.js"></script>
@@ -35,25 +36,30 @@
 		height:100%;
 	}
 
+	/* webkit, opera, IE9 */
+	::selection{background:#eda8a8b3;}
+	/* mozilla firefox */
+	​​​​​​​::-moz-selection{background:#eda8a8b3;}
+
 	input:-webkit-autofill {
 	    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
 	}
 
 	.box::-webkit-scrollbar{
-	  width: 12px;
+	 	width: 8px;
 	
-	  height: 5px;
+	  	height: 5px;
 	
-	  background-color: rgb(244, 244, 244);
+	  	background-color: rgb(213, 204, 204);
 	
 	}
 
 
 	.box::-webkit-scrollbar-thumb{
 	
-	  border-radius: 10px;
+	  	border-radius: 5px;
 	
-	  background: gray;
+	  	background: rgb(237, 145, 100);
 	
 	}
 

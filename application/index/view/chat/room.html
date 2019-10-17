@@ -61,6 +61,14 @@
 		<!-- <script type="text/javascript" src="/static/js/chat.js"></script> -->
 		<script type="text/javascript">
 
+				if(window.screen.width < 500){
+					// console.log($('#send').outerHeight(true));
+					$('#message').css({
+						'height':$('#send').outerHeight(true)+12.6+'px',
+						'font-size':'20px'
+					});
+				}
+
 				$('#chat_iframe').on('click',function(){
 					if($(this).html() == '纯净模式'){
 						$('nav').css('display','none');
@@ -68,12 +76,41 @@
 							'paddingTop':'0',
 							'background':'#dde5c5'
 						});
+
+						console.log();
+						if(window.screen.width > 500){
+							$('.box').css({
+								'height':window.screen.height - 350 +'px'
+							});
+						}else{
+							$('.box').css({
+								'height':window.screen.height +'px'
+							});
+						}
+						// $('#wrap').css({
+						// 	'height':'100%'
+						// });
+						// $('#wrap .row').css({
+						// 	'height':'100%'
+						// });
+						// $('#wrap .row .col-md-12').css({
+						// 	'height':'100%'
+						// });
+						// $('#wrap .row .col-md-12').css({
+						// 	'height':'100%'
+						// });
 						$(this).removeClass('btn-info').addClass('btn-default');
 						$(this).html('普通模式');
 						return false;
 					}else{
 						$('nav').css('display','block');
-						$('body').css('paddingTop','70px');
+						$('body').css({
+							'paddingTop':'120px',
+							'background':'#f0f2f5',
+						});
+						$('.box').css({
+							'height':'400px'
+						});
 						$(this).removeClass('btn-default').addClass('btn-info');
 						$(this).html('纯净模式');
 					}
@@ -93,7 +130,7 @@
 				$(".box").scrollTop($(".box")[0].scrollHeight);
 
 				//连接websocket服务端
-				var ws = new WebSocket("ws://127.0.0.1:1998");
+				var ws = new WebSocket("ws://119.29.96.243:1998");
 
 				ws.onopen = function(evt){
 					// alert('连接成功');
@@ -302,7 +339,7 @@
 
 
 
-
+					$(".box").scrollTop($(".box")[0].scrollHeight);
 					
 				}
 

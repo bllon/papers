@@ -15,7 +15,7 @@
 							{volist name="$mvList" id="mv" key="i"}
 							<div class="col-md-3 col-xs-6" style="margin-bottom:20px;">
 								<div class="box" style="width:100%;height:150px;border-radius:1px;background:#c3e5d1;overflow:hidden;" onclick="playMv(this);" data-url="{$mv['mvUrl'][2]}">
-									<div class="img" style="width:100%;height:150px;position:relative;">
+									<div class="img" style="width:100%;height:100%;position:relative;">
 										<img src="{$mv.picurl}" style="width:100%;height:100%">
 										<div class="lv" style="color:#10ff02;line-height:150px;font-size:30px;">
 											<span class="glyphicon glyphicon-play-circle"></span>
@@ -35,6 +35,11 @@
 			</div>	
 		  		
 			<script>
+				if(window.screen.width < 500){
+					$('.box').css({
+						'height':'250px'
+					});
+				}
 				// 视频滤镜
 				$('.lv').css({
 					'width':'100%',

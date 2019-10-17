@@ -34,6 +34,12 @@
 			</div>	
 		  		
 			<script>
+				if(window.screen.width < 500){
+					$('.box').css({
+						'height':'250px'
+					});
+				}
+
 				//加入房间
 				$('#come').on('click',function(){
 					if($('#userId').val() == ''){

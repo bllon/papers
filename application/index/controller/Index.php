@@ -402,6 +402,35 @@ class Index extends Base
 //		return $this->view->fetch('paperDetail');
 	}
 
+	//添加论文笔记
+	public function addNotes()
+	{
+		$data = Request::param();
+		//判断用户有没有登录
+		if(Session::get('user_id') == null){
+			return ['status'=>0,'message'=>'请先登录'];
+		}
+		// return ['status'=>0,'message'=>'添加笔记失败'];
+		$map = [];
+		$map[] = ['consumer_id','=',Session::get('user_id')];
+		$map[] = ['paper_id','=',$data['paper_id']];
+		//查询论文的笔记数量
+		$noteList = Db::table('paper_notes')->where($map)->select();
+		if(count($noteList) >= 30){
+			return ['status'=>0,'message'=>'单篇笔记数量不能超过30个'];
+		}
+
+		$data['consumer_id'] = Session::get('user_id');
+		$data['create_time'] = time();
+
+		if(Db::table('paper_notes')->insert($data)){
+			return ['status'=>1,'message'=>'添加笔记成功'];
+		}else{
+			return ['status'=>0,'message'=>'添加笔记失败'];
+		}
+
+	}
+
 	//获取收藏和借阅状态
 	public function paperStatu(){
 		$id = Request::param('id');
