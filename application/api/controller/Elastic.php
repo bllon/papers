@@ -56,6 +56,7 @@ class Elastic
 			$params['type'] = 'paper_type';
 			$params['id'] = $paperlist['id'];
 			print_r($params);
+			// http://localhost:9200/paper_index/paper_type/1
 			$client->index($params);
 		}
 		
