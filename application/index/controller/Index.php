@@ -266,143 +266,6 @@ class Index extends Base
 		return $this->buildHtml('paperDetail',['id'=>$id]);
 //		return $this->view->fetch('paperDetail');
 	}
-
-	//添加论文笔记
-	public function addNotes()
-	{
-		$data = Request::param();
-		//判断用户有没有登录
-		if(Session::get('user_id') == null){
-			return ['status'=>0,'message'=>'请先登录'];
-		}
-		// return ['status'=>0,'message'=>'添加笔记失败'];
-		$map = [];
-		$map[] = ['consumer_id','=',Session::get('user_id')];
-		$map[] = ['paper_id','=',$data['paper_id']];
-		//查询论文的笔记数量
-		$noteList = Db::table('paper_notes')->where($map)->select();
-		if(count($noteList) >= 30){
-			return ['status'=>0,'message'=>'单篇笔记数量不能超过30个'];
-		}
-
-		$data['consumer_id'] = Session::get('user_id');
-		$data['create_time'] = time();
-
-		if(Db::table('paper_notes')->insert($data)){
-			return ['status'=>1,'message'=>'添加笔记成功'];
-		}else{
-			return ['status'=>0,'message'=>'添加笔记失败'];
-		}
-
-	}
-
-	//获取收藏和借阅状态
-	public function paperStatu(){
-		$id = Request::param('id');
-		//是否收藏过
-		$collect = Collect::where('user_id',Session::get('user_id'))->where('paper_id',$id)->find();
-		$collectaction = 0;
-		if($collect !==null){
-			$collectaction = 1;
-		}
-		
-		$borrow = Borrow::where('user_id',Session::get('user_id'))->where('paper_id',$id)->find();
-		$borrowaction = 0;
-		if($borrow !==null && $borrow['status']!==3){
-			$borrowaction = 1;
-		}
-
-		$data = ['collectaction'=>$collectaction,'borrowaction'=>$borrowaction];
-		return ['status'=>1,'message'=>json_encode($data)];
-	}
-	
-	//添加阅读量
-	public function incPv()
-	{
-		$this->hasPower(Session::get('user_id'), 'index/index/paperDetail');
-		$paperId = Request::param('id');
-		$paper = Lunwen::where('id',$paperId)->setInc('pv');
-		return "阅读使我快乐";
-	}
-	
-	//处理论文上传
-	public function savePaper()
-	{
-		$this->isLogin();
-
-		if(Request::isPost()){
-			//1.获取用户提交的文章信息
-			$data = Request::param();
-//			$data['cate'] = implode($data['cate'], ',');
-//			return ['data'=>$data];
-			$res = $this->validate($data,'app\common\validate\Paper');
-			if(true !== $res){
-				$this->error($res);
-//				return ['status'=>-1,'message'=>$res];
-			}else{
-				//验证成功
-				//获取一下上传的图片信息
-				$title_img = $_FILES['title_img'];
-				$paper = $_FILES['paper'];
-				
-				//文件限制
-				$fileConfig = [
-					'title_img'=>[
-						'maxSize'=>20000,
-						'ext'=>['jpg','jpeg','png','gif'],
-					],
-					'paper'=>[
-						'maxSize'=>2000000,
-						'ext'=>['pdf'],
-					]
-				];
-				
-				$checkImg = checkFile($title_img,$fileConfig['title_img']);
-				$checkPaper = checkFile($paper,$fileConfig['paper']);
-				
-				if(false == $checkImg['check']){
-					$this->error($checkImg['message']);
-				}
-				if(false == $checkPaper['check']){
-					$this->error($checkPaper['message']);
-				}
-				
-				//设置文件目录
-				$imgpath = "uploads/images/".date('Y/m/d',time());
-				$paperpath = "uploads/paper/".date('Y/m/d',time());
-				
-				if(!file_exists($imgpath)){
-					mkdir($imgpath,0777,true);
-				}
-				if(!file_exists($paperpath)){
-					mkdir($paperpath,0777,true);
-				}
-				
-				if(!move_uploaded_file($title_img['tmp_name'], $imgpath.'/'.md5($checkImg['name']).'.'.$checkImg['type'])){
-					$this->error('上传图片失败');
-				}
-				if(!move_uploaded_file($paper['tmp_name'], $paperpath.'/'.md5($checkPaper['name']).'.'.$checkPaper['type'])){
-					$this->error('上传文档失败');
-				}
-				
-				$data['title_img'] = $imgpath.'/'.md5($checkImg['name']).'.'.$checkImg['type'];
-				$data['file_path'] = $paperpath.'/'.md5($checkPaper['name']).'.'.$checkPaper['type'];
-				
-				//将数据写到数据表中
-				if(Paper::create($data)){
-					$this->success('上传成功');
-//					return ['status'=>1,'message'=>'上传成功'];
-				}else{
-					$this->error('上传失败');
-//					return ['status'=>0,'message'=>'上传失败'];
-				}
-			}
-			
-		}else{
-			$this->error('请求异常');
-//			return ['status'=>-2,'message'=>'请求异常'];
-		}
-	}
 	
 	//关闭通告
 	public function closeNotice()
@@ -411,59 +274,9 @@ class Index extends Base
 		Cookie::set('notice','1',7200);
 	}
 	
-	//论文分类页面
-	public function rank()
-	{
-		$this->hasPower(Session::get('user_id'), 'index/index/rank');
-		$seleList = Sele::all();
-		$this->view->assign('seleList',$seleList);
-		$this->view->assign('title','论文分类');
-		$this->view->assign('active','1');
-		return $this->view->fetch('rank');
-	}
-	
 	//显示二级分类论文
 	public function sele()
-	{
-// 		$map = [];
-		
-// 		//显示公开论文
-// 		$map[] = ['lunwen_terms','=',1];
-// 		$map2 = [];
-// 		//没登陆
-// 		if(Session::get('user_id') == null){
-
-// 			$sele_name = Request::param('sele_name');
-				
-// 				$map[] = ['lunwen_rank','=',$sele_name];
-				
-// 				$lunwenList = Db::table('paper_lunwen')
-// 							->where($map)
-// 							->order('addtime','desc')
-// 							->paginate(15);
-						
-// 				$this->view->assign('seleName',$sele_name);
-			
-// 		}else{
-// 			//既显示公开论文，也显示学校的
-// 			$map2[] = ['school_name','=',Session::get('user_school')];
-			
-			
-// 	    	$sele_name = Request::param('sele_name');	
-				
-// 				$map[] = ['lunwen_rank','=',$sele_name];
-// 				$map2[] = ['lunwen_rank','=',$sele_name];
-				
-// 				$lunwenList = Db::table('paper_lunwen')
-// 							->whereOr([$map,$map2])
-// 							->order('addtime','desc')
-// //								->select();
-// 							->paginate(15);
-
-// 				$this->view->assign('seleName',$sele_name);
-				
-// 		}			
-		
+	{					
 		
 		$sele_name = Request::param('sele_name');
 	
@@ -504,18 +317,6 @@ class Index extends Base
 		$this->view->assign('currentPage',$currentPage);
 		
     	return $this->view->fetch('sele');
-	}	
-	
-	//ajax请求增加查重次数 ?
-	public function decPassNum()
-	{
-		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
-
-		$id = Session::get('user_id');
-		$consumer = Consumer::get($id);
-		$consumer->passnum = ['dec', 1];
-		$consumer->save();
 	}
 	
 

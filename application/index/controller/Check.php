@@ -361,4 +361,17 @@ class Check extends Base
 		$this->view->assign('wordInfo',$wordInfo);
 		return $this->view->fetch('getWord');
 	}
+
+
+	//ajax请求增加查重次数 ?
+	public function decPassNum()
+	{
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
+
+		$id = Session::get('user_id');
+		$consumer = Consumer::get($id);
+		$consumer->passnum = ['dec', 1];
+		$consumer->save();
+	}
 }
