@@ -82,7 +82,7 @@
 					var url = $(this).attr('data-url');
 					var name = $(this).attr('data-song');		
 
-					window.location.href = '/index/index/downloadMusic?name='+name+'&url='+url;
+					window.location.href = '/index/comunity/downloadMusic?name='+name+'&url='+url;
 
 				})
 
@@ -94,7 +94,7 @@
 					var name = $(this).attr('data-song');
 					var singer = $(this).attr('data-singer');
 
-					$.post("{:url('index/collectMusic')}",{'url':url,'name':name,'singer':singer},function(data,err){
+					$.post("{:url('comunity/collectMusic')}",{'url':url,'name':name,'singer':singer},function(data,err){
 						if(data.status){
 							$(that).css('color','red');
 						}
