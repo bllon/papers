@@ -192,14 +192,15 @@
 		var myreg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
         if(!myreg.test(email))
         {
-            alert('请输入正确的邮箱格式');
+            // alert('请输入正确的邮箱格式');
+            sweetAlert("不要皮……", '请输入正确的邮箱格式',"error");
             return false;
         }
 		$.get("{:url('consumer/mailValidation')}",{'email':email},function(data){
 			if(!data.status){
-				alert(data.message);
+				sweetAlert("哎呦……", data.message,"error");
 			}else{
-				alert(data.message);
+				swal("干得漂亮！", data.message,"success")
 				$('#sendEmail').attr('disabled','disabled');
 				$('#sendEmail').html('已发送');
 			}
@@ -219,7 +220,13 @@
 				window.location.href="{:url('index/index/index')}";
 			},
 			error:function(data){
-				alert(data.message);
+				// alert(data.message);
+				swal({ 
+				  title: data.message, 
+				  text: "服务器出错", 
+				  timer: 2000, 
+				  showConfirmButton: false 
+				});
 				history.back();
 			},
 		});
@@ -240,13 +247,29 @@
 			},
 			success:function(data){
 				if(data.status == 1){
-					window.location.href="{:url('index/index/index')}";
+					// swal(data.message, "畅享论文库社区","success")
+					// setTimeout(function(){ 
+					//     window.location.href="{:url('index/index/index')}"; 
+					// }, 2000);
+					window.location.href="{:url('index/index/index')}"; 
 				}else{
-					alert(data.message);
+					// alert(data.message);
+					swal({ 
+					  title: data.message, 
+					  text: "请认真填写表单", 
+					  timer: 2000, 
+					  showConfirmButton: false 
+					});
 				}
 			},
 			error:function(data){
-				alert(data.message);
+				// alert(data.message);
+				swal({ 
+				  title: data.message, 
+				  text: "服务器出错", 
+				  timer: 2000, 
+				  showConfirmButton: false 
+				});
 //				history.back();
 			},
 		});
@@ -277,13 +300,26 @@
 			},
 			dataType:"json",
 			success:function(data){
-				alert(data.message);
+				// alert(data.message);
 				if(data.status == 1){
 					window.location.href="{:url('index/index/index')}";
+				}else{
+					swal({ 
+					  title: data.message, 
+					  text: "请认真填写表单", 
+					  timer: 2000, 
+					  showConfirmButton: false 
+					});
 				}
 			},
 			error:function(data){
-				alert(data.message);
+				// alert(data.message);
+				swal({ 
+				  title: data.message, 
+				  text: "服务器出错", 
+				  timer: 2000, 
+				  showConfirmButton: false 
+				});
 //				history.back();
 			},
 		});
