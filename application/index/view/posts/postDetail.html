@@ -17,7 +17,7 @@
 					
 				    <div class="row">
 				    	<div class="col-md-12">
-					    	<form id="comment-content" class="col-md-12" action="{:url('index/commit')}" style="padding:0px;" method="post">
+					    	<form id="comment-content" class="col-md-12" action="{:url('posts/commit')}" style="padding:0px;" method="post">
 								<textarea id="content" name="content" class="form-control"></textarea>
 								<input type="hidden" name="reply_user" id="reply_user" value="{$Think.session.user_name}" />
 								<input type="hidden" name="user_id" id="user_id" value="{$Think.session.user_id}" />
@@ -49,7 +49,7 @@
 				        <h4 class="modal-title" id="exampleModalLabel">评论</h4>
 				      </div>
 				      <div class="modal-body">
-				        <form action="{:url('index/reply')}" method="post">
+				        <form action="{:url('posts/reply')}" method="post">
 				          	<textarea name="content" style="width:100%;"></textarea>
 							<input type="hidden" name="reply_user" value="{$Think.session.user_name}" />
 							<input type="hidden" name="user_id" value="{$Think.session.user_id}" />
@@ -103,7 +103,7 @@
 
 			// 异步加载所有评论
 			$(document).ready(function(){
-				$.get("{:url('index/getComment')}",{id:{$postInfo.id}},function(data){
+				$.get("{:url('posts/getComment')}",{id:{$postInfo.id}},function(data){
 					if(data.status == 1){
 						$('#comment_list').html(data.message);
 						console.log('获取评论成功');
@@ -125,7 +125,7 @@
 						});
 
 					}else{
-						console.log('获取评论失败');
+						// console.log('获取评论失败');
 					}				
 				})
 

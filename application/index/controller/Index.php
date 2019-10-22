@@ -1,6 +1,6 @@
 <?php
 /*
-**index前台类
+**index首页类
 */
 namespace app\index\controller;
 use app\common\controller\Base;//导入公共控制器
@@ -350,176 +350,21 @@ class Index extends Base
 		return $this->view->fetch('userDetail');
 	}
 	
-	//显示贴子详情
-	public function postDetail()
-	{
-		$this->hasPower(Session::get('user_id'), 'index/index/postDetail');
-
-		$postId = Request::param('id');
-		$postInfo = PostModel::get($postId);
-
-		$commentList = Comment::where('post_id',$postId)->select();
-
-		// $commentList = $this->getCommlist($postId);
-
-		// $html = $this->postHtml($commentList);
-
-		// $this->view->assign('postHtml',$html);
-
-		$this->view->assign('postInfo',$postInfo);
-		$this->view->assign('commentNum',count($commentList));
-		$this->view->assign('title',$postInfo['title']);
-		return $this->view->fetch('postDetail');
-	}
-
-	//ajax获取评论接口
-	public function getComment(){
-		$id = Request::param('id');
-
-		$commentList = $this->getCommlist($id);
-
-		$html = $this->postHtml($commentList);
-		return ['status'=>1,'message'=>$html];
-	}
-
-	//获取评论列表HTML
-	public function postHtml($commentList,&$s = ''){
-		$str = &$s;
-
-		foreach($commentList as $comment){
-
-			if($comment['lv'] == 1){
-				$str .= '<li class="list-group-item">
-							    <h5 class="list-group-item-heading"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['user_id'].'">'.$comment['reply_user'].'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
-							    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';				
-			}else{
-					$str .= '<div style="width:93%;margin:0 auto;border-top:1px solid #ddd;">
-									    <h5 style="margin:0;"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/index/userDetail/id/'.$comment['user_id'].'">'.$comment['reply_user'].'</a></small>&nbsp;<small>回复</small>&nbsp;<img src="'.getConsumerImg(getPostUserId($comment['reply_id'])).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="/index/index/userDetail/id/'.getPostUserId($comment['reply_id']).'">'.getPostUser($comment['reply_id']).'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
-									    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';
-			}	
-
-			
-			$children = $comment['children'];
-
-			if($children !== null){							    						
-				$this->postHtml($children,$str);		
-			}
-			if($comment['lv'] == 1){
-				$str .= '</li>';
-			}else{
-				$str .= '</div>';
-			}
-			  							
-		}
-		
-		return $str;		
-	}
-
-	//递归建立所有评论
-	public function getCommlist($postId,$reply_id = 0,&$result = array(),&$lv=0){       
-	    $arr = Comment::where('post_id',$postId)->where('reply_id',$reply_id)->select();
-
-	    if(empty($arr)){
-	        return array();
-	    }
-	    $lv++;
-	    foreach ($arr as $cm) {
-	    	//来存放每一级的结果  
-	        $thisArr=&$result[];
-	        $cm['lv'] = $lv;
-	        $cm["children"] = $this->getCommlist($postId,$cm["id"],$thisArr,$lv);    
-	        $lv = $cm['lv'];
-	        //来存放每一级的结果  
-	        $thisArr = $cm;
-
-	    }
-	    return $result;
-   }
 	
-	//循环遍历
-	public function getReply($postId,$reply_id = 0){
-		$data = [];
-		$commentList = Comment::where('post_id',$postId)->where('reply_id',$reply_id)->select();
-		foreach($commentList as $comment){
-			if($comment['reply_id'] == 0){
-				dump($comment);
-				$data[$comment['id']] = $comment;
-				$this->getReply($comment['id']);
-			}else{
-				dump($comment);
-				
-			}
-		}
-	}
-	
-	//显示更多贴子
-	public function morePost(){
-		$this->hasPower(Session::get('user_id'), 'index/index/postDetail');
 
-		$sta = Cookie::get('postSchool');
-		
-		$map = [];
-		if($sta !== null && $sta == 1){
-			$map[] = ['u.school_name','=',Session::get('user_school')];
-		}
-		
-		$postList = Db::table('paper_post')
-							->alias('p')->join('paper_user u','p.user_id = u.id')
-							->field('p.id,p.title,p.subtitle,p.content,p.writer,p.user_id,u.school_name,p.create_time')
-							->where($map)
-							->order('create_time','desc')
-							->paginate(3);
-		$this->assign('postList',$postList);
-		$this->view->assign('title','贴子专区');
-		return $this->view->fetch('morePost');
-	}
 	
-	//选择学校区域贴子
-	public function selectPost(){
-		$this->hasPower(Session::get('user_id'), 'index/index/postDetail');
 
-		$data = Request::param('sta');
-		Cookie::set('postSchool',$data);
-		return ['status'=>1,'message'=>$data];
-	}
 	
-	//评论贴子
-	public function commit()
-	{
-		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/commit');
 
-		$data = Request::param();		
-		$res = $this->validate($data,'app\common\validate\Comment');
-		if(true !== $res){
-			$this->error($res);
-		}
-		
-		if(Comment::create($data)){
-			$this->success('评论成功');
-		}else{
-			$this->error('评论失败');
-		}
-	}
 	
-	//回复评论
-	public function reply()
-	{
-		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/reply');
-
-		$data = Request::param();
-		$res = $this->validate($data,'app\common\validate\Comment');
-		if(true !== $res){
-			$this->error($res);
-		}
-		
-		if(Comment::create($data)){
-			$this->success('评论成功');
-		}else{
-			$this->error('评论失败');
-		}
-	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//收藏论文
 	public function collect()
@@ -634,103 +479,6 @@ class Index extends Base
 			return ['status'=>0,'message'=>'删除失败'];
 		}
 	}
-	
-	//社区首页
-	public function comunity(){
-		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/comunity');
-
-		//获取所有房间
-		//redis读取
-		// $comunity = new Comunity;
-		// $groupList = $comunity->getAllGroup();
-
-		//数据库读取
-		$groupList = Db::table('paper_group')->select();
-		$this->view->assign('groupCount',count($groupList));
-		$groupList = array_slice($groupList, 0,8);
-		// var_dump($groupList);exit;
-
-
-		$filename = dirname(dirname(dirname(__DIR__))).'/public/uploads/song/music.txt';
-		if(file_exists($filename)){
-			$content = file_get_contents($filename);
-			if($content){
-				$data = json_decode($content,true);
-			}else{
-				$data = [];
-			}
-		}else{
-			$data = [];
-
-			//获取音乐列表
-			$content = $this->getUrlContent("http://www.333ttt.com/up/top16.html");
-
-			preg_match_all('/<li data-id=\"\d+\" data-title=([\s\S]*?)<\/li>/',$content,$matches);
-
-			if(isset($matches[0])){
-				foreach($matches[0] as $k => $v){
-					preg_match('/data-title=\"([\s\S]*?)\"/',$v,$match);
-					$data[$k]['name'] = $match[1];
-
-					preg_match('/html\">([\s\S]*?)<\/a>/',$v,$match);
-					$name = explode("-", $match[1]);
-					$data[$k]['singer'] = $name[1];
-
-					preg_match('/title=\"按鼠标右键->另存为可以下载歌曲\" href=\"([\s\S]*?)\"/',$v,$match);
-					$data[$k]['url'] = $match[1];
-
-				}
-			}
-			$path = dirname(dirname(dirname(__DIR__))).'/public/uploads/song/';
-
-			if(!is_dir($path)){
-				mkdir($path,0777,true);
-			}
-			file_put_contents($path.'music.txt', json_encode($data));
-		}
-		
-		$this->view->assign('songNum',count($data));
-
-		$data1 = array_slice($data, 0,10);
-		$data2 = array_slice($data, 10,10);
-
-
-		//获取mv
-		$path = Env::get('root_path').'/runtime/cache/mvHtml';
-		$filename = $path.'/mvUrl.json';
-		if(file_exists($filename)){
-			$content = file_get_contents($filename);
-
-			$data = json_decode($content,true);
-
-			if($data['expire'] + 86400 > time()){
-				$content = $data['content'];
-			}else{
-				//缓存过期
-				$content = [];
-			}
-		}else{
-			$content = [];
-		}
-
-		if($content){
-			$mvList = $content;
-		}else{
-			$mvList = $this->MusicMv();
-			$mvList = $mvList['content'];
-		}
-		$this->view->assign('mvCount',count($mvList));
-		$mvList = array_slice($mvList, 0,8);
-
-		$this->view->assign('title','社区首页');
-		$this->view->assign('groupList',$groupList);
-		$this->view->assign('songList',$data1);
-		$this->view->assign('recommendList',$data2);
-		$this->view->assign('mvList',$mvList);
-		return $this->view->fetch('comunity');
-	}
-
 
 	//爬取腾讯音乐最火MV
 	public function MusicMv()

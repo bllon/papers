@@ -267,29 +267,4 @@ class Index extends Base
 			return ['status'=>0,'message'=>'解散失败'];
 		}
 	}	
-	
-	//测试锁
-	public function test(){
-		
-		$lock = new Lock();
-		
-//		for($i=0;$i<50;$i++){
-			
-			$identifier = $lock->getLock('test');
-			
-//			if($identifier){	
-				//打印锁的唯一标识
-				dump($identifier);
-				
-//				$count = $lock->redis->get('count');
-//				dump($count);
-//				$count += 1;
-//				$lock->redis->set('count',$count);
-				
-				//释放锁
-//				$lock->releaseLock('test', $identifier);				
-//			}
-//		}
-	}	
-	
 }

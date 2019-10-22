@@ -1,204 +1,109 @@
 <?php
-namespace app\index\controller;
-use app\common\controller\Base;
-
 /**
- * redis聊天社区
- */
-class Comunity
+*社区类
+*/
+
+namespace app\index\controller;
+use app\common\controller\Base;//导入公共控制器
+use think\facade\Session;
+use think\Db;
+use think\facade\Env;
+
+class Comunity extends Base
 {
-	//连接客户端
-	public function conn(){
-		
-		$redis = new \Redis();
-		$host = '127.0.0.1';
-		$port = 6379;
-		$redis->connect($host,$port);
-		return $redis;
-	}
-	
-	/**
-	 * 添加新群组
-	 * $creator 创建者名称
-	 * $name	群组名称
-	 */
-	public function createGroup($creator,$name){
-		$redis = $this->conn();
-		
-		$redis->multi();
-		
-		//向集合中添加一个新群组
-		$redis->zadd('group',1,$name);		
-		
-		//创建成员群组
-		$redis->zadd($name,1,$creator);
-		
-		//记录成员所加入的群组
-		$redis->zadd($creator.'hasGroup',0,$name);
-		
-		//创建消息群组
-		//发送数据
-		$data = [
-			'from'=>'系统',
-			'data'=>'恭喜创建新群组',
-			'time'=>time()
-		];
-		
-		$data = json_encode($data);
-		$redis->zadd($name.'ChatMessage',1,$data);
-		
-		//记录群组的消息数量
-		$redis->set($name.'ChatMessageCount',1);
-		
-		return $redis->exec();
-		
-		dump($redis->zrange('group',0,-1));
-		dump($redis->zrange($name,0,-1));
-		dump($redis->zrange($creator.'hasGroup',0,-1));
-		dump($redis->zrange($name."ChatMessage",0,-1));
-		dump($redis->get($name.'ChatMessageCount'));
-	}
-	
-	/**
-	 * 添加成员
-	 * $person 成员名称
-	 * $name	群组名称
-	 */
-	public function addPerson($person,$index,$name){		
-		$redis = $this->conn();	
-		$redis->zadd($name,$index,$person);
-		
-		//记录成员所加入的群组
-		$redis->zadd($person.'hasGroup',0,$name);
-	}
-	
-	//删除成员
-	public function removePerson($person,$name){
-		$redis = $this->conn();
-		//加入黑名单
-		$redis->sAdd($name.'BlackList',$person);
-		 		
-		return $redis->zDelete($name,$person);
-	}
-	
-	//返回黑名单
-	public function BlackList($name){
-		$redis = $this->conn();
-		return $redis->sMembers($name.'BlackList');
-	}
-	
-	//解除黑名单限制
-	public function removeBlack($person,$name){
-		$redis = $this->conn();
-		return $redis->sRem($name.'BlackList', $person); 
-	}
-	
-	
-	/**
-	 * 获取房间所有成员
-	 * $name	房间名
-	 */	 
-	public function getAllPerson($name){
-		$redis = $this->conn();	
-		return $redis->zrange($name,0,-1);
-	}
-	
-	/**
-	 * 发送信息
-	 * $person	发送者
-	 * $name	所属群组
-	 * $data	发送数据
-	 */
-	public function sendMessage($name,$data){
-		$redis = $this->conn();
-		//当前会话数量
-		$count = $redis->get($name.'ChatMessageCount');
-		if($redis->zadd($name.'ChatMessage',$count+1,$data)){
-			$redis->incr($name.'ChatMessageCount');
-			return true;
+	//社区首页
+	public function index(){
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/comunity');
+
+		//获取所有房间
+		//redis读取
+		// $comunity = new Comunity;
+		// $groupList = $comunity->getAllGroup();
+
+		//数据库读取
+		$groupList = Db::table('paper_group')->select();
+		$this->view->assign('groupCount',count($groupList));
+		$groupList = array_slice($groupList, 0,8);
+		// var_dump($groupList);exit;
+
+
+		$filename = dirname(dirname(dirname(__DIR__))).'/public/uploads/song/music.txt';
+		if(file_exists($filename)){
+			$content = file_get_contents($filename);
+			if($content){
+				$data = json_decode($content,true);
+			}else{
+				$data = [];
+			}
 		}else{
-			return false;
-		}	
-			
-	}
-	
-	//获得所有房间
-	public function getAllGroup(){
-		$redis = $this->conn();
-		return $redis->zrange('group',0,-1);
-	}
-	
-	public function info($name){
-		$redis = $this->conn();
-		$personList = $redis->zrange($name,0,-1);
-		foreach($personList as $p){			
-			$redis->zDelete($p.'hasGroup',$name);
-		}
-	}
-	
-	
-	/**
-	 * 关闭房间
-	 * $creator	创建者
-	 * $name	所创群组
-	 */
-	//关闭房间
-	public function close($creator,$name){
-		$redis = $this->conn();
-		
-		$personList = $redis->zrange($name,0,-1);		
-		foreach($personList as $p){			
-			$redis->zDelete($p.'hasGroup',$name);
+			$data = [];
+
+			//获取音乐列表
+			$content = $this->getUrlContent("http://www.333ttt.com/up/top16.html");
+
+			preg_match_all('/<li data-id=\"\d+\" data-title=([\s\S]*?)<\/li>/',$content,$matches);
+
+			if(isset($matches[0])){
+				foreach($matches[0] as $k => $v){
+					preg_match('/data-title=\"([\s\S]*?)\"/',$v,$match);
+					$data[$k]['name'] = $match[1];
+
+					preg_match('/html\">([\s\S]*?)<\/a>/',$v,$match);
+					$name = explode("-", $match[1]);
+					$data[$k]['singer'] = $name[1];
+
+					preg_match('/title=\"按鼠标右键->另存为可以下载歌曲\" href=\"([\s\S]*?)\"/',$v,$match);
+					$data[$k]['url'] = $match[1];
+
+				}
+			}
+			$path = dirname(dirname(dirname(__DIR__))).'/public/uploads/song/';
+
+			if(!is_dir($path)){
+				mkdir($path,0777,true);
+			}
+			file_put_contents($path.'music.txt', json_encode($data));
 		}
 		
-		$redis->multi();	
-		
-//		$redis->zDelete($creator.'hasGroup',$name);
-		$redis->del($name.'ChatMessageCount');
-		$redis->zRemRangeByRank($name."ChatMessage",0,-1);
-		$redis->zRemRangeByRank($name,0,-1);
-		$redis->zDelete('group',$name);
-		
-		return $redis->exec();
-	}
-	
-	//打印所有信息
-	public function dumpAll($name,$person){
-		
-		$redis = $this->conn();
-		dump($redis->zrange('group',0,-1));
-		dump($redis->zrange($name,0,-1));
-		dump($redis->zrange($person.'hasGroup',0,-1));
-		dump($redis->zrange($name."ChatMessage",0,-1));
-		dump($redis->get($name.'ChatMessageCount'));
-	}
-	
-	//获取房间的消息
-	public function getMessage($name,$start=0,$stop=-1){
-		$redis = $this->conn();
-		$res = $redis->get($name.'ChatMessageCount');
-		if($res == false){
-			return '404';
+		$this->view->assign('songNum',count($data));
+
+		$data1 = array_slice($data, 0,10);
+		$data2 = array_slice($data, 10,10);
+
+
+		//获取mv
+		$path = Env::get('root_path').'/runtime/cache/mvHtml';
+		$filename = $path.'/mvUrl.json';
+		if(file_exists($filename)){
+			$content = file_get_contents($filename);
+
+			$data = json_decode($content,true);
+
+			if($data['expire'] + 86400 > time()){
+				$content = $data['content'];
+			}else{
+				//缓存过期
+				$content = [];
+			}
+		}else{
+			$content = [];
 		}
-		return $redis->zrange($name."ChatMessage",$start,$stop);
-	}
-	
-	//统计房间人数
-	public function getCount($name){
-		$redis = $this->conn();
-		return $redis->zCount($name,1,2);
-	}
-	
-	//删除
-	public function zRemRangeByScore(){
-		$redis = $this->conn();
-		$redis->zRemRangeByScore('group',0,3);
-	}
-	
-	//查看信息
-	public function zrange($name){
-		$redis = $this->conn();
-		dump($redis->zrange($name,0,-1));
+
+		if($content){
+			$mvList = $content;
+		}else{
+			$mvList = $this->MusicMv();
+			$mvList = $mvList['content'];
+		}
+		$this->view->assign('mvCount',count($mvList));
+		$mvList = array_slice($mvList, 0,8);
+
+		$this->view->assign('title','社区首页');
+		$this->view->assign('groupList',$groupList);
+		$this->view->assign('songList',$data1);
+		$this->view->assign('recommendList',$data2);
+		$this->view->assign('mvList',$mvList);
+		return $this->view->fetch('index');
 	}
 }
-?>

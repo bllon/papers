@@ -1,6 +1,6 @@
 <?php
 /*
-**连接websocket聊天类
+**聊天频道类
 */
 namespace app\index\controller;
 use app\common\controller\Base;//导入公共控制器

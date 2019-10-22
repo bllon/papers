@@ -31,7 +31,7 @@
 	</div>
 	<div class="list-group">
 	{volist name="postList" id="post"}
-	  <a href="{:url('index/postDetail',['id'=>$post.id])}" target="_blank" class="list-group-item" style="padding:10px 5px;max-height:160px;overflow:hidden;">
+	  <a href="{:url('posts/postDetail',['id'=>$post.id])}" target="_blank" class="list-group-item" style="padding:10px 5px;max-height:160px;overflow:hidden;">
 	    <h4 class="list-group-item-heading">{$post.title} <span class="glyphicon glyphicon-pencil"></span></h4>
 	    <p class="text-right" style="margin:0;"><span class="pull-left">{$post.subtitle}</span><small>发帖人: {$post.writer}</small></p>
 	    <p class="text-right" style="margin:0;color:#dfa600;"><small>{$post.user_id|getschool}</small></p>
@@ -39,7 +39,7 @@
 	    <!--<div class="list-group-item-text" style="padding:10px 5px;">{$post.content|raw}</div>-->
 	  </a>
 	{/volist}
-	<a class="btn btn-block btn-sm btn-info" style="margin-top:10px;" href="{:url('index/morePost')}" target="_blank">更多<span class="glyphicon glyphicon-chevron-right"></span></a>
+	<a class="btn btn-block btn-sm btn-info" style="margin-top:10px;" href="{:url('posts/morePost')}" target="_blank">更多<span class="glyphicon glyphicon-chevron-right"></span></a>
 	</div>
 </div>
 

@@ -1,6 +1,6 @@
 <?php
 /**
-*论文控制器
+*论文类
 */
 namespace app\index\controller;
 use app\common\controller\Base;//导入公共控制器
