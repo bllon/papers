@@ -16,6 +16,51 @@ use think\Db;
 
 class Paper extends Base
 {
+	//论文详情
+	public function paperDetail()
+	{
+		$this->hasPower(Session::get('user_id'), 'index/index/paperDetail');
+
+		$id = Request::param('id');
+		
+		//获取缓存文件
+		$content = $this->getCacheHtml(['id'=>$id]);
+		if($content){
+			return $content;
+		}
+
+
+		
+		$paperInfo = Lunwen::get(function($query) use ($id){
+			$query->where('id',$id);
+		});
+//		var_dump($paperInfo);exit;
+
+		//获取redis缓存论文
+		// $content = Paper($id);
+		if(null == $content){
+			if($paperInfo['lunwen_file'] !== null){
+				$paperInfo['content'] = parserPdf(substr($paperInfo['lunwen_file'],1));
+				
+				//设置缓存
+				// setCache("paper:id:".$paperInfo['id'].":content",serialize(parserPdf(substr($paperInfo['lunwen_file'],1))),86400);
+			}else{
+				$arr = [];
+				$arr[] = $paperInfo['content'];
+				$paperInfo['content'] = $arr;
+			}
+		}else{
+			$paperInfo['content'] = $content;
+		}
+		
+		
+		$this->view->assign('title',$paperInfo['lunwen_title']);
+		$this->view->assign('paperInfo',$paperInfo);
+//		$this->view->assign('paperfile',substr($paperInfo['lunwen_file'],1));
+		return $this->buildHtml('paperDetail',['id'=>$id]);
+//		return $this->view->fetch('paperDetail');
+	}
+	
 	//获取首页分页论文
     public function getPage()
     {

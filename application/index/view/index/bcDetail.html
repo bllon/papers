@@ -13,7 +13,7 @@
 								<h4>我的收藏</h4>
 								<div class="list-group">
 								{volist name="collectList" id="collect" empty="暂无收藏"}
-								  <a href="{:url('index/paperDetail',['id'=>$collect.paper_id])}" target="_blank" class="list-group-item">
+								  <a href="{:url('paper/paperDetail',['id'=>$collect.paper_id])}" target="_blank" class="list-group-item">
 								    <h4 class="list-group-item-heading">{$collect.paper_id|getPaperName}</h4>
 								    <p class="text-right" style="margin:0;"><span class="pull-left"></span><small>{$collect.create_time}</small></p>
 								  </a>
@@ -26,7 +26,7 @@
 								<div class="list-group">
 								{volist name="borrowList" id="borrow" empty="暂无借阅"}
 								  <li class="list-group-item">
-								    <h4 class="list-group-item-heading"><a href="{:url('index/paperDetail',['id'=>$borrow.paper_id])}" target="_blank">{$borrow.paper_id|getPaperName}</a><span class="pull-right"><small>{$borrow.create_time}</small></span></h4>
+								    <h4 class="list-group-item-heading"><a href="{:url('paper/paperDetail',['id'=>$borrow.paper_id])}" target="_blank">{$borrow.paper_id|getPaperName}</a><span class="pull-right"><small>{$borrow.create_time}</small></span></h4>
 								    <p class="text-right" style="margin:0;">
 								    	
 								    		{switch name="$borrow.status"}

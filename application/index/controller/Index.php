@@ -137,30 +137,6 @@ class Index extends Base
         }
 	}
 
-	//sphinx测试
-	public function sphinx()
-	{
-
-		//搜索关键字
-		$key = Request::param('key');
-
-		//搜索sphinx
-		require_once '../extend/sphinx/sphinxapi.php';
-		$sph = new \SphinxClient();
-		$sph->SetServer('localhost', 9312);
-		//第二个参数，默认是*，要查询的索引名字
-		$ret = $sph->Query($key, 'papers');
-		//提取出所有文章id
-		$id = array_keys($ret['matches']);
-		var_dump($id);
-		//查询出所有文章
-		$lunwenList = Db::table('paper_lunwen')
-								->whereOr('id','in',$id)
-								->order('addtime','asc')
-								->select();
-		var_dump($lunwenList);
-	}
-
 	//首页
     public function index()
     {			
@@ -219,53 +195,7 @@ class Index extends Base
 
 	    	Cookie::set('displayFunc',$type);
     	}
-    	
     }
-	
-	//论文详情
-	public function paperDetail()
-	{
-		$this->hasPower(Session::get('user_id'), 'index/index/paperDetail');
-
-		$id = Request::param('id');
-		
-		//获取缓存文件
-		$content = $this->getCacheHtml(['id'=>$id]);
-		if($content){
-			return $content;
-		}
-
-
-		
-		$paperInfo = Lunwen::get(function($query) use ($id){
-			$query->where('id',$id);
-		});
-//		var_dump($paperInfo);exit;
-
-		//获取redis缓存论文
-		// $content = Paper($id);
-		if(null == $content){
-			if($paperInfo['lunwen_file'] !== null){
-				$paperInfo['content'] = parserPdf(substr($paperInfo['lunwen_file'],1));
-				
-				//设置缓存
-				// setCache("paper:id:".$paperInfo['id'].":content",serialize(parserPdf(substr($paperInfo['lunwen_file'],1))),86400);
-			}else{
-				$arr = [];
-				$arr[] = $paperInfo['content'];
-				$paperInfo['content'] = $arr;
-			}
-		}else{
-			$paperInfo['content'] = $content;
-		}
-		
-		
-		$this->view->assign('title',$paperInfo['lunwen_title']);
-		$this->view->assign('paperInfo',$paperInfo);
-//		$this->view->assign('paperfile',substr($paperInfo['lunwen_file'],1));
-		return $this->buildHtml('paperDetail',['id'=>$id]);
-//		return $this->view->fetch('paperDetail');
-	}
 	
 	//关闭通告
 	public function closeNotice()
@@ -611,8 +541,7 @@ class Index extends Base
 			}else{
 				return ['status'=>0,'message'=>'取消收藏失败'];
 			}
-		}
-		
+		}	
 	}
 	
 	
@@ -641,8 +570,7 @@ class Index extends Base
 			}else{
 				return ['status'=>0,'message'=>'取消借阅失败'];
 			}
-		}
-		
+		}	
 	}
 	
 	//显示借阅和收藏详情

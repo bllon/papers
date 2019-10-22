@@ -359,19 +359,24 @@
 		    			if(paperList.length > 0){
 		    				var html = '<div class="col-md-4" style="position:fixed;top:230px;right:0;" id="recommend"><div class="list-group"><li class="list-group-item text-center"><span>推荐论文</span><button class="btn btn-sm btn-warning" id="sizeClick" style="margin-left:20px;outline:none;">收起</button></li>';
 
+		    				var pushNum = 0;	//实际推荐数
 			    			for(var i=0;i<paperList.length;i++){
 			    				if(paperList[i].id != $('#paperId').val()){
 			    					html += '<a href="javascript:void(0);" data-id="'+paperList[i].id+'" target="_blank" class="list-group-item recom" style="padding:10px 5px;max-height:160px;overflow:hidden;"><h4 class="list-group-item-heading"><span>'+paperList[i].lunwen_title+'</span></h4><p class="text-right" style="margin:0;"><span class="pull-left"><small>专业: '+paperList[i].major+'</small></span><small>作者: '+paperList[i].writer+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>分类: <span class="text-danger">'+paperList[i].rank_type+'</span> <span class="glyphicon glyphicon-arrow-right"></span> <span class="text-info">'+paperList[i].lunwen_rank+'</span></small></span><small style="color:#dfa600;">'+paperList[i].school_name+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>阅读量：'+paperList[i].pv+'</small></span><small style="color:#dfa600;">发布时间:'+formatTime(paperList[i].addtime,'Y/M/D h:m:s')+'</small></p></a>';
+
+			    					pushNum = pushNum + 1;
 			    				}	
 			    			}
 
 			    			html += '</div></div>';
-			    			$('body').append(html);
+			    			if(pushNum > 0){
+			    				$('body').append(html);
+			    			}
 
 			    			$('.recom').click(function(){
 			    				var id = $(this).attr('data-id');
 			    				// window.location.href = "http://www.papers.com/index/index/paperdetail/id/"+id+".html";
-			    				window.open("/index/index/paperdetail/id/"+id+".html", '_blank');
+			    				window.open("/index/paper/paperdetail/id/"+id+".html", '_blank');
 			    			})
 
 			    			//收起按钮

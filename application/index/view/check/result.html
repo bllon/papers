@@ -55,7 +55,7 @@
 							{present name="lunwenList"}
 							<h4 class="text-warning">重复标题</h4>
 							{volist name="lunwenList" id="lunwen" empty="<h4>无</h4>"}
-							<li class="text-danger" style="list-style:none;"><a href="{:url('index/paperDetail',['id'=>$lunwen.id])}" target="_blank">{$lunwen.lunwen_title}</a></li>
+							<li class="text-danger" style="list-style:none;"><a href="{:url('paper/paperDetail',['id'=>$lunwen.id])}" target="_blank">{$lunwen.lunwen_title}</a></li>
 							{/volist}
 							{/present}
 							<h4 class="text-warning">重复句子&nbsp;&nbsp;&nbsp;<button id="page-btn" class="btn btn-sm btn-info">展开</button></h4>

@@ -15,7 +15,7 @@
 	</div>
 	<div class="list-group">
 	{volist name="hotPaper" id="paper"}
-	  <a href="{:url('index/paperDetail',['id'=>$paper.id])}" target="_blank" class="list-group-item">
+	  <a href="{:url('paper/paperDetail',['id'=>$paper.id])}" target="_blank" class="list-group-item">
 	    	<span class="badge" style="background-color:#fff;font-weight:normal;padding:0;">
 <!-- 	    		<p style="color:#000;margin:0;background-color:#fff;border-radius:10px;">阅读量: {$paper.pv}</p> -->
 	    		<p style="color:#6c5959;margin:0;padding:4px;background-color:#ffe5e5;border-radius:10px;">{$paper.lunwen_rank}</p>
