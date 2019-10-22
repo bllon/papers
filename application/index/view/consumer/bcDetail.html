@@ -71,7 +71,7 @@
 					//取消预约
 					$('.cancel').on('click',function(){
 						console.log($(this).attr('value'));
-						$.get("{:url('index/cancel')}",{'id':$(this).attr('value')},function(data){
+						$.get("{:url('consumer/cancel')}",{'id':$(this).attr('value')},function(data){
 							if(data.status == -1){
 								alert(data.message);
 							}else{
@@ -85,7 +85,7 @@
 					//归还论文
 					$('.replyReturn').on('click',function(){
 						console.log($(this).attr('value'));
-						$.get("{:url('index/replyReturn')}",{'id':$(this).attr('value')},function(data){
+						$.get("{:url('consumer/replyReturn')}",{'id':$(this).attr('value')},function(data){
 							if(data.status == -1){
 								alert(data.message);
 							}else{

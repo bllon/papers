@@ -195,6 +195,57 @@ class Paper extends Base
 		return ['status'=>1,'message'=>'成功获取分页','data'=>['list'=>$lunwenList->items(),'pages'=>$lunwenList->render()]];
     }
 
+    //收藏论文
+	public function collect()
+	{
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/collect');
+
+		$data = Request::param();
+		if($data['action'] == 0){
+			if(Collect::create($data)){
+				return ['status'=>1,'message'=>'收藏成功'];
+			}else{
+				return ['status'=>0,'message'=>'收藏失败'];
+			}
+		}else if($data['action'] == 1){
+			unset($data['action']);
+			if(Collect::destroy($data)){
+				return ['status'=>1,'message'=>'取消收藏成功'];
+			}else{
+				return ['status'=>0,'message'=>'取消收藏失败'];
+			}
+		}	
+	}
+
+	//借阅论文
+	public function borrow()
+	{
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
+
+		$data = Request::param();
+		$borrow = Borrow::where('paper_id',$data['paper_id'])->find();
+		if($borrow !== null){
+			return ['status'=>-1,'message'=>'已被借走'];
+		}
+		
+		if($data['action'] == 0){
+			if(Borrow::create($data)){
+				return ['status'=>1,'message'=>'预约成功,等待管理员通知'];
+			}else{
+				return ['status'=>0,'message'=>'借阅失败'];
+			}
+		}else if($data['action'] == 1){
+			unset($data['action']);
+			if(Borrow::destroy($data)){
+				return ['status'=>1,'message'=>'取消借阅成功'];
+			}else{
+				return ['status'=>0,'message'=>'取消借阅失败'];
+			}
+		}	
+	}
+
     //获取收藏和借阅状态
 	public function paperStatu(){
 		$id = Request::param('id');

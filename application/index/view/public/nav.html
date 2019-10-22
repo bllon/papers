@@ -62,11 +62,11 @@
 		          <ul class="dropdown-menu">
 		          	<!--<li class="text-center"><a href="{:url('index/uploadPaper')}">上传论文</a></li>
 		          	<li role="separator" class="divider"></li>-->
-		          	<li class="text-center"><a href="{:url('index/bcDetail')}">收藏和借阅</a></li>
+		          	<li class="text-center"><a href="{:url('consumer/bcDetail')}">收藏和借阅</a></li>
 		          	<li role="separator" class="divider"></li>
 		          	<li class="text-center"><a href="{:url('check/paperpass')}">论文查重</a></li>
 		          	<li role="separator" class="divider"></li>
-		          	<li class="text-center"><a href="{:url('index/setting')}">用户设置</a></li>
+		          	<li class="text-center"><a href="{:url('consumer/setting')}">用户设置</a></li>
 		          	<li role="separator" class="divider"></li>
 		            <li class="text-center"><a href="javascript:void(0);" id="logout">退出登录</a></li>
 		          </ul>
@@ -117,7 +117,7 @@
 
 	var user_id = getCookie('user_id')
 	if(user_id){
-		$('.user_id').attr('href','/index/index/userDetail/id/'+user_id);
+		$('.user_id').attr('href','/index/consumer/userDetail/id/'+user_id);
 	}
 	$('.user_img').css('visibility','visible');
 

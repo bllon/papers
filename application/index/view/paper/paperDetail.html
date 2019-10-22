@@ -448,8 +448,8 @@
 					alert('对不起，你还没有登录');
 					return false;
 				}
-				$.get("{:url('index/collect')}",{'paper_id':$('#paperId').val(),'user_id':$('#userId').val(),'action':$('#collectaction').val()},function(data){
-					console.log(data.message);
+				$.get("{:url('paper/collect')}",{'paper_id':$('#paperId').val(),'user_id':$('#userId').val(),'action':$('#collectaction').val()},function(data){
+					// console.log(data.message);
 					if($('#collectaction').val() && data.status){
 						//收藏增加积分
 				    	$.get("{:url('Integral/paperIntegral')}",{'id':$('#paperId').val(),'type':1},function(data){
@@ -470,7 +470,7 @@
 					alert('对不起，你还没有登录');
 					return false;
 				}
-				$.get("{:url('index/borrow')}",{'paper_id':$('#paperId').val(),'user_id':$('#userId').val(),'action':$('#borrowaction').val()},function(data){
+				$.get("{:url('paper/borrow')}",{'paper_id':$('#paperId').val(),'user_id':$('#userId').val(),'action':$('#borrowaction').val()},function(data){
 					if(data.status){
 						alert(data.message);
 					}

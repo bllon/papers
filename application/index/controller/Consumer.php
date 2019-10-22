@@ -6,6 +6,8 @@ namespace app\index\controller;
 use app\common\controller\Base;//导入公共控制器
 use app\common\model\Consumer as ConsumerModel;
 use app\common\model\School;
+use app\common\model\Collect;
+use app\common\model\Borrow;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cookie;
@@ -262,5 +264,165 @@ class Consumer extends Base
 		return ['status'=>1,'message'=>'退出成功'];
 	}
 
-	
+	//用户设置
+	public function setting()
+	{
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/setting');
+
+		$userInfo = ConsumerModel::get(Session::get('user_id'));
+		Session::set('user_name',$userInfo['name']);
+
+		Cookie::set('user_name',$userInfo['name']);
+		Cookie::set('user_img',$userInfo['user_img']);
+		$this->view->assign('title','用户设置');
+		$this->view->assign('userInfo',$userInfo);
+		return $this->view->fetch('setting');
+	}
+
+	//修改用户设置
+	public function saveSetting()
+	{
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/setting');
+
+		$data = Request::param();
+
+		if($data['password'] == $data['pass'] || sha1($data['password']) == $data['pass']){
+
+			unset($data['password']);
+		}else{
+			$data['password'] = sha1($data['password']);
+
+		}
+		unset($data['pass']);
+
+		//设置文件目录
+		$imgPath = "uploads/user_img/";
+		
+		if($_FILES['user_img']['size'] !== 0){
+			
+			$user_img = Request::file('user_img');
+		
+			$info = $user_img->move($imgPath);
+			
+			if($info){
+				$filepath = "uploads/user_img/".$info->getSaveName();
+				$image = \think\Image::open($filepath);
+				$image->thumb(128,128)->save($filepath);
+				$data['user_img'] = "/uploads/user_img/".$info->getSaveName();
+			}else{
+				$this->error($info->getError());
+			}
+		}
+
+		$data['id'] = Session::get('user_id');
+		if(ConsumerModel::update($data)){
+			Session::set('user_name',$data['name']);
+			$this->success('更改成功');
+		}else{
+			$this->error('更改失败');
+		}
+	}
+
+	//显示用户详情页
+	public function userDetail()
+	{
+		$this->hasPower(Session::get('user_id'), 'index/index/userDetail');
+
+		$id = Request::param('id');
+		
+		$userInfo = ConsumerModel::where('id',$id)->find();
+
+		//查询收藏论文
+		$collect = Collect::where('user_id',$userInfo['id'])->select();
+		$collectNum = count($collect);
+
+		//查询累计借阅
+		$borrow = Borrow::where('user_id',$userInfo['id'])->where('status',3)->select();
+		$borrowNum = count($borrow);
+		
+		//查询累计查重次数
+		$pass = Db::table('paper_pass')->where('user_id',$id)->select();
+		$passNum = count($pass);
+
+		//用户收藏歌单
+		$songList = Db::table('paper_collectMusic')->where('consumer_id',$id)->select();
+		$musicNum = count($songList);
+
+		unset($collect);
+		unset($comment);
+		unset($$borrow);
+		unset($id);
+		$this->view->assign('title',"{$userInfo['name']}的详情信息");
+		$this->view->assign('userInfo',$userInfo);
+		$this->view->assign('collectNum',$collectNum);
+		$this->view->assign('borrowNum',$borrowNum);
+		$this->view->assign('passNum',$passNum);
+		$this->view->assign('musicNum',$musicNum);
+		$this->view->assign('songList',$songList);
+		return $this->view->fetch('userDetail');
+	}
+
+	//显示借阅和收藏详情
+	public function bcDetail()
+	{
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/collect');
+		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
+
+		$collectList = Collect::where('user_id',Session::get('user_id'))->select();
+		$borrowList = Borrow::where('user_id',Session::get('user_id'))->select();
+		$this->view->assign('title','收藏和借阅');
+		$this->view->assign('collectList',$collectList);
+		$this->view->assign('borrowList',$borrowList);
+		return $this->view->fetch('bcDetail');
+	}
+
+	//取消预约
+	public function cancel(){
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
+
+		$data = Request::param();
+		
+		if(Borrow::destroy($data)){
+			return ['status'=>1,'message'=>'取消成功'];
+		}else{
+			return ['status'=>0,'message'=>'取消失败'];
+		}
+	}
+
+	//归还论文
+	public function replyReturn(){
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
+
+		$id = Request::param('id');
+		$borrow = Borrow::where('id',$id)->find();
+		if($borrow == null){
+			return ['status'=>-1,'message'=>'已归还'];
+		}
+		
+		$data = ['id'=>$id,'status'=>2];
+		if(Borrow::update($data)){
+			return ['status'=>1,'message'=>'预约归还成功'];
+		}else{
+			return ['status'=>0,'message'=>'预约归还失败'];
+		}
+	}
+
+	//删除历史借阅
+	public function deleborrow()
+	{
+		$this->isLogin();
+		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
+
+		$id = Request::param('id');
+		if(borrow::destroy($id)){
+			return ['status'=>1,'message'=>'删除成功'];
+		}else{
+			return ['status'=>0,'message'=>'删除失败'];
+		}
+	}
 }
