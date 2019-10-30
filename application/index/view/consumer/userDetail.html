@@ -1,9 +1,9 @@
-{extend name="public:base"}
+{extend name="public:base2"}
 		{block name="body"}
 		<div class="container container-fluid">
 			<div class="row">
 				<div class="col-md-8">
-					<div class="page-header" style="position:relative;">
+					<div class="page-header" style="position:relative;margin:0">
 					  	{neq name="$userInfo.user_img" value=""}
 				        <img class="img-circle" src="{$userInfo.user_img}" style="width:100px;height:100px;margin:5px;">
 				        {/neq}
@@ -13,55 +13,79 @@
 					  <span class="h3" style="position:relative;left:15px;bottom:-30px;">{$userInfo.name}</span>
 					</div>
 					<div class="page-body">
-						<div class="form-group">
-							<label>学校:&nbsp;</label><span>{$userInfo.school_name}</span>
-						</div>
-						<div class="form-group">
-							<label>邮箱:&nbsp;</label><span>{$userInfo.email}</span>
-						</div>
-						<div class="form-group">
-							<label>注册时间:&nbsp;</label><span>{$userInfo.create_time}</span>
-						</div>
-						<div class="form-group">
-							<label>收藏论文:&nbsp;</label><span>{$collectNum}本</span>
-						</div>
-						<div class="form-group">
-							<label>累计借阅:&nbsp;</label><span>{$borrowNum}本</span>
-						</div>
-						<div class="form-group">
-							<label>累计查重:&nbsp;</label><span>{$borrowNum}次</span>
-						</div>
+						<!-- Nav tabs -->
+					  	<ul class="nav nav-tabs" role="tablist">
+					    	<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">个人信息</a></li>
+					    	<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">歌单</a></li>
+					    	<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">通知</a></li>
+					    	<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">私信</a></li>
+					  	</ul>
 
-						<div class="form-group">
-							<label>收藏歌单:&nbsp;</label><span>{$musicNum}首</span>
-						</div>
-						<div class="col-md-10" style="padding:0;">
-							<div class="list-group collect-music" style="max-height:300px;overflow-y:scroll;">
-								{volist name="songList" id="song"}
-							  	<li class="list-group-item item" style="text-align:left;">
-									<div style="float:left;width:20px;text-align:center;">
-										<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
-									</div>										
-									<span style="margin-left:15px;width:150px;float:left;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</span>
-									<span style="margin-left:15px;width:150px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</span>
-									<span style="margin-left:15px;width:150px;float:right;">
-										<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
-											<span class="glyphicon glyphicon glyphicon-play"></span>
-										</a>
-										<a class="download" href="javascript:void(0);" data-url="{$song.url|urlencode}" data-song="{$song.name}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
-											<span class="glyphicon glyphicon-cloud-download"></span>
-										</a>
-										<a class="collect" href="javascript:void(0);" data-url="{$song.url}" data-song="{$song.name}" data-singer="{$song.singer}" title="收藏" style="margin-left:15px;color:#edb331;text-decoration:none;">
-											<span class="glyphicon glyphicon-heart"></span>
-										</a>
-									</span>
-								</li>
-								{/volist}
-							</div>
-							<video class="media" controls="controls" style="display:none;">
-								<source src="" type="audio/mpeg">
-							</video>
-						</div>
+					  	<!-- Tab panes -->
+					  	<div class="tab-content" style="padding-top:20px;">
+					    	<div role="tabpanel" class="tab-pane active" id="home">
+					    		<div class="form-group">
+									<label>学校:&nbsp;</label><span>{$userInfo.school_name}</span>
+								</div>
+								<div class="form-group">
+									<label>邮箱:&nbsp;</label><span>{$userInfo.email}</span>
+								</div>
+								<div class="form-group">
+									<label>注册时间:&nbsp;</label><span>{$userInfo.create_time}</span>
+								</div>
+								<div class="form-group">
+									<label>收藏论文:&nbsp;</label><span>{$collectNum}本</span>
+								</div>
+								<div class="form-group">
+									<label>累计借阅:&nbsp;</label><span>{$borrowNum}本</span>
+								</div>
+								<div class="form-group">
+									<label>累计查重:&nbsp;</label><span>{$borrowNum}次</span>
+								</div>
+
+								<div class="form-group">
+									<label>收藏歌单:&nbsp;</label><span>{$musicNum}首</span>
+								</div>
+						
+					    	</div>
+					    	<div role="tabpanel" class="tab-pane" id="profile">
+					    		<div class="col-md-10" style="padding:0;">
+									<div class="list-group collect-music" style="max-height:300px;overflow-y:scroll;">
+										{volist name="songList" id="song"}
+									  	<li class="list-group-item item" style="text-align:left;">
+											<div style="float:left;width:auto;text-align:center;margin-top:5px;">
+												<span class="badge" style="float:none;padding:3px 3px;">{$i}</span>
+											</div>										
+											<div style="margin:5px 0 0 15px;display:inline-block;width:200px;float:left;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.name}">{$song.name}</div>
+											<div style="margin:5px 0 0 15px;display:inline-block;width:120px;overflow:hidden;text-overflow:ellipsis;white-space: nowrap;" title="{$song.singer}">{$song.singer}</div>
+											<div style="margin:5px 0 0 15px;display:inline-block;width:150px;float:right;">
+												<a class="play" href="javascript:void(0);" data-url="{$song.url}" title="播放" style="margin-left:15px;color:#ffc0cb;text-decoration:none;">
+													<span class="glyphicon glyphicon glyphicon-play"></span>
+												</a>
+												<a class="download" href="javascript:void(0);" data-url="{$song.url|urlencode}" data-song="{$song.name}" title="下载" style="margin-left:15px;color:#44afd1;text-decoration:none;">
+													<span class="glyphicon glyphicon-cloud-download"></span>
+												</a>
+												<a class="collect" href="javascript:void(0);" data-url="{$song.url}" data-song="{$song.name}" data-singer="{$song.singer}" title="收藏" style="margin-left:15px;color:#edb331;text-decoration:none;">
+													<span class="glyphicon glyphicon-heart"></span>
+												</a>
+												{if condition="$Think.Session.user_name == $userInfo.name"}
+												<a class="remove" href="javascript:void(0);" data-id="{$song.id}" title="删除" style="margin-left:15px;color:#ed6731;text-decoration:none;">
+													<span class="glyphicon glyphicon-remove"></span>
+												</a>
+												{/if}
+											</div>
+										</li>
+										{/volist}
+									</div>
+									<video class="media" controls="controls" style="display:none;">
+										<source src="" type="audio/mpeg">
+									</video>
+								</div>
+					    	</div>
+					    	<div role="tabpanel" class="tab-pane" id="messages">...</div>
+					    	<div role="tabpanel" class="tab-pane" id="settings">...</div>
+					  	</div>
+						
 						
 					</div>
 				</div>		
@@ -119,6 +143,20 @@
 							}
 						})
 					})
-				</script> 
+
+					//删除控件
+					$('.remove').click(function(e){
+						var that = this;
+						var id = $(this).attr('data-id');
+
+						$.post("{:url('consumer/unCollectMusic')}",{'id':id},function(data,err){
+							if(data.status){
+								$(that).parent().parent().remove();
+							}
+						})
+					})
+				</script>
+
+{include file="consumer/userDetail-right"} 
 {/block}
 

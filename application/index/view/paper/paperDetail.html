@@ -45,10 +45,62 @@
 
 							<!-- 文章高度 -->
 							<input type="hidden" id="wordHeight" value="">
+
+
+							<div id="openNotes" data-toggle="tooltip" data-placement="right" title="笔记" style="width:30px;height:40px;text-align:center;line-height:40px;background:#cadbe7;color:#fff;position:fixed;top:50%;left:0;cursor:pointer;">
+								<svg viewBox="0 0 24 24" width="1.5em" height="1.5em" style="margin-top:5px;"><path style="color:#fff" fill-rule="evenodd" d="M4 8l6-6h8c1.1 0 2 .9 2 2v16c0 1.1-.89 2-1.99 2H6c-1.1 0-2-.9-2-2V8zm14.01 12V4H11v5H6v11h12.01z"></path></svg>
+							</div>
 						</div>
 				</div>
 
 		<script type="text/javascript">
+
+			$(function () {
+			  $('[data-toggle="tooltip"]').tooltip();
+			})
+
+
+			$.get("{:url('paper/paperNotes')}",{'paper_id':$('#paperId').val()},function(data,err){
+				if(data.status){
+					var html = '<div class="col-md-3" id="paperNotes-wrap" style="position:fixed;top:230px;left:-500px;padding:0;background:#f0f2f5;"><div class="list-group" style="margin:0;"><li class="list-group-item text-center"><span>我的笔记</span><button class="btn btn-sm btn-warning" id="closeNotes" style="margin-left:20px;outline:none;">收起</button></li></div><div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="max-height:400px;overflow-y:scroll;">';
+
+					var noteList = JSON.parse(data.data);
+					console.log(noteList);
+					if(noteList.length > 0){
+
+						for(var i=0;i<noteList.length;i++){
+	    					html += '<div class="panel panel-default"><div class="panel-heading" role="tab" id="heading'+i+'"><h4 class="panel-title"><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse'+i+'" aria-expanded="	true" aria-controls="collapse'+i+'">Notes #'+(i+1)+'</a></h4></div><div id="collapse'+i+'" class="panel-collapse note-collapse in" role="tabpanel" aria-labelledby="heading'+i+'"><div class="panel-body">'+noteList[i].content+'</div></div></div>';
+
+		    			}
+
+		    			
+					}else{
+						html += '<div class="panel panel-default"><div class="panel-heading" role="tab" id="heading'+i+'"><h4 class="panel-title">暂无任何笔记</div>';
+					}
+
+
+					html += '</div></div>';
+					$('body').append(html);//渲染笔记
+
+					$('.note-collapse').collapse();
+
+					//收起按钮
+	    			$('#closeNotes').click(function(){
+	    				$('#paperNotes-wrap').animate({
+	    					'left':'-500px'
+	    				});
+	    			})
+				}
+				
+			})
+
+
+
+			$('#openNotes').click(function(){				
+				$('#paperNotes-wrap').animate({
+					'left':'0px'
+				});
+			})
 
 			//获取设备宽度
 			if(window.screen.width < 500){

@@ -425,4 +425,29 @@ class Consumer extends Base
 			return ['status'=>0,'message'=>'删除失败'];
 		}
 	}
+
+	//取消收藏音乐
+	public function unCollectMusic()
+	{
+		$data = Request::param();
+
+		if(Session::get('user_id') == null)
+		{
+			//没登录
+			return ['status'=>0,'message'=>'请先登录'];
+		}
+
+		$data['consumer_id'] = Session::get('user_id');
+
+		$map = [];
+		$map[] = ['consumer_id','=',$data['consumer_id']];
+		$map[] = ['id','=',$data['id']];
+
+		if(Db::table('paper_collectMusic')->delete($data)){
+			return ['status'=>1,'message'=>'删除成功'];
+		}else{
+			return ['status'=>0,'message'=>'删除失败'];
+		}
+
+	}
 }

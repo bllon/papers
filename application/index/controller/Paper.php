@@ -294,6 +294,29 @@ class Paper extends Base
 		}
 	}
 
+	//获取论文笔记
+	public function paperNotes()
+	{
+		//判断用户有没有登录
+		if(Session::get('user_id') == null){
+			return ['status'=>0,'message'=>'请先登录'];
+		}
+
+		$data = Request::param();
+		$id = $data['paper_id'];
+		$map = [];
+		$map[] = ['consumer_id','=',Session::get('user_id')];
+		$map[] = ['paper_id','=',$id];
+
+		$noteList = Db::table('paper_notes')->where($map)->select();
+
+		if($noteList){
+			return ['status'=>1,'message'=>'获取笔记成功','data'=>json_encode($noteList)];
+		}else{
+			return ['status'=>0,'message'=>'获取笔记失败'];
+		}
+	}
+
 	//添加阅读量
 	public function incPv()
 	{

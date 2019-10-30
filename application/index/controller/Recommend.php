@@ -35,7 +35,6 @@ class Recommend
 			for($i=0;$i<3;$i++){
 				array_pop($push);
 			}
-
 			$push = array_keys($push);
 			
 			// 返回推荐的论文详情
@@ -62,7 +61,7 @@ class Recommend
 				$similarity_info[$v['consumer_id']] = $this->similarity($integral_index[$consumer_id],$integral_index[$v['consumer_id']]);
 			}
 		}
-		arsort($similarity_info);
+		arsort($similarity_info);//相似的用户，键是用户id，值是相似度
 		
 		if(count($similarity_info) > 3){
 			//除去小于0.5的相似用户
@@ -70,28 +69,44 @@ class Recommend
 				if($v < 0.5){
 					unset($similarity_info[$k]);
 				}
+				if(count($similarity_info) <= 3){
+					break;
+				}
 			}
 		}
 		
 
 		//保存要推荐的论文id
 		$push = [];
-
+		
 		//取出相似用户的论文
 		foreach($similarity_info as $u=>$s){
-			// var_dump($integral[$k]);
-
+			
 			foreach($integral[$u] as $p=>$i){
-				if(!in_array($p, $this->hasIntegral($integral[$consumer_id]))){
-					$push[] = $p;
+				//推荐用户没看过的论文
+				// if(!in_array($p, $this->hasIntegral($integral[$consumer_id]))){
+				// 	$push[] = $p;
+				// }
+
+				if($i == 0){
+					continue;
 				}
-				//只选三篇
-				if(count($push)>2){
-					break;
+
+				if(array_key_exists($p, $push)){
+					//存在，判断积分值大小
+					if($i > $push[$p]){
+						$push[$p] = $i;
+					}
+				}else{
+					$push[$p] = $i;
 				}
 			}
 			
 		}
+
+		arsort($push);
+		$push = $this->hasIntegral($push);
+		$push = array_slice($push, 0,3);
 
 		// 返回推荐的论文详情
 		$pushList = Db::table('paper_lunwen')->where('id','in',$push)->select();

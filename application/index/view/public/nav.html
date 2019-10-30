@@ -55,6 +55,8 @@
 		        {/if}
 		        {if $Think.Session.user_name}
 
+		        <li style="width:50px;line-height:50px;text-align:center;font-size:16px;color:#a7b3c6;cursor:pointer;"><span class="glyphicon glyphicon-bell" data-toggle="tooltip" data-placement="bottom" title="通知"></span></li>
+
 		        <li><a href="" class="user_id" style="cursor:pointer;padding:0px;"><img src="" data-src="/static/images/userimg/1.jpg" class="img-circle user_img" style="width:40px;height:40px;margin:5px;visibility:hidden;"/></a></li>
 
 		        <li class="dropdown">
@@ -78,6 +80,10 @@
 		</nav>
 
 <script>
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip();
+	})
+
 	function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
 	
 	$('#searchPaper').on('click',function(e){
