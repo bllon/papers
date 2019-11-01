@@ -18,7 +18,6 @@ class Check extends Base
 	public function paperpass()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 
 		$token = substr(str_shuffle('qwertyuiopasdfghjklzxcvbnm1234567890'),0,15);
 		Session::set('token',$token);
@@ -30,7 +29,6 @@ class Check extends Base
 	public function doPass()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 		
 		$lock = new Lock();
 		//获取锁			
@@ -166,7 +164,6 @@ class Check extends Base
 	public function passRsult()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 
 		$id = Request::param('id');
 		$passResult = Pass::get($id);
@@ -191,7 +188,6 @@ class Check extends Base
 	//判断用户查重次数是否用完
 	public function getPassNum(){
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 
 		$id = Session::get('user_id');		
 		$consumer = Consumer::get($id);
@@ -202,11 +198,10 @@ class Check extends Base
 		}
 	}
 	
-	//ajax请求增加查重次数
+	//ajax请求减少查重剩余次数
 	public function decPassNum()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 
 		$id = Session::get('user_id');
 		$consumer = Consumer::get($id);
@@ -216,7 +211,6 @@ class Check extends Base
 	
 	//获取检测结果文档
 	public function getReport(){
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 		
 		$data = Request::param();
 		$passResult = Pass::get($data['pass_id']);
@@ -247,7 +241,6 @@ class Check extends Base
 	//生成pdf文档
 	public function toPdf(){
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/toPdf');
 		
 		//拿到当前的记录
 		$id = Request::param('id');
@@ -338,7 +331,6 @@ class Check extends Base
 
 	//查重记录
 	public function passrecord(){
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 					
 		$passList = Db::table('paper_pass')
 							->where('user_id',Session::get('user_id'))
@@ -353,7 +345,6 @@ class Check extends Base
 	//获取查重的句子
 	public function getWord(){
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/paperpass');
 
 		$id = Request::param('id');
 		$wordInfo = Word::get($id);

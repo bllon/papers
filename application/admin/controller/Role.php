@@ -28,9 +28,15 @@ class Role extends Base
 	public function addPower(){
 		$this->isLogin();
 		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
+		$data = Request::param();
+		$type = $data['r'];
+
+		$powerList = Db::table('paper_power')->order('create_time','asc')->select();
 		
 		$this->view->assign('navActive','7');
 		$this->view->assign('title','添加权限');
+		$this->view->assign('type',$type);
+		$this->view->assign('powerList',$powerList);
 		return $this->view->fetch('addPower');
 	}
 	
@@ -48,7 +54,7 @@ class Role extends Base
 		}
 		
 		if(Power::create($data)){
-			$this->success('创建成功','role/powerList');
+			$this->success('创建成功');
 		}else{
 			$this->error('创建失败,请检查bug');
 		}
@@ -208,9 +214,9 @@ class Role extends Base
 		$roles = Db::table('paper_role_power')->where('name',$roleInfo['name'])->find();
 
 		if($roleInfo['sta']){
-			$powerList = Db::table('paper_power')->where('type',1)->order('create_time','asc')->select();
+			$powerList = Db::table('paper_power')->where('type',1)->where('pid',0)->order('create_time','asc')->select();
 		}else{
-			$powerList = Db::table('paper_power')->where('type',0)->order('create_time','asc')->select();
+			$powerList = Db::table('paper_power')->where('type',0)->where('pid',0)->order('create_time','asc')->select();
 		}
 
 		$hasRole = explode(',', $roles['power_id']);
@@ -324,7 +330,7 @@ class Role extends Base
 		//查询用户角色
 		
 		$roleInfo = Db::table('paper_consumer')->where('id',$id)->find();
-		
+
 		$role = Db::table('paper_role')->where('id',$roleInfo['role_id'])->find();
 		
 		//查询所有角色
@@ -392,6 +398,28 @@ class Role extends Base
 		}	
 	}
 	
-	
+	//生成权限表
+	public function createTable()
+	{
+		$powerList = Db::table('paper_power')->where('type',1)->order('create_time','asc')->select();
+		$data = '';
+		foreach($powerList as $power){
+			// if($power['pid']){
+			// 	//子级权限
+
+			// }else{
+			// 	//父级权限
+
+			// }
+			$data .= $power['name']."\t".$power['name']."\t".$power['url']."\n";
+		}
+		// var_dump($powerList);
+		$path = dirname(dirname(dirname(__DIR__))).'/runtime/cache/power/';
+
+		if(!is_dir($path)){
+			mkdir($path,0777,true);
+		}
+		file_put_contents($path.'power-table.json', $data);
+	}
 }
 ?>

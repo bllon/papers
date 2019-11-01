@@ -12,6 +12,7 @@ use think\facade\Cookie;
 use think\Db;
 
 
+
 class Index extends Base
 {
 	//qq登录
@@ -127,7 +128,7 @@ class Index extends Base
 	//首页
     public function index()
     {			
-			
+
 		$rank_name = Request::param('rank_name');
 	
 		//查询最新通告
@@ -173,7 +174,7 @@ class Index extends Base
     	return $this->view->fetch('index');
     }
 
-    //显示方式
+    //设置论文列表显示方式
     public function displayFunc()
     {
     	if(Request::isAjax()){
@@ -194,7 +195,6 @@ class Index extends Base
 	//显示二级分类论文页面
 	public function sele()
 	{					
-		
 		$sele_name = Request::param('sele_name');
 	
 		//查询最新通告

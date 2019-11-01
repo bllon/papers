@@ -17,7 +17,6 @@ class Posts extends Base
 	//显示贴子详情
 	public function postDetail()
 	{
-		$this->hasPower(Session::get('user_id'), 'index/index/postDetail');
 
 		$postId = Request::param('id');
 		$postInfo = PostModel::get($postId);
@@ -32,7 +31,6 @@ class Posts extends Base
 
 	//显示更多贴子
 	public function morePost(){
-		$this->hasPower(Session::get('user_id'), 'index/index/postDetail');
 
 		$sta = Cookie::get('postSchool');
 		
@@ -54,7 +52,6 @@ class Posts extends Base
 
 	//选择学校区域贴子
 	public function selectPost(){
-		$this->hasPower(Session::get('user_id'), 'index/index/postDetail');
 
 		$data = Request::param('sta');
 		Cookie::set('postSchool',$data);
@@ -65,7 +62,6 @@ class Posts extends Base
 	public function commit()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/commit');
 
 		$data = Request::param();
 		$data['content'] = strip_tags($data['content']);	
@@ -85,7 +81,6 @@ class Posts extends Base
 	public function reply()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/reply');
 
 		$data = Request::param();
 		$res = $this->validate($data,'app\common\validate\Comment');

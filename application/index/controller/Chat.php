@@ -1,6 +1,6 @@
 <?php
 /*
-**聊天频道类
+**讨论房间类
 */
 namespace app\index\controller;
 use app\common\controller\Base;//导入公共控制器
@@ -13,8 +13,7 @@ class Chat extends Base
 {
 	//创建房间
 	public function createGroup(){
-		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/createGroup');		
+		$this->isLogin();		
 		
 		$roomKey = uniqid();
 		//随机生成房间名
@@ -29,7 +28,6 @@ class Chat extends Base
 	//执行创建房间
 	public function doCreateGroup(){
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/createGroup');
 
 		//接收参数
 		$data = Request::param();
@@ -75,7 +73,6 @@ class Chat extends Base
 	//加入房间
 	public function room(){
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/room');
 
 		//获取房间id
 		$id = Request::param('id');

@@ -2,7 +2,7 @@
 /*
 **任务类，生成任务队列
 */
-namespace app\index\controller;
+namespace app\common\controller;
 use think\Queue;
 use think\queue\Job;
 

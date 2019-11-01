@@ -19,7 +19,6 @@ class Paper extends Base
 	//论文详情
 	public function paperDetail()
 	{
-		$this->hasPower(Session::get('user_id'), 'index/index/paperDetail');
 
 		$id = Request::param('id');
 		
@@ -150,7 +149,6 @@ class Paper extends Base
     //获取sele页分页论文
     public function getSelePage()
     {
-    	// var_dump(Request::param());exit;
     	$page = Request::param('currentPage') ? Request::param('currentPage'):1;
 
     	Cookie::set('selePage',$page);
@@ -199,7 +197,6 @@ class Paper extends Base
 	public function collect()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/collect');
 
 		$data = Request::param();
 		if($data['action'] == 0){
@@ -222,7 +219,6 @@ class Paper extends Base
 	public function borrow()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
 
 		$data = Request::param();
 		$borrow = Borrow::where('paper_id',$data['paper_id'])->find();
@@ -320,7 +316,6 @@ class Paper extends Base
 	//添加阅读量
 	public function incPv()
 	{
-		$this->hasPower(Session::get('user_id'), 'index/index/paperDetail');
 		$paperId = Request::param('id');
 		$paper = Lunwen::where('id',$paperId)->setInc('pv');
 		return "阅读使我快乐";
@@ -401,7 +396,6 @@ class Paper extends Base
 	//论文分类页面
 	public function rank()
 	{
-		$this->hasPower(Session::get('user_id'), 'index/index/rank');
 		$seleList = Sele::all();
 		$this->view->assign('seleList',$seleList);
 		$this->view->assign('title','论文分类');

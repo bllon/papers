@@ -26,12 +26,17 @@
               			</div>
               			
               			<div class="form-group">
-              				<label for="">选择权限</label>
+                      <label for="">选择权限</label>
+                      <div class="animated-checkbox" style="display:inline;margin-left:15px;">
+                        <label>
+                          <input type="checkbox" id="selectall"><span class="label-text">全选</span>
+                        </label>
+                      </div>
               				<div class="box">
 	              				{volist name="powerList" id="power"}
 	              				<div class="animated-checkbox" style="display:inline;margin-right:5px;">
 					              <label>
-					                <input type="checkbox" name="power_id[]" value="{$power.id}" {:in_array($power.id,$hasRole) ? 'checked':''}><span class="label-text">{$power.name}</span>
+					                <input type="checkbox" name="power_id[]" value="{$power.id}" class="power-item" {:in_array($power.id,$hasRole) ? 'checked':''}><span class="label-text">{$power.name}</span>
 					              </label>
 					            </div>	
 			                	{/volist}
@@ -55,4 +60,14 @@
     {include file="public/footer2"}
     
   </body>
+
+  <script type="text/javascript">
+      $('#selectall').click(function(){
+          if($(this).prop('checked')){
+              $('.power-item').prop('checked',true);
+          }else{
+              $('.power-item').prop('checked',false);
+          }
+      })
+  </script>
 </html>

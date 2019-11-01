@@ -5,6 +5,7 @@
 **/
 
 namespace app\index\controller;
+use app\common\controller\Tools;//导入工具类
 use think\facade\Request;
 use think\Db;
 
@@ -50,7 +51,7 @@ class Recommend
 		$integral_index = $this->integral();
 
 		//索引积分表
-		$integral_index = $this->arrFormat($integral_index,false);
+		$integral_index = Tools::arrFormat($integral_index,false);
 
 
 
@@ -58,7 +59,7 @@ class Recommend
 
 		foreach($consumer as $k=>$v){
 			if($v['consumer_id'] != $consumer_id){
-				$similarity_info[$v['consumer_id']] = $this->similarity($integral_index[$consumer_id],$integral_index[$v['consumer_id']]);
+				$similarity_info[$v['consumer_id']] = Tools::similarity($integral_index[$consumer_id],$integral_index[$v['consumer_id']]);
 			}
 		}
 		arsort($similarity_info);//相似的用户，键是用户id，值是相似度
@@ -84,7 +85,7 @@ class Recommend
 			
 			foreach($integral[$u] as $p=>$i){
 				//推荐用户没看过的论文
-				// if(!in_array($p, $this->hasIntegral($integral[$consumer_id]))){
+				// if(!in_array($p, Tools::hasIntegral($integral[$consumer_id]))){
 				// 	$push[] = $p;
 				// }
 
@@ -105,7 +106,7 @@ class Recommend
 		}
 
 		arsort($push);
-		$push = $this->hasIntegral($push);
+		$push = Tools::hasIntegral($push);
 		$push = array_slice($push, 0,3);
 
 		// 返回推荐的论文详情
@@ -113,10 +114,6 @@ class Recommend
 		return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($pushList)];
 		
 	}
-
-	//推荐相似论文
-	
-
 
 	//获取积分表
 	public function integral()
@@ -153,36 +150,6 @@ class Recommend
 		return $integralTable;
 	}
 
-
-	//关联数组转索引数组
-	public function arrFormat(&$arr,$flag=true){
-
-		if(!is_array($arr)){
-			return $arr;
-		}
-		$newArr = [];
-		foreach($arr as $k=>$v){
-			if($flag){
-				$newArr[] = $this->arrFormat($v);
-			}else{
-				$newArr[$k] = $this->arrFormat($v);
-			}			
-		}
-		$arr = $newArr;
-		return $arr;
-	}
-
-	//去掉数组中为0的元素，并返回所有的键值
-	public function hasIntegral($arr){
-		foreach($arr as $k=>$v){
-			if($v == 0){
-				unset($arr[$k]);
-			}
-		}
-
-		return array_keys($arr);
-	}
-
 	//打印用户-论文积分矩阵表
 	public function print()
 	{
@@ -210,38 +177,6 @@ class Recommend
 
 		echo $table;
 
-	}
-
-
-	//计算复杂相似度	利用余弦相似度公式
-	public function similarity($arr1,$arr2)
-	{
-		//计算分子
-		$numerator = 0;
-		for($i=0;$i<count($arr1);$i++)
-		{
-			$numerator += $arr1[$i]*$arr2[$i];
-		}
-
-		//计算分母
-		$denominator1 = 0;
-		for($i=0;$i<count($arr1);$i++)
-		{
-			$denominator1 += $arr1[$i]*$arr1[$i];
-		}
-
-		$denominator2 = 0;
-		for($i=0;$i<count($arr2);$i++)
-		{
-			$denominator2 += $arr2[$i]*$arr2[$i];
-		}
-		$data = $numerator/(sqrt($denominator1)*sqrt($denominator2));
-		
-		unset($numerator);
-		unset($denominator1);
-		unset($denominator2);
-		
-		return $data;	
 	}
 
 }

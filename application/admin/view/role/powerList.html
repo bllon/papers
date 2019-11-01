@@ -18,7 +18,18 @@
           <div class="tile">
             <div class="row">
               <div class="col-md-12">
-              	<a href="{:url('role/addPower')}" class="btn btn-info btn-sm">添加权限</a>
+                <div class="bs-component">
+                  <ul class="nav nav-tabs">
+                    <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">添加权限</a>
+                      <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+                        <a href="{:url('role/addPower',['r'=>1])}" class="dropdown-item">前台权限</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{:url('role/addPower',['r'=>0])}">后台权限</a>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              	
               </div>
             </div>
            	<div class="row">

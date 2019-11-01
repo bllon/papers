@@ -4,6 +4,7 @@
 */
 namespace app\index\controller;
 use app\common\controller\Base;//导入公共控制器
+use app\common\controller\Tools;//导入工具类
 use app\common\model\Consumer as ConsumerModel;
 use app\common\model\School;
 use app\common\model\Collect;
@@ -11,8 +12,6 @@ use app\common\model\Borrow;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cookie;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 use think\Db;
 
 
@@ -130,40 +129,6 @@ class Consumer extends Base
     	}
 	}
 
-	//获取高校名称
-	public function campus()
-	{
-		$file = dirname(dirname(dirname(__DIR__))).'/public/uploads/campus/campus.txt';
-		$content = file_get_contents($file);
-		$data = json_decode($content,true);
-
-		$list = [];
-		foreach($data as $p){
-			foreach($p['cities'] as $s){
-				$list[] = $s;
-			}
-		}
-
-		$data = [];
-		$num = 0;
-		foreach($list as $row){
-			$num += count($row['universities']);
-			$data = array_merge($data,$row['universities']);
-		}
-		
-		// $list = '[';
-
-		// foreach($data as $row){
-		// 	$list .= '"'.$row.'",';
-		// }
-		// $list = rtrim($list,',');
-		// $list .= ']';
-
-		$file = dirname(dirname(dirname(__DIR__))).'/public/uploads/campus/Allcampus.txt';
-
-		file_put_contents($file, json_encode($data));
-	}
-
 	//邮箱验证
 	public function mailValidation()
 	{
@@ -175,7 +140,7 @@ class Consumer extends Base
 
 		if($sendInfo){
 			//存在记录，判断是否超过10分钟
-			if(time() < $sendInfo['time']+600)
+			if(time() < $sendInfo['time']+300)
 			{
 				return ['status'=>0,'message'=>'发送太过频繁,稍后再试'];
 			}
@@ -198,54 +163,12 @@ class Consumer extends Base
 		$data = ['email'=>$email['email'],'reg'=>$reg];
 
 
-		$res = $this->sendMail($data);
+		$res = Tools::sendMail($data);
 		
 		if($res){
 			return ['status'=>1,'message'=>'成功发送邮件,请查收'];
 		}else{
 			return ['status'=>0,'message'=>'发送邮件失败，请检查邮箱是否异常'];
-		}
-	}
-
-
-
-	//发送邮件
-	public function sendMail($data)
-	{
-		$mail = new PHPMailer(true);
-		$mail->CharSet='UTF-8';
-
-		try {
-		    //Server settings
-		    $mail->SMTPDebug = 0;                                       // Enable verbose debug output
-		    $mail->isSMTP();                                            // Set mailer to use SMTP
-		    $mail->Host       = 'smtp.163.com';  // Specify main and backup SMTP servers
-		    $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-		    $mail->Username   = 'papers_xubei@163.com';                     // SMTP username
-		    $mail->Password   = 'xubei1998526';                               // SMTP password
-		    $mail->SMTPSecure = 'tls';
-		                                     // Enable TLS encryption, `ssl` also accepted
-		    $mail->Port       = 25;                                    // TCP port to connect to
-
-		    //Recipients
-		    $mail->setFrom('papers_xubei@163.com', 'papers.com');
-		    $mail->addAddress($data['email']);               // Name is optional
-		    
-
-		    
-
-		    // Content
-		    $mail->isHTML(true);                                  // Set email format to HTML
-		    $mail->Subject = 'papers.com';
-		    $mail->Body    = "【论文库官方】 谢谢你对论文库的支持!<br>注册验证码为:".$data['reg']."<br><br>有活动将会第一时间推送给你<br>from 论文库团队";
-		    // $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
-		    $mail->send();
-		    // echo 'Message has been sent';
-		    return true;
-		} catch (Exception $e) {
-		    // echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-		    return false;
 		}
 	}
 	
@@ -268,7 +191,6 @@ class Consumer extends Base
 	public function setting()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/setting');
 
 		$userInfo = ConsumerModel::get(Session::get('user_id'));
 		Session::set('user_name',$userInfo['name']);
@@ -284,7 +206,6 @@ class Consumer extends Base
 	public function saveSetting()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/setting');
 
 		$data = Request::param();
 
@@ -328,7 +249,6 @@ class Consumer extends Base
 	//显示用户详情页
 	public function userDetail()
 	{
-		$this->hasPower(Session::get('user_id'), 'index/index/userDetail');
 
 		$id = Request::param('id');
 		
@@ -368,8 +288,6 @@ class Consumer extends Base
 	public function bcDetail()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/collect');
-		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
 
 		$collectList = Collect::where('user_id',Session::get('user_id'))->select();
 		$borrowList = Borrow::where('user_id',Session::get('user_id'))->select();
@@ -382,7 +300,6 @@ class Consumer extends Base
 	//取消预约
 	public function cancel(){
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
 
 		$data = Request::param();
 		
@@ -396,7 +313,6 @@ class Consumer extends Base
 	//归还论文
 	public function replyReturn(){
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
 
 		$id = Request::param('id');
 		$borrow = Borrow::where('id',$id)->find();
@@ -416,7 +332,6 @@ class Consumer extends Base
 	public function deleborrow()
 	{
 		$this->isLogin();
-		$this->hasPower(Session::get('user_id'), 'index/index/borrow');
 
 		$id = Request::param('id');
 		if(borrow::destroy($id)){
