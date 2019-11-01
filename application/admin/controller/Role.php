@@ -144,10 +144,10 @@ class Role extends Base
 
 		$type = (int)Request::param('role_type');
 		if($type == 1){
-			$powerList = Db::table('paper_power')->where('type',1)->order('create_time','asc')->select();
+			$powerList = Db::table('paper_power')->where('type',1)->where('pid',0)->order('create_time','asc')->select();
 			$this->view->assign('type',1);
 		}else{
-			$powerList = Db::table('paper_power')->where('type',0)->order('create_time','asc')->select();
+			$powerList = Db::table('paper_power')->where('type',0)->where('pid',0)->order('create_time','asc')->select();
 			$this->view->assign('type',0);
 		}
 		
@@ -350,7 +350,6 @@ class Role extends Base
 		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$data = Request::param();
-
 		if(Db::name('paper_consumer')->where('id',$data['id'])->update($data)){
 			$this->success('修改成功','userRoleList');
 		}else{

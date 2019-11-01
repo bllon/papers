@@ -97,7 +97,7 @@ class Index extends Base
                 'passnum'=>0,
                 'status'=>1,
                 'user_img'=>$res['figureurl_qq_2'],
-                'role_id'=>21,
+                'role_id'=>3,
                 'gender'=>$res['gender'],
             ];
             if($user = Consumer::create($data)){

@@ -5,7 +5,6 @@
 **/
 
 namespace app\index\controller;
-use app\index\controller\Jobs;
 use think\facade\Request;
 use think\facade\Session;
 use think\Db;

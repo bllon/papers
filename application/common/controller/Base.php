@@ -234,7 +234,7 @@ INFO;
 	public function showHotPaper()
 	{
 		// filed('id,lunwentitle,')
-		$hotPaper = Db::table('paper_lunwen')->field('id,lunwen_title,rank_type,lunwen_rank,pv')->order('pv','desc')->limit(10)->select();
+		$hotPaper = Db::table('paper_lunwen')->field('id,lunwen_title,rank_type,lunwen_rank,pv')->where('lunwen_terms',1)->order('pv','desc')->limit(10)->select();
 		$this->assign('hotPaper',$hotPaper);
 	}
 

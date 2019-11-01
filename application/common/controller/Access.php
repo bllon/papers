@@ -50,8 +50,9 @@ class Access
 		$json = intval($need['is_json']);
 
 		while($need['pid'] != 0){
-			$need = Db::table('paper_consumer')->where('id',$need['pid'])->find();
+			$need = Db::table('paper_power')->where('id',$need['pid'])->find();
 		}
+
 
 		//判断有无权限，是否为接口调用
 		if(!in_array($need['id'], $hasPower)){
@@ -59,11 +60,8 @@ class Access
 				echo "<script>alert('对不起，你没有此权限');history.back();window.opener=null;window.open('','_self');window.close();</script>";
 				exit;
 			}else{
-				return false;
-			}	
-		}else{
-			if($json){
-				return true;
+				echo '对不起，你没有此权限';
+				exit;
 			}	
 		}
 		
