@@ -41,13 +41,14 @@ class User extends Base
 		}
 	}
 	
+	//后台注册
 	public function register()
 	{
 		return $this->view->fetch('register');
 	}
 	
 	
-	//注册用户
+	//验证后台注册
 	public function doRegister()
 	{
 		
@@ -70,10 +71,9 @@ class User extends Base
 		}
 	}
 	
-	//用户设置
+	//管理员设置
 	public function setting()
 	{
-		$this->isLogin();
 		
 		$userInfo = UserModel::get(Session::get('admin_id'));
 		$this->view->assign('userInfo',$userInfo);
@@ -81,10 +81,10 @@ class User extends Base
 		return $this->view->fetch('setting');
 	}
 	
+	//保存管理员设置
 	public function saveSetting()
 	{
 		
-		$this->isLogin();
 		$data = Request::param();
 
 		if($data['password'] == $data['pass'] || sha1($data['password']) == $data['pass']){
@@ -121,113 +121,6 @@ class User extends Base
 			$this->success('保存成功');
 		}else{
 			$this->error('保存失败');
-		}
-	}
-
-	//文贴列表
-	public function putList()
-	{
-		//判断用户是否登录
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/user/putList');
-		
-		$postList = Db::table('paper_post')->order('create_time','asc')->paginate(10);
-		$this->view->assign('navActive','6');
-		$this->view->assign('title','贴子列表');
-		$this->view->assign('empty','没有贴子');
-		$this->view->assign('postList',$postList);
-		return $this->view->fetch('postList');
-	}
-
-	//删除文贴
-	public function delepost()
-	{
-		if(!Session::has('admin_id')){
-			return ['status'=>-1,'message'=>'你还没有登录'];
-		}
-		
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/user/putList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
-		
-		if(Session::get('admin_level') !== 1){
-			return ['status'=>-1,'message'=>'你不是超级管理员'];
-		}
-		
-		$id = Request::param('id');
-		if(PostModel::destroy($id)){
-			return ['status'=>1,'message'=>'删除成功'];
-		}else{
-			return ['status'=>0,'message'=>'删除失败'];
-		}
-	}
-
-	//编辑文贴
-	public function editpost()
-	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/user/putList');
-		
-		$id = Request::param('id');
-		$postInfo = PostModel::get($id);
-		$this->view->assign('title','编辑贴子');
-		$this->view->assign('postInfo',$postInfo);
-		$this->view->assign('navActive','6');
-		return $this->view->fetch('editPost');
-	}
-
-	//保存编辑
-	public function savePost()
-	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/user/putList');
-		
-		$data = Request::param();
-		$data['writer'] = Session::get('admin_name');
-		$data['grade'] = Session::get('admin_level');
-		$data['user_id'] = Session::get('admin_id');
-		$res = $this->validate($data,'app\admin\common\validate\Post');
-		if(true !== $res){
-			$this->error($res);
-		}
-		if(PostModel::update($data)){
-			$this->success('修改成功');
-		}else{
-			$this->error('修改失败');
-		}
-	}
-	
-	//发布文帖
-	public function putPost()
-	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/user/putList');
-		
-		$this->view->assign('title','发布贴子');
-		$this->view->assign('navActive','6');
-		return $this->view->fetch('putPost');
-	}
-	
-	//执行发布文帖
-	public function doPutPost()
-	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/user/putList');
-		
-		$data = Request::param();
-		$data['writer'] = Session::get('admin_name');
-		$data['grade'] = Session::get('admin_level');
-		$data['user_id'] = Session::get('admin_id');
-		$res = $this->validate($data,'app\admin\common\validate\Post');
-		if(true !== $res){
-			$this->error($res);
-		}
-		if(PostModel::create($data)){
-			$this->success('发贴成功');
-		}else{
-			$this->error('发贴失败');
 		}
 	}
 	

@@ -8,11 +8,9 @@ use think\Db;
 
 class Consumer extends Base
 {
+	//用户列表
 	public function consumerList()
 	{
-		//判断用户是否登录
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/consumer/consumerList');
 		
 		$consumerList = Db::table('paper_consumer')->where('school_name',Session::get('school'))->paginate(10);
 		$this->view->assign('navActive','3');
@@ -21,11 +19,9 @@ class Consumer extends Base
 	}
 	
 	
-	//冻结用户账号
+	//冻结用户
 	public function banConsumer()
 	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/consumer/consumerList');
 		
 		$consumerId = Request::param('id');		
 		$data = ['status'=>0];
@@ -41,8 +37,6 @@ class Consumer extends Base
 	//恢复用户账号
 	public function reConsumer()
 	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/consumer/consumerList');
 		
 		$consumerId = Request::param('id');	
 		$data = ['status'=>1];
@@ -58,14 +52,7 @@ class Consumer extends Base
 	
 	//删除用户
 	public function deleConsumer()
-	{
-		//权限判断
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/consumer/consumerList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
-		
+	{	
 		
 		$consumerId = Request::param('id');		
 		if(null !== $consumerId){
@@ -80,8 +67,6 @@ class Consumer extends Base
 	//搜索用户
 	public function consumerSearch()
 	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/consumer/consumerList');
 		
 		$school = Session::get('school');
 		$map = [];

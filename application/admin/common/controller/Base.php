@@ -4,6 +4,7 @@
  */
 
 namespace app\admin\common\controller;
+use app\common\controller\Access;//导入权限类
 use think\Controller;
 use app\admin\common\model\User as UserModel;
 use app\admin\common\model\Power;
@@ -17,6 +18,9 @@ class Base extends Controller
 	//初始化方法
 	protected function initialize()
 	{
+		//判断权限认证
+    	Access::adminHasPower($this->key());
+
 		$this->saveUserInfo();
 	}
 	
@@ -39,53 +43,18 @@ class Base extends Controller
 		}
 	}
 	
-	
+	//保存管理员信息
 	protected function saveUserInfo()
 	{
 		$userInfo = UserModel::get(Session::get('admin_id'));
 		$this->view->assign('userInfo',$userInfo);
 	}
-	
-	/**
-	 * 判断是否拥有权限
-	 * @param $user_id 用户id
-	 * @param $url	权限url
-	 * @param $json 是否为接口调用
-	 */
-	protected function hasPower($user_id,$url,$json = false)
+
+	//获取当前模块/控制器/方法字符串
+	public function key()
 	{
-		//查询用户的角色
-		$role = UserModel::where('id',$user_id)->find();
-
-		//角色名称
-		$roleName = getRoleName($role['role_id']);
-
-		//查询角色所拥有的的权限
-		$power = Db::table('paper_role_power')
-						->field('power_id')
-						->where('name',$roleName)
-						->find();
-		$hasPower = explode(',', $power['power_id']);
-
-		//查询所需要的权限
-		$need = Db::table('paper_power')
-						->field('id')
-						->where('url',$url)
-						->find();
-
-		//判断有无权限，是否为接口调用
-		if(!in_array($need['id'], $hasPower)){
-			if(!$json){
-				$this->error('对不起，你没有此权限');
-			}else{
-				return false;
-			}	
-		}else{
-			if($json){
-				return true;
-			}	
-		}
-		
+		return request()->module().'/'.request()->controller().'/'.request()->action();
 	}
+	
 }
 ?>

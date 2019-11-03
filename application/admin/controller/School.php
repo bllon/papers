@@ -12,9 +12,6 @@ class School extends Base
 	//学校列表
 	public function schoolList()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/school/schoolList');
 		
 		$schoolList = Db::table('paper_school')->order('create_time','asc')->paginate(10);
 		$this->view->assign('schoolList',$schoolList);
@@ -26,9 +23,6 @@ class School extends Base
 	//学校授权
 	public function giveTerms()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/school/schoolList');
 		
 		$id = Request::param('id');
 		$key = Request::param('key');
@@ -46,9 +40,6 @@ class School extends Base
 	//管理员列表
 	public function userList()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/school/schoolList');
 		
 		$userList = Db::table('paper_user')->where('is_admin',0)->order('create_time','asc')->paginate(10);
 		$this->view->assign('userList',$userList);
@@ -60,9 +51,6 @@ class School extends Base
 	//冻结管理员
 	public function userStatus()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/school/schoolList');
 		
 		$id = Request::param('id');
 		$key = Request::param('key');

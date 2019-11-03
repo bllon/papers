@@ -32,7 +32,7 @@
 		$this->is_open();
 
     	//判断权限认证
-    	Access::hasPower($this->key());
+    	Access::userHasPower($this->key());
 
     	//显示分类导航
     	$this->showNav();

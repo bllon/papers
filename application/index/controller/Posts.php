@@ -61,7 +61,6 @@ class Posts extends Base
 	//评论贴子
 	public function commit()
 	{
-		$this->isLogin();
 
 		$data = Request::param();
 		$data['content'] = strip_tags($data['content']);	
@@ -80,7 +79,6 @@ class Posts extends Base
 	//回复评论
 	public function reply()
 	{
-		$this->isLogin();
 
 		$data = Request::param();
 		$res = $this->validate($data,'app\common\validate\Comment');

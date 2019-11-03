@@ -38,10 +38,12 @@
                     <td>{$lunwen.addtime|date="Y/m/d"}</td>
                     <td colspan="2" class="text-center">
                     	{if $lunwen.lunwen_terms}
-                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>0])}"><button class="btn btn-sm btn-primary" type="button">不公开</button></a>
+                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>0])}"><button class="btn btn-sm btn-primary" type="button">已公开</button></a>
                     	{else /}
-                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>1])}"><button class="btn btn-sm btn-warning" type="button">公开</button></a>
+                    	<a href="{:url('paper/giveTerms',['id'=>$lunwen.id,'key'=>1])}"><button class="btn btn-sm btn-warning" type="button">未公开</button></a>
                     	{/if}
+                      &nbsp;
+                      <a href="{:url('paper/editPaper',['id'=>$lunwen.id])}"><button class="btn btn-sm btn-info" type="button">编辑</button></a>
                     	&nbsp;
                     	<a href="#" class="deleLunwen" lunwenId="{$lunwen.id}"><button class="btn btn-sm btn-danger" type="button">删除</button></a>
                     </td>

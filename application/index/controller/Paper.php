@@ -196,7 +196,6 @@ class Paper extends Base
     //收藏论文
 	public function collect()
 	{
-		$this->isLogin();
 
 		$data = Request::param();
 		if($data['action'] == 0){
@@ -218,7 +217,6 @@ class Paper extends Base
 	//借阅论文
 	public function borrow()
 	{
-		$this->isLogin();
 
 		$data = Request::param();
 		$borrow = Borrow::where('paper_id',$data['paper_id'])->find();
@@ -324,7 +322,6 @@ class Paper extends Base
 	//处理论文上传
 	public function savePaper()
 	{
-		$this->isLogin();
 
 		if(Request::isPost()){
 			//1.获取用户提交的文章信息

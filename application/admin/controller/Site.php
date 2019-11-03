@@ -16,9 +16,6 @@ class Site extends Base
 	//系统设置
 	public function index()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
 		
 		$siteInfo = SiteModel::get(['status'=>1]);
 		$this->view->assign('siteInfo',$siteInfo);
@@ -33,9 +30,7 @@ class Site extends Base
 	//保存站点的修改信息
 	public function save()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
+
 		//1.获取到数据
 		$data = Request::param();
 		if(isset($data['is_open'])){
@@ -64,9 +59,6 @@ class Site extends Base
 	//发布通知
 	public function addNotice()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
 		
 		$data = Request::param();
 		$rule = [
@@ -90,9 +82,6 @@ class Site extends Base
 	//关闭通告
 	public function closeNotice()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
 		
 		$id = Request::param('id');
 		$data = ['status'=>0];
@@ -106,9 +95,6 @@ class Site extends Base
 	//删除通告
 	public function deleNotice()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
 		
 		$id = Request::param('id');
 		if(Notice::destroy($id)){
@@ -121,9 +107,6 @@ class Site extends Base
 	//缓存管理
 	public function cacheSet()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
 		
 		//1.实例化对象
 		$redis = new \Redis();
@@ -150,13 +133,7 @@ class Site extends Base
 	//设置缓存
 	public function setCache()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/site/index',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
-		
+
 		//1.实例化对象
 		$redis = new \Redis();
 		//2.定义主机和端口
@@ -177,12 +154,6 @@ class Site extends Base
 	//清除缓存
 	public function clearCache()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/site/index',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		//1.实例化对象
 		$redis = new \Redis();
@@ -204,9 +175,6 @@ class Site extends Base
 	//查看缓存
 	public function getCache()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
 		
 		//1.实例化对象
 		$redis = new \Redis();
@@ -226,9 +194,6 @@ class Site extends Base
 	//添加论文
 	public function addPaper()
 	{
-		$this->isLogin();
-		$this->is_admin();
-		$this->hasPower(Session::get('admin_id'), 'admin/site/index');
 		
 		$schoolList = School::all();
 		$this->view->assign('title','添加论文');
@@ -240,8 +205,6 @@ class Site extends Base
 	//doAddPaper
 	public function doAddPaper()
 	{
-		$this->isLogin();
-		$this->is_admin();
 		$data = Request::param();
 		$number =$data['number']/15;
 		include "../extend/querylist/vendor/autoload.php";

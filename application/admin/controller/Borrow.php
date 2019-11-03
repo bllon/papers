@@ -11,9 +11,6 @@ class Borrow extends Base
 	//借阅列表
 	public function borrowList()
 	{
-		//权限判断
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/borrow/borrowList');
 		
 		//两表联查，查出当前学校的借阅列表
 		$borrowList = Db::table('paper_consumer')->alias('u')->join('paper_borrow b','b.user_id = u.id')->field('b.id,b.user_id,b.paper_id,b.status,b.create_time,b.update_time')->where('u.school_name',Session::get('school'))->paginate(10);
@@ -23,12 +20,8 @@ class Borrow extends Base
 		return $this->view->fetch('borrowList');
 	}
 	
-	//确定借阅
+	//审核借阅
 	public function doborrow(){
-		
-		//权限判断
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/borrow/borrowList');
 		
 		$borrowId = Request::param('id');
 		
@@ -65,12 +58,8 @@ class Borrow extends Base
 		}
 	}
 	
-	//确定归还
+	//审核归还
 	public function doreturn(){
-		
-		//权限判断
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/borrow/borrowList');
 		
 		$borrowId = Request::param('id');
 		
@@ -83,18 +72,9 @@ class Borrow extends Base
 		}
 	}
 	
-	//删除借阅信息
+	//删除借阅记录
 	public function deleborrow()
 	{
-		if(!Session::has('admin_id')){
-			return ['status'=>-1,'message'=>'你还没有登录'];
-		}
-		
-		//判断权限
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/borrow/borrowList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		$id = Request::param('id');
 		if(borrowModel::destroy($id)){

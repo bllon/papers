@@ -16,7 +16,6 @@ class Comunity extends Base
 
 	//社区首页
 	public function index(){
-		$this->isLogin();
 
 		//获取所有房间
 		$groupList = Db::table('paper_group')->select();

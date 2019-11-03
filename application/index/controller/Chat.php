@@ -12,8 +12,7 @@ use think\Db;
 class Chat extends Base
 {
 	//创建房间
-	public function createGroup(){
-		$this->isLogin();		
+	public function createGroup(){	
 		
 		$roomKey = uniqid();
 		//随机生成房间名
@@ -27,7 +26,6 @@ class Chat extends Base
 
 	//执行创建房间
 	public function doCreateGroup(){
-		$this->isLogin();
 
 		//接收参数
 		$data = Request::param();
@@ -72,7 +70,6 @@ class Chat extends Base
 
 	//加入房间
 	public function room(){
-		$this->isLogin();
 
 		//获取房间id
 		$id = Request::param('id');

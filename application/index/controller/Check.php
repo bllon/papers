@@ -17,7 +17,6 @@ class Check extends Base
 	//论文查重页面
 	public function paperpass()
 	{
-		$this->isLogin();
 
 		$token = substr(str_shuffle('qwertyuiopasdfghjklzxcvbnm1234567890'),0,15);
 		Session::set('token',$token);
@@ -28,7 +27,6 @@ class Check extends Base
 	//执行查重，并返回结果
 	public function doPass()
 	{
-		$this->isLogin();
 		
 		$lock = new Lock();
 		//获取锁			
@@ -163,7 +161,6 @@ class Check extends Base
 	//查重结果页面
 	public function passRsult()
 	{
-		$this->isLogin();
 
 		$id = Request::param('id');
 		$passResult = Pass::get($id);
@@ -187,7 +184,6 @@ class Check extends Base
 	
 	//判断用户查重次数是否用完
 	public function getPassNum(){
-		$this->isLogin();
 
 		$id = Session::get('user_id');		
 		$consumer = Consumer::get($id);
@@ -201,7 +197,6 @@ class Check extends Base
 	//ajax请求减少查重剩余次数
 	public function decPassNum()
 	{
-		$this->isLogin();
 
 		$id = Session::get('user_id');
 		$consumer = Consumer::get($id);
@@ -240,7 +235,6 @@ class Check extends Base
 	
 	//生成pdf文档
 	public function toPdf(){
-		$this->isLogin();
 		
 		//拿到当前的记录
 		$id = Request::param('id');
@@ -344,7 +338,6 @@ class Check extends Base
 
 	//获取查重的句子
 	public function getWord(){
-		$this->isLogin();
 
 		$id = Request::param('id');
 		$wordInfo = Word::get($id);

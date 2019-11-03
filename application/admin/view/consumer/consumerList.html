@@ -34,7 +34,7 @@
                     <td>{$consumer.id}</td>
                     <td>{$consumer.name}</td>
                     <td>{$consumer.email}</td>
-                    <td>{$consumer.create_time}</td>
+                    <td>{$consumer.create_time|date='Y/m/d'}</td>
                     {if $consumer.status}
                     <td class="text-success">正常</td>
                     {else /}

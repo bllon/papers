@@ -18,10 +18,6 @@ class Paper extends Base
 	//论文列表
 	public function lunwenList(){
 		
-		//权限判断
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList');
-		
 //		$lunwenList = Lunwen::where('school_name',Session::get('school'))->select();
 		$lunwenList = Db::table('paper_lunwen')
 								->where('school_name',Session::get('school'))
@@ -36,8 +32,6 @@ class Paper extends Base
 	
 	//论文分类
 	public function rankList(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList');
 		
 		$rankList = Rank::where('school_name',Session::get('school'))->select();
 		$seleList = Sele::where('school_name',Session::get('school'))->select();
@@ -51,8 +45,6 @@ class Paper extends Base
 	
 	//论文搜索
 	public function search(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList');
 		
 		$school = Session::get('school');
 		$map = [];
@@ -99,8 +91,6 @@ class Paper extends Base
 	
 	//论文上传
 	public function uploadLunwen(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList');
 		
 		$this->view->assign('title','论文上传');
 		$rankList = Rank::where('school_name',Session::get('school'))->select();
@@ -122,11 +112,6 @@ class Paper extends Base
 	//获取分类
 	public function getSele()
 	{
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 
 		$rankType = Request::param('rank_type');
 		$map = [];
@@ -138,8 +123,6 @@ class Paper extends Base
 	
 	//执行论文上传
 	public function doUploadLunwen(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList');
 
 		$data = Request::param();
 		$reul = 'app\admin\common\validate\Lunwen';
@@ -207,8 +190,6 @@ class Paper extends Base
 	//论文公开权限
 	public function giveTerms()
 	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList');
 		
 		$id = Request::param('id');
 		$key = Request::param('key');
@@ -222,18 +203,117 @@ class Paper extends Base
 			$this->error('操作失败');
 		}
 	}
+
+	//编辑论文
+	public function editPaper()
+	{
+		$data = Request::param();
+		$paperInfo = Lunwen::where('id',$data['id'])->find();
+
+		$this->view->assign('title','编辑论文');
+		$rankList = Rank::where('school_name',Session::get('school'))->select();
+		
+		$map = [];
+		$map[] = ['school_name','=',Session::get('school')];
+		
+		if(0 !== count($rankList)){
+			$map[] = ['sele_type','=',$rankList[0]['rank_name']];
+		}
+		
+		$seleList = Sele::where($map)->select();
+		$this->view->assign('rankList',$rankList);
+		$this->view->assign('seleList',$seleList);
+		$this->view->assign('paperInfo',$paperInfo);
+		$this->view->assign('navActive','1');
+
+		return $this->view->fetch('editPaper');
+	}
+
+	//保存编辑论文
+	public function doEditPaper()
+	{
+
+		$data = Request::param();
+
+		$reul = 'app\admin\common\validate\Lunwen';
+		$res = $this->validate($data,$reul);
+		if(true !== $res){
+			$this->error($res);
+		}
+		
+		$data['addtime'] = strtotime($data['addtime']);
+		
+		$file = Request::file();
+
+		if(!empty($file)){
+
+			if(!empty($file['lunwen_img'])){
+				//上传标题图片
+				$titlePath = "uploads/lunwen/title_img/";
+
+				$title_img = Request::file('lunwen_img');
+				
+				$info = $title_img->move($titlePath);
+				if($info){
+					//成功上传，保存缩略图
+					$filepath = "uploads/lunwen/title_img/".$info->getSaveName();
+					$image = \think\Image::open($filepath);
+					$image->thumb(3000, 2000,\think\Image::THUMB_SCALING)->save($filepath);
+					$data['lunwen_img'] = "/uploads/lunwen/title_img/".$info->getSaveName();
+					
+				}else{
+					$this->error($info->getError());
+				}
+			}
+
+			
+			
+			
+			
+			//上传论文图片
+	//		$thumb_img = Request::file('thumb_img');
+	//		
+	//		foreach($thumb_img as $img){
+	//			$lunwenPath = "uploads/lunwen/thumb/";
+	//			$info = $img->move($lunwenPath);
+	//			if($info){
+	//				$filepath = "uploads/lunwen/thumb/".$info->getSaveName();
+	//				$image = \think\Image::open($filepath);
+	//				$image->thumb(3000, 2000,\think\Image::THUMB_SCALING)->save($filepath);
+	//				$data['thumb_img'][] = "/uploads/lunwen/thumb/".$info->getSaveName();
+	//			}else{
+	//				$this->error($info->getError());
+	//			}
+	//		}
+			
+			if(!empty($file['lunwen_file'])){
+				//上传论文文件
+				$paperPath = "uploads/lunwen/pdf/";
+				$title_file = Request::file('lunwen_file');
+
+				$info = $title_file->move($paperPath);
+				if($info){
+					$data['lunwen_file'] = "/uploads/lunwen/pdf/".$info->getSaveName();	
+				}else{
+					$this->error($info->getError());
+				}
+			}
+		}
+		
+		
+		
+		$data['school_name'] = Session::get('school');
+
+		if(Lunwen::update($data)){
+			$this->success('保存成功');
+		}else{
+			$this->error('保存失败');
+		}
+	}
 	
 	//删除论文
 	public function deleLunwen()
 	{
-
-		if(!Session::has('admin_id')){
-			return ['status'=>-1,'message'=>'你还没有登录'];
-		}
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		$id = Request::param('id');
 		if(Lunwen::destroy($id)){
@@ -246,11 +326,6 @@ class Paper extends Base
 	//添加一级分类
 	public function addRank()
 	{
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		if(Request::isAjax()){
 			$rank = Request::param('rank_type');
@@ -276,11 +351,6 @@ class Paper extends Base
 	//添加二级分类
 	public function addSele()
 	{
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		if(Request::isAjax()){
 			$seleName = Request::param('sele_name');
@@ -308,11 +378,6 @@ class Paper extends Base
 	//删除一级分类
 	public function deleRank()
 	{
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		$rankId = Request::param('id');
 		
@@ -328,11 +393,6 @@ class Paper extends Base
 	//删除二级分类
 	public function deleSele()
 	{
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		$seleId = Request::param('id');
 		
@@ -348,11 +408,6 @@ class Paper extends Base
 	//编辑一级分类
 	public function editRank()
 	{
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		if(Request::isAjax()){
 			$id = Request::param('id');
@@ -393,11 +448,6 @@ class Paper extends Base
 	//编辑二级分类
 	public function editSele()
 	{
-		$this->isLogin();
-		$res = $this->hasPower(Session::get('admin_id'), 'admin/Paper/lunwenList',true);
-		if(false == $res){
-			return ['status'=>0,'message'=>'没有此权限'];
-		}
 		
 		if(Request::isAjax()){
 			$id = Request::param('id');

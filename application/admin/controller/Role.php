@@ -11,27 +11,28 @@ use think\Db;
 
 class Role extends Base
 {
-	//权限管理
+	//权限列表
 	public function powerList(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
-		$powerList = Db::table('paper_power')->order('create_time','asc')->paginate(5);
+		$data = Request::param();
+		$type = isset($data['r']) ? $data['r'] : 1;
+
+		$powerList = Db::table('paper_power')->where('type',$type)->order('create_time','asc')->paginate(5);
 		
 		$this->view->assign('navActive','7');
 		$this->view->assign('powerList',$powerList);
+		$this->view->assign('type',$type);
 		$this->view->assign('title','权限管理');
 		return $this->view->fetch('powerList');
 	}
 	
 	//添加权限
 	public function addPower(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
+
 		$data = Request::param();
 		$type = $data['r'];
 
-		$powerList = Db::table('paper_power')->order('create_time','asc')->select();
+		$powerList = Db::table('paper_power')->where('type',$type)->order('create_time','asc')->select();
 		
 		$this->view->assign('navActive','7');
 		$this->view->assign('title','添加权限');
@@ -42,8 +43,6 @@ class Role extends Base
 	
 	//执行添加权限
 	public function doAddPower(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		$data = Request::param();
 		
@@ -63,27 +62,31 @@ class Role extends Base
 	
 	//编辑权限
 	public function editPower(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		$id = Request::param('id');
 		
 		$powerInfo = Power::get($id);
+		$type = $powerInfo['type'];
+		$powerList = Db::table('paper_power')->where('type',$type)->order('create_time','asc')->select();
 		
 		$this->view->assign('navActive','7');
 		$this->view->assign('title','编辑权限');
 		$this->view->assign('powerInfo',$powerInfo);
+		$this->view->assign('powerList',$powerList);
+		$this->view->assign('type',$type);
 		return $this->view->fetch('editPower');
 	}
 	
 	//执行修改权限
 	public function doEditPower(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		$data = Request::param();
 		
 		$res = $this->validate($data,'app\admin\common\validate\Power');
+
+		if(!isset($data['is_json'])){
+			$data['is_json'] = 0;
+		}
 		
 		if(true !== $res){
 			$this->error($res);
@@ -98,8 +101,6 @@ class Role extends Base
 
 	//删除权限
 	public function delPower(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$id = Request::param('id');
 		
@@ -116,8 +117,6 @@ class Role extends Base
 	
 	//角色列表
 	public function roleList(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$roleList = Db::table('paper_role')->paginate(5);
 		
@@ -126,21 +125,9 @@ class Role extends Base
 		$this->view->assign('title','角色管理');
 		return $this->view->fetch('roleList');
 	}
-
-	//选择添加权限的模块，前台/后台
-	public function selectRoleModel(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
-
-		$this->view->assign('navActive','7');
-		$this->view->assign('title','添加角色');
-		return $this->view->fetch('selectRoleModel');
-	}
 	
 	//添加角色
 	public function addRole(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$type = (int)Request::param('role_type');
 		if($type == 1){
@@ -155,11 +142,17 @@ class Role extends Base
 		$this->view->assign('powerList',$powerList);
 		return $this->view->fetch('addRole');
 	}
+
+	//选择添加权限的模块，前台/后台
+	public function selectRoleModel(){
+
+		$this->view->assign('navActive','7');
+		$this->view->assign('title','添加角色');
+		return $this->view->fetch('selectRoleModel');
+	}
 	
 	//执行添加角色
 	public function doAddRole(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		$data = Request::param();
 		
@@ -205,8 +198,6 @@ class Role extends Base
 	
 	//编辑角色
 	public function editRole(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$id = Request::param('role_id');
 		$roleInfo = Db::table('paper_role')->where('id',$id)->find();
@@ -233,8 +224,6 @@ class Role extends Base
 	
 	//执行修改角色
 	public function doEditRole(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$data = Request::param();
 		
@@ -293,10 +282,8 @@ class Role extends Base
 				
 	}
 	
-	//前台用户角色管理
+	//前台用户角色列表
 	public function userRoleList(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		$userRoleList = Db::table('paper_consumer')->field('id,name,role_id,create_time')->order('create_time','asc')->paginate(10);
 		// var_dump($userRoleList);exit;
@@ -306,10 +293,8 @@ class Role extends Base
 		return $this->view->fetch('userRoleList');
 	}
 	
-	//后台用户角色管理
+	//后台用户角色列表
 	public function adminRoleList(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		$adminRoleList = Db::table('paper_user')->field('id,username,role_id,create_time')->order('create_time','asc')->paginate(5);
 		$this->view->assign('navActive','7');
@@ -321,8 +306,6 @@ class Role extends Base
 	
 	//编辑前台用户角色
 	public function editUserRole(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		//获取用户id
 		$id = Request::param('id');
@@ -343,11 +326,9 @@ class Role extends Base
 		return $this->view->fetch('editUserRole');
 	}
 	
-	//修改前台用户角色
+	//执行修改前台用户角色
 	public function doEditUserRole()
 	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$data = Request::param();
 		if(Db::name('paper_consumer')->where('id',$data['id'])->update($data)){
@@ -360,8 +341,6 @@ class Role extends Base
 	
 	//编辑后台用户角色
 	public function editAdminRole(){
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 		
 		//获取用户id
 		$id = Request::param('id');
@@ -386,8 +365,6 @@ class Role extends Base
 	//修改后台用户角色
 	public function doEditAdminRole()
 	{
-		$this->isLogin();
-		$this->hasPower(Session::get('admin_id'), 'admin/role/powerList');
 
 		$data = Request::param();
 		if(Db::name('paper_user')->where('id',$data['id'])->update($data)){

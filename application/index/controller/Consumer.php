@@ -190,7 +190,6 @@ class Consumer extends Base
 	//用户设置
 	public function setting()
 	{
-		$this->isLogin();
 
 		$userInfo = ConsumerModel::get(Session::get('user_id'));
 		Session::set('user_name',$userInfo['name']);
@@ -205,7 +204,6 @@ class Consumer extends Base
 	//修改用户设置
 	public function saveSetting()
 	{
-		$this->isLogin();
 
 		$data = Request::param();
 
@@ -287,7 +285,6 @@ class Consumer extends Base
 	//显示借阅和收藏详情
 	public function bcDetail()
 	{
-		$this->isLogin();
 
 		$collectList = Collect::where('user_id',Session::get('user_id'))->select();
 		$borrowList = Borrow::where('user_id',Session::get('user_id'))->select();
@@ -299,7 +296,6 @@ class Consumer extends Base
 
 	//取消预约
 	public function cancel(){
-		$this->isLogin();
 
 		$data = Request::param();
 		
@@ -312,7 +308,6 @@ class Consumer extends Base
 
 	//归还论文
 	public function replyReturn(){
-		$this->isLogin();
 
 		$id = Request::param('id');
 		$borrow = Borrow::where('id',$id)->find();
@@ -331,7 +326,6 @@ class Consumer extends Base
 	//删除历史借阅
 	public function deleborrow()
 	{
-		$this->isLogin();
 
 		$id = Request::param('id');
 		if(borrow::destroy($id)){
@@ -345,12 +339,6 @@ class Consumer extends Base
 	public function unCollectMusic()
 	{
 		$data = Request::param();
-
-		if(Session::get('user_id') == null)
-		{
-			//没登录
-			return ['status'=>0,'message'=>'请先登录'];
-		}
 
 		$data['consumer_id'] = Session::get('user_id');
 
