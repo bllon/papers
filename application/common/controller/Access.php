@@ -45,6 +45,8 @@ class Access
 						->where('url',$url)
 						->find();
 
+		var_dump($url);
+
 		$json = intval($need['is_json']);
 
 		while($need['pid'] != 0){
@@ -52,21 +54,50 @@ class Access
 		}
 
 
+
 		//判断有无权限，是否为接口调用
 		if(!in_array($need['id'], $hasPower)){
 			$html = <<< 'INFO'
-<body style="background-color:#333">
-<h1 style="color:#eee;text-align:center;margin:200px">没有权限...</h1>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<meta name="description" content="Vali is a responsive and free admin theme built with Bootstrap 4, SASS and PUG.js. It's fully customizable and modular.">
+    <!-- Twitter meta-->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:site" content="@pratikborsadiya">
+    <meta property="twitter:creator" content="@pratikborsadiya">
+    <!-- Open Graph Meta-->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Vali Admin">
+    <meta property="og:title" content="Vali - Free Bootstrap 4 admin theme">
+    <meta property="og:url" content="http://pratikborsadiya.in/blog/vali-admin">
+    <meta property="og:image" content="http://pratikborsadiya.in/blog/vali-admin/hero-social.png">
+    <meta property="og:description" content="Vali is a responsive and free admin theme built with Bootstrap 4, SASS and PUG.js. It's fully customizable and modular.">
+    <title>Error Page - paper</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="shortcut icon" href="/static/images/3.ico" />
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/docs/css/main.css">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">      
+  </head>
+  <body>
+      <div class="page-error" style="background:#f0f2f5;">
+        <h1><i class="fa fa-exclamation-circle"></i> Error 500: unauthorized...</h1>
+        <p>Not authorized by the administrator.</p>
+      </div>
+  </body>
+</html>
 INFO;
-			echo $html;
-			exit;
+
 			if(!$json){
-				echo "<script>alert('对不起，你没有此权限');history.back();window.opener=null;window.open('','_self');window.close();</script>";
+				echo $html;
 				exit;
 			}else{
-				echo '对不起，你没有此权限';
-				exit;
+				exit;;
 			}	
 		}
 		
@@ -115,20 +146,47 @@ INFO;
 		//判断有无权限，是否为接口调用
 		if(!in_array($need['id'], $hasPower)){
 			$html = <<< 'INFO'
-<body style="background-color:#333">
-<h1 style="color:#eee;text-align:center;margin:200px">没有权限...</h1>
-</body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<meta name="description" content="Vali is a responsive and free admin theme built with Bootstrap 4, SASS and PUG.js. It's fully customizable and modular.">
+    <!-- Twitter meta-->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:site" content="@pratikborsadiya">
+    <meta property="twitter:creator" content="@pratikborsadiya">
+    <!-- Open Graph Meta-->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Vali Admin">
+    <meta property="og:title" content="Vali - Free Bootstrap 4 admin theme">
+    <meta property="og:url" content="http://pratikborsadiya.in/blog/vali-admin">
+    <meta property="og:image" content="http://pratikborsadiya.in/blog/vali-admin/hero-social.png">
+    <meta property="og:description" content="Vali is a responsive and free admin theme built with Bootstrap 4, SASS and PUG.js. It's fully customizable and modular.">
+    <title>Error Page - paper</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="shortcut icon" href="/static/images/3.ico" />
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="/static/docs/css/main.css">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">      
+  </head>
+  <body>
+      <div class="page-error" style="background:#f0f2f5;">
+        <h1><i class="fa fa-exclamation-circle"></i> Error 500: unauthorized...</h1>
+        <p>Not authorized by the administrator.</p>
+      </div>
+  </body>
+</html>
 INFO;
-			echo $html;
-			exit;
+			
 
 			if(!$json){
 
-				echo "<script>alert('对不起，你没有此权限');history.back();window.opener=null;window.open('','_self');window.close();</script>";
+				echo $html;
 				exit;
 			}else{
-				echo "<!DOCTYPE html><html><head><title>没有权限</title></head><body><h1>没有权限</h1></body></html>";
-				//跳转到无权限的信息页
 				exit;
 			}	
 		}

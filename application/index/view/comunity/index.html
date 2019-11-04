@@ -23,14 +23,14 @@
 								<div class="box" style="width:100%;height:150px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
 									<h4 style="margin-top:40px;">{$group.name}</h4>
 									<p class="text-warning" style="padding:0px 20px;font-size:12px;">{$group.title}</p>
-									<a href="{:url('chat/room',['id'=>$group.id])}" target="_blank" class="btn btn-info btn-sm">加入</a>
+									<a href="{:url('chat/room',['id'=>$group.id])}" target="_blank" class="croom btn btn-info btn-sm">加入</a>
 								</div>
 							</div>
 							{/volist}
 							<div class="col-md-3 col-xs-12">
 								<div class="box" style="width:100%;height:150px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
 									<h3 style="margin-top:50px;"><span class="glyphicon glyphicon-plus"></span></h3>
-									<a href="{:url('chat/createGroup')}" target="_blank" class="btn btn-success btn-sm">创建</a>
+									<a href="{:url('chat/createGroup')}" target="_blank" class="croom btn btn-success btn-sm">创建</a>
 								</div>
 							</div>
 						</div>
@@ -167,6 +167,13 @@
 			if(window.screen.width < 300){
 				$('.menu').remove();
 			}
+
+			$('.croom').on('click',function(e){
+				if($('#userId').val() == ''){
+					e.preventDefault();
+					alert('对不起，你还没有登录');
+				}
+			})
 
 			//菜单
 			$('.menu li').on('click',function(){

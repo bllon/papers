@@ -402,8 +402,12 @@
 
 			//1秒后推送论文
 			setTimeout(function(){
+				// if($('#userId').val() == ''){
+				// 	return false;
+				// }
 
 		    	$.get("{:url('recommend/push')}",{'consumer_id':$('#userId').val()},function(data){
+		    		console.log(data);
 		    		if(data.status){
 		    			//成功获取推荐论文
 		    			//渲染论文

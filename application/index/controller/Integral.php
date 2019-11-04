@@ -13,6 +13,7 @@ class Integral
 {
 	//用户对应的文章积分变化
 	public function paperIntegral(){
+
 		$type = Request::param('type');
 		$id = Request::param('id');
 
