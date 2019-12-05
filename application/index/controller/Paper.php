@@ -304,6 +304,10 @@ class Paper extends Base
 
 		$noteList = Db::table('paper_notes')->where($map)->select();
 
+		if($noteList == []){
+			return ['status'=>1,'message'=>'获取笔记成功','data'=>'{}'];
+		}
+
 		if($noteList){
 			return ['status'=>1,'message'=>'获取笔记成功','data'=>json_encode($noteList)];
 		}else{

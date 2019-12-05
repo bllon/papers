@@ -25,6 +25,15 @@ use app\common\model\Comment;
 use app\api\controller\Elastic;
 use app\api\controller\CosineSimilar;
 
+//获取用户所在学校
+if(!function_exists('getSchoolOfConsumer'))
+{
+	function getSchoolOfConsumer($id)
+	{
+		$userInfo =Consumer::get($id);
+		return $userInfo['school_name'];
+	}
+}
 
 //根据主键获取权限名称
 if(!function_exists('getPowerName'))

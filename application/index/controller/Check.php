@@ -71,7 +71,7 @@ class Check extends Base
 			foreach($res as $row){
 //					$lunwenList = Db::query("SELECT * FROM paper_lunwen WHERE MATCH (lunwen_title) AGAINST ('".$row."');");
 				if(mb_strlen($row)>=2){
-					$map[] = '%'.$row.'%';
+					$map[] = $row.'%';
 				}
 			}
 			

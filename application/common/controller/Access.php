@@ -45,15 +45,11 @@ class Access
 						->where('url',$url)
 						->find();
 
-		var_dump($url);
-
 		$json = intval($need['is_json']);
 
 		while($need['pid'] != 0){
 			$need = Db::table('paper_power')->where('id',$need['pid'])->find();
 		}
-
-
 
 		//判断有无权限，是否为接口调用
 		if(!in_array($need['id'], $hasPower)){
@@ -92,6 +88,8 @@ class Access
   </body>
 </html>
 INFO;
+
+exit;
 
 			if(!$json){
 				echo $html;

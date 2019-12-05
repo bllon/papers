@@ -17,6 +17,10 @@ class Integral
 		$type = Request::param('type');
 		$id = Request::param('id');
 
+		if(Session::get('user_id') == null){
+			return ['statu'=>0,'message'=>'没有登录'];
+		}
+
 		//对应的积分变化类型
 		$integralTable = array(
 			1 => 0.1,	//点击进入详情

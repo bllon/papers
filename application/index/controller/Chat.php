@@ -61,7 +61,7 @@ class Chat extends Base
 		];			
 		$res = Db::name('paper_group')->data($data)->insert();
 		if($res){
-			$this->redirect('index/comunity',2,'创建成功');
+			$this->redirect('comunity/index',2,'创建成功');
 		}else{
 			$this->error('创建失败');
 		}

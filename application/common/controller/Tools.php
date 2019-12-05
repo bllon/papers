@@ -159,7 +159,7 @@ class Tools
 	}
 
 	//关联数组转索引数组
-	public function arrFormat(&$arr,$flag=true){
+	static public function arrFormat(&$arr,$flag=true){
 
 		if(!is_array($arr)){
 			return $arr;
@@ -167,9 +167,9 @@ class Tools
 		$newArr = [];
 		foreach($arr as $k=>$v){
 			if($flag){
-				$newArr[] = $this->arrFormat($v);
+				$newArr[] = self::arrFormat($v);
 			}else{
-				$newArr[$k] = $this->arrFormat($v);
+				$newArr[$k] = self::arrFormat($v);
 			}			
 		}
 		$arr = $newArr;
@@ -177,7 +177,7 @@ class Tools
 	}
 
 	//去掉数组中为0的元素，并返回所有的键值
-	public function hasIntegral($arr){
+	static public function hasIntegral($arr){
 		foreach($arr as $k=>$v){
 			if($v == 0){
 				unset($arr[$k]);

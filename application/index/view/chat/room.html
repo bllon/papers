@@ -130,7 +130,7 @@
 				$(".box").scrollTop($(".box")[0].scrollHeight);
 
 				//连接websocket服务端
-				var ws = new WebSocket("ws://119.29.96.243:1998");
+				var ws = new WebSocket("ws://127.0.0.1:1998");
 
 				ws.onopen = function(evt){
 					// alert('连接成功');
@@ -149,7 +149,7 @@
 				ws.onclose = function(evt){
 					console.log('服务器断开连接');
 					alert('服务器断开连接');
-					window.location.href = "{:url('index/comunity')}";
+					window.location.href = "{:url('comunity/index')}";
 				}
 
 				//监听连接错误信息
@@ -194,7 +194,7 @@
 						if($('#userName').val() == msg.data){
 							ws.close();
 							// alert('你的会话已转移到新窗口');
-							// window.location.href = "{:url('index/comunity')}";
+							// window.location.href = "{:url('comunity/index')}";
 
 						}
 					}
@@ -265,7 +265,7 @@
 
 						if($('#userName').val() == msg.data){
 							alert('你已经被管理员踢出房间');
-							window.location.href = "{:url('index/comunity')}";
+							window.location.href = "{:url('comunity/index')}";
 						}
 
 						//重新获取黑名单列表
@@ -331,7 +331,7 @@
 					if(msg.type == 5){
 						if($('#creator').val() != $('#userName').val()){
 							alert('该房间已经被解散');
-							window.location.href = "{:url('index/comunity')}";
+							window.location.href = "{:url('comunity/index')}";
 						}
 					}
 
@@ -404,7 +404,7 @@
 							var data = {'type':5,'message':'解散房间','roomKey':$('#roomKey').val()};
 							
 							ws.send(JSON.stringify(data));
-							window.location.href = "{:url('index/comunity')}";
+							window.location.href = "{:url('comunity/index')}";
 						}
 					})
 				})

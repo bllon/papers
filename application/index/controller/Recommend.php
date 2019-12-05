@@ -14,7 +14,11 @@ class Recommend
 	//推送推荐论文
 	public function push()
 	{
+
 		$consumer_id = Request::param('consumer_id');
+		if($consumer_id == '' || $consumer_id == null){
+			return ['status'=>0,'message'=>'获取推荐论文失败','data'=>[]];
+		}
 
 		//查询该用户是否存在积分
 		$consumer_info = Db::table('paper_integral')->where('consumer_id',$consumer_id)->find();
@@ -36,10 +40,12 @@ class Recommend
 			for($i=0;$i<3;$i++){
 				array_pop($push);
 			}
+
 			$push = array_keys($push);
 			
 			// 返回推荐的论文详情
-			$pushList = Db::table('paper_lunwen')->where('id','in',$push)->select();
+			$pushList = Db::table('paper_lunwen')->where('lunwen_terms',1)->where('id','in',$push)->select();
+			$pushList = array_slice($pushList, 0,3);
 			return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($pushList)];
 		}
 
@@ -107,10 +113,10 @@ class Recommend
 
 		arsort($push);
 		$push = Tools::hasIntegral($push);
-		$push = array_slice($push, 0,3);
 
 		// 返回推荐的论文详情
-		$pushList = Db::table('paper_lunwen')->where('id','in',$push)->select();
+		$pushList = Db::table('paper_lunwen')->where('lunwen_terms',1)->where('id','in',$push)->select();
+		$pushList = array_slice($pushList, 0,3);
 		return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($pushList)];
 		
 	}
@@ -123,7 +129,6 @@ class Recommend
 
 		//查询所有存在积分的论文
 		$paper = Db::query('select distinct(paper_id) from paper_integral');
-		// var_dump($paper);
 
 
 		//查询用户-论文积分表

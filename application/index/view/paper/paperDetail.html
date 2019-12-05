@@ -23,12 +23,12 @@
 								发布时间: {$paperInfo.addtime|date="Y/m/d"} &nbsp;&nbsp;&nbsp;&nbsp;
 								阅读量 : {$paperInfo.pv} &nbsp;&nbsp;&nbsp;&nbsp;
 							</p>
-							<center class="lunwen" style="background:white;">
+							<center class="lunwen" style="background:#ededed;">
 								<button class="btn btn-warning btn-sm" id="page_focus" style="position:absolute;right:30px;outline:none"><span class="glyphicon glyphicon-fullscreen"></span></button>
 								<article class="page" id="lunwen">
 								{volist name="$paperInfo.content" id="content" key="i"}
 									<h3 class="text-left text-info"><span class="badge" style="-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;">{$i}</span></h3>
-									<p class="" style="padding:0 10px;letter-spacing:2px;font-size:22px;">{$content|raw}</p><br><hr class="text-danger" />
+									<p class="" style="padding:0 10px;letter-spacing:2px;font-size:18px;line-height:40px;">{$content|raw}</p><br><hr class="text-danger" />
 								{/volist}
 									<!-- <a href="#tit" style="-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;">回到顶部</a> -->
 								</article>
@@ -60,12 +60,12 @@
 			})
 
 
+			//获取论文笔记
 			$.get("{:url('paper/paperNotes')}",{'paper_id':$('#paperId').val()},function(data,err){
 				if(data.status){
 					var html = '<div class="col-md-3" id="paperNotes-wrap" style="position:fixed;top:230px;left:-500px;padding:0;background:#f0f2f5;"><div class="list-group" style="margin:0;"><li class="list-group-item text-center"><span>我的笔记</span><button class="btn btn-sm btn-warning" id="closeNotes" style="margin-left:20px;outline:none;">收起</button></li></div><div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="max-height:400px;overflow-y:scroll;">';
 
 					var noteList = JSON.parse(data.data);
-					console.log(noteList);
 					if(noteList.length > 0){
 
 						for(var i=0;i<noteList.length;i++){
@@ -407,7 +407,6 @@
 				// }
 
 		    	$.get("{:url('recommend/push')}",{'consumer_id':$('#userId').val()},function(data){
-		    		console.log(data);
 		    		if(data.status){
 		    			//成功获取推荐论文
 		    			//渲染论文

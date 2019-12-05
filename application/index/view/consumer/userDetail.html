@@ -11,6 +11,16 @@
 				        <img class="img-circle" src="/static/images/userimg/1.jpg" style="width:100px;height:100px;margin:5px;">
 				        {/eq}
 					  <span class="h3" style="position:relative;left:15px;bottom:-30px;">{$userInfo.name}</span>
+					  <span class="h4" style="position:relative;left:30px;bottom:-30px;">
+					  	{if $userInfo.gender}
+					  	女
+					  	{else/}
+					  	男
+					  	{/if}
+					  </span>
+					  <span class="h5 text-danger" style="position:relative;left:40px;bottom:-30px;">
+					  	{$userInfo.role_id|getRoleName}
+					  </span>
 					</div>
 					<div class="page-body">
 						<!-- Nav tabs -->
