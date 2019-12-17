@@ -290,6 +290,58 @@ class Site extends Base
 	}
 
 
+	//设置redis缓存
+	public function setPaperCache()
+	{
+
+		//一次缓存100个
+		$res = Db::table('paper_cache_num')->find();
+		if($res == null){
+			$n = 0;
+		}else{
+			$n = $res['id'];
+		}
+
+		//1.实例化对象
+		$redis = new \Redis();
+		//2.定义主机和端口
+		$host = '127.0.0.1';
+		$port = 6379;
+		//3.连接redis服务器
+		$redis->connect($host , $port);
+
+		$list = Db::table('paper_lunwen')->where('id','>=',$n+1)->cursor();	//tp5封装了PHP的生成器的新特性
+		$num = 0;//缓存成功数量
+		$need = 0;//变量个数总量
+		foreach($list as $paperInfo){
+			
+			$content = parserPdf(substr($paperInfo['lunwen_file'],1));
+			if(!empty($content)){
+				//解析成功的
+				$bool = $redis->set("paper:id:".$paperInfo['id'].":content",serialize($content),86400);
+				if($bool){
+					//缓存成功
+					$num += 1;
+				}else{
+					var_dump('缓存失败: '.$paperInfo['id']);
+				}
+			}else{
+				//解析失败
+				var_dump('文档解析失败: '.$paperInfo['id']);
+			}
+
+			$need += 1;
+			if($need >= 25)
+				break;			
+		}
+		var_dump('共缓存了: '.$num);
+		
+		//实际遍历个数 $n+$need
+		//写入数据库
+		$data = ['id'=>$n+$need];
+		Db::table('paper_cache_num')->where('id',$n)->update($data);
+	}
+
 	//添加新的句子
 	public function addWord()
 	{

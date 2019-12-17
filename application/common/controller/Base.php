@@ -233,8 +233,15 @@ INFO;
 	//显示热门论文
 	public function showHotPaper()
 	{
-		// filed('id,lunwentitle,')
-		$hotPaper = Db::table('paper_lunwen')->field('id,lunwen_title,rank_type,lunwen_rank,pv')->where('lunwen_terms',1)->order('pv','desc')->limit(10)->select();
+		
+		if(Session::get('user_id') == null){
+			$hotPaper = Db::table('paper_lunwen')->field('id,lunwen_title,rank_type,lunwen_rank,pv')->where('lunwen_terms',1)->order('pv','desc')->limit(10)->select();
+		}else{
+			$map = ['lunwen_terms','=',1];
+			$map2 = ['school_name','=',Session::get('user_school')];
+			$hotPaper = Db::table('paper_lunwen')->field('id,lunwen_title,rank_type,lunwen_rank,pv')->whereOr([$map,$map2])->order('pv','desc')->limit(10)->select();
+		}
+		
 		$this->assign('hotPaper',$hotPaper);
 	}
 

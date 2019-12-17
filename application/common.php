@@ -293,13 +293,22 @@ function Paper($id)
  function parserPdf($path)
 {
 	include_once '../extend/pdfparser/vendor/autoload.php';
-	$parser = new \Smalot\PdfParser\Parser();       
+
+	$parser = new \Smalot\PdfParser\Parser();
 	// 调用解析方法，参数为pdf文件路径，返回结果为Document类对象
 	$path = str_replace("\\", "/", $path);
+
 	$document = $parser->parseFile($path);
+
+	if(!$document){
+		//解析出错
+		return [];
+	}
+
 	// 获取所有的页
 	$pages = $document->getPages();
-	//$pages[0]->getText();  //提取第一页的内容，想提取多页，可以按照下面的方法，用$key来控制要获取的页数
+	// var_dump($pages);exit;
+	  //提取第一页的内容，想提取多页，可以按照下面的方法，用$key来控制要获取的页数
 	// 逐页提取文本
 //		$pattern = '/[^,.;\s]+[,.;\s]/';
 //		$pat = "/[\x80-\xff]+/";
@@ -309,13 +318,19 @@ function Paper($id)
 		$content[$key] = '';
 //		halt(iconv_set_encoding('utf8', 'gbk',$pages[$key]->getText()));
 		preg_match_all($pat, $pages[$key]->getText(),$matches);
-		
-		
-		foreach($matches[1] as $match){
-			$content[$key] .= preg_replace("/\s+|[<br>]+/", ' ',$match)."<br>";
+
+		if(!empty($matches[1])){
+			foreach($matches[1] as $match){
+				$content[$key] .= preg_replace("/\s+|[<br>]+/", ' ',$match)."<br>";
+			}
+		}else{
+			//处理特殊情况
+			$content[$key] = $pages[$key]->getText();
+			// $content[$key] = preg_replace("/[\n]+/", '<br>',$pages[$key]->getText());
 		}
-		
-	}  
+				
+	}
+  
 	return $content; 
 }
 
@@ -441,12 +456,21 @@ function passPaper($path)
 	return $data;
 }
 
-
 //先数据库写入段落作为查重的库
 function addPaperWord()
 {
+	//一次写入25条论文
+	$res = Db::table('paper_word_id')->find();
+	if($res == null){
+		$n = 0;
+	}else{
+		$n = $res['id'];
+	}
+	$num = 0;//解析成功数量
+	$need = 0;//遍历个数总量
+
 	$data = [];
-	$paperList = Lunwen::all();
+	$paperList = Db::table('paper_lunwen')->where('id','>=',$n+1)->cursor();	//tp5封装了PHP的生成器的新特性
 	foreach($paperList as $paper){
 		$compare = paper($paper['id']);//现有库的单篇论文
 		if(false !==$compare){
@@ -494,10 +518,24 @@ function addPaperWord()
 						
 					}		
 				}
+
+
 			}
-			
+
+			$num++;
 		}
+
+		$need++;
+		if($need >= 25)
+			break;
 	}
+
+	var_dump('共写了: '.$num);
+		
+	//实际遍历个数 $n+$need
+	//写入数据库
+	$data = ['id'=>$n+$need];
+	Db::table('paper_word_id')->where('id',$res['id'])->update($data);
 }
 
 

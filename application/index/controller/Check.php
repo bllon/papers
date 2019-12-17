@@ -28,9 +28,9 @@ class Check extends Base
 	public function doPass()
 	{
 		
-		$lock = new Lock();
+		// $lock = new Lock();
 		//获取锁			
-		$identifier = $lock->getLock('test');	
+		// $identifier = $lock->getLock('test');	
 
 //		if(getCache(Session::get('user_id').":passpaper")!==false){
 //			$result = unserialize(getCache(Session::get('user_id').":passpaper"));
@@ -146,13 +146,13 @@ class Check extends Base
 			$this->decPassNum();
 			
 			//释放锁
-			$lock->releaseLock('test', $identifier);				
+			// $lock->releaseLock('test', $identifier);				
 			return redirect('passRsult')->params([
 				'id' => $pass->id
 			]);
 		}else{
 			//释放锁
-			$lock->releaseLock('test', $identifier);
+			// $lock->releaseLock('test', $identifier);
 			$this->error('系统出错');
 		}
 

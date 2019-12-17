@@ -7,6 +7,7 @@
 namespace app\index\controller;
 use app\common\controller\Tools;//导入工具类
 use think\facade\Request;
+use think\facade\Session;
 use think\Db;
 
 class Recommend
@@ -16,15 +17,34 @@ class Recommend
 	{
 
 		$consumer_id = Request::param('consumer_id');
+		$paper_id = Request::param('paper_id');
+
+		//查询该论文的专业信息
+		$paperInfo = Db::table('paper_lunwen')->find($paper_id);
+
 		if($consumer_id == '' || $consumer_id == null){
-			return ['status'=>0,'message'=>'获取推荐论文失败','data'=>[]];
+			//没有登录直接推荐热门论文
+			//优先推荐同专业论文
+			$list = Db::table('paper_lunwen')->where('lunwen_rank',$paperInfo['lunwen_rank'])->where('id','in',$push)->select();
+			if(count($list) >= 3){
+				return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($list)];
+			}
+
+			$pushList = Db::table('paper_lunwen')->where('lunwen_terms',1)->order('pv','desc')->limit(10)->select();
+			$num = 3 - count($list);
+
+			$pushList = array_slice($pushList, 0,$num);
+			$pushList = array_merge($list,$pushList);//合并同专业的推荐论文
+
+			return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($pushList)];
 		}
 
 		//查询该用户是否存在积分
 		$consumer_info = Db::table('paper_integral')->where('consumer_id',$consumer_id)->find();
-		
+
 		if(!$consumer_info){
-			//不存在积分系统中	推荐最火的论文
+
+			//不存在积分系统中	推荐被看最多的论文
 			$push = [];//计算论文的积分
 
 			$cursor = Db::table('paper_integral')->cursor();	//tp5封装了PHP的生成器的新特性 
@@ -37,15 +57,31 @@ class Recommend
 			}
 
 			//推送3个大家看得最多的论文
-			for($i=0;$i<3;$i++){
+			for($i=0;$i>3;$i++){
 				array_pop($push);
 			}
 
 			$push = array_keys($push);
 			
+			//优先推荐同专业论文
+			$list = Db::table('paper_lunwen')->where('lunwen_rank',$paperInfo['lunwen_rank'])->where('id','in',$push)->select();
+			if(count($list) >= 3){
+				return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($list)];
+			}
+
+			$map = ['lunwen_terms','=',1];
+			$map2 = ['school_name','=',Session::get('user_school')];
 			// 返回推荐的论文详情
-			$pushList = Db::table('paper_lunwen')->where('lunwen_terms',1)->where('id','in',$push)->select();
-			$pushList = array_slice($pushList, 0,3);
+			$pushList = Db::table('paper_lunwen')->whereOr([$map,$map2])->where('id','in',$push)->select();
+
+			//热门论文
+			$hotPaper = Db::table('paper_lunwen')->whereOr([$map,$map2])->order('pv','desc')->limit(10)->select();
+
+			$pushList = array_merge($pushList,$hotPaper);
+			$num = 3 - count($list);
+
+			$pushList = array_slice($pushList, 0,$num);
+			$pushList = array_merge($list,$pushList);//合并同专业的推荐论文
 			return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($pushList)];
 		}
 
@@ -58,8 +94,6 @@ class Recommend
 
 		//索引积分表
 		$integral_index = Tools::arrFormat($integral_index,false);
-
-
 
 		$similarity_info = [];
 
@@ -114,9 +148,28 @@ class Recommend
 		arsort($push);
 		$push = Tools::hasIntegral($push);
 
+		//优先推荐同专业论文
+		$list = Db::table('paper_lunwen')->where('lunwen_rank',$paperInfo['lunwen_rank'])->where('id','in',$push)->select();
+		if(count($list) >= 3){
+			return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($list)];
+		}
+
+		$map = ['lunwen_terms','=',1];
+		$map2 = ['school_name','=',Session::get('user_school')];
+
 		// 返回推荐的论文详情
-		$pushList = Db::table('paper_lunwen')->where('lunwen_terms',1)->where('id','in',$push)->select();
-		$pushList = array_slice($pushList, 0,3);
+		$pushList = Db::table('paper_lunwen')->whereOr([$map,$map2])->where('id','in',$push)->select();
+
+		//热门论文
+		$hotPaper = Db::table('paper_lunwen')->whereOr([$map,$map2])->order('pv','desc')->limit(10)->select();
+
+		$pushList = array_merge($pushList,$hotPaper);
+
+		$num = 3 - count($list);
+
+		$pushList = array_slice($pushList, 0,$num);
+		$pushList = array_merge($list,$pushList);//合并同专业的推荐论文
+
 		return ['status'=>1,'message'=>'成功获取推荐论文','data'=>json_encode($pushList)];
 		
 	}

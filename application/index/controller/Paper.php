@@ -13,6 +13,7 @@ use think\facade\Request;
 use think\facade\Session;
 use think\facade\Cookie;
 use think\Db;
+use app\api\controller\Elastic;
 
 class Paper extends Base
 {
@@ -27,8 +28,6 @@ class Paper extends Base
 		if($content){
 			return $content;
 		}
-
-
 		
 		$paperInfo = Lunwen::get(function($query) use ($id){
 			$query->where('id',$id);
@@ -40,6 +39,10 @@ class Paper extends Base
 		if(null == $content){
 			if($paperInfo['lunwen_file'] !== null){
 				$paperInfo['content'] = parserPdf(substr($paperInfo['lunwen_file'],1));
+				if(empty($paperInfo['content'])){
+					//解析出错
+					$paperInfo['content'] = ['pdf解析出错,请切换模式参看源文档'];
+				}
 				
 				//设置缓存
 				// setCache("paper:id:".$paperInfo['id'].":content",serialize(parserPdf(substr($paperInfo['lunwen_file'],1))),86400);
@@ -78,21 +81,33 @@ class Paper extends Base
 		$num = Request::param('num');
 		if(!empty($keywords)){
 			//搜索sphinx
-			require_once '../extend/sphinx/sphinxapi.php';
-			$sph = new \SphinxClient();
-			$sph->SetServer('localhost', 9312);
-			//第二个参数，默认是*，要查询的索引名字
-			$ret = $sph->Query($keywords, 'papers');
+			// require_once '../extend/sphinx/sphinxapi.php';
+			// $sph = new \SphinxClient();
+			// $sph->SetServer('localhost', 9312);
+			// //第二个参数，默认是*，要查询的索引名字
+			// $ret = $sph->Query($keywords, 'papers');
 
-			//提取出所有文章id
-			if(isset($ret['matches'])){
-				$id = array_keys($ret['matches']);
-			}else{
-				$id = [];
-			}
+			// //提取出所有文章id
+			// if(isset($ret['matches'])){
+			// 	$id = array_keys($ret['matches']);
+			// }else{
+			// 	$id = [];
+			// }
+			$es = new Elastic;
+			$id = $es->paperSearch($keywords);
 
 			$map[] = ['id','in',$id];
 			$map2[] = ['id','in',$id];
+
+			//存在搜索就重置页码
+			
+			if(!Cookie::get('paperSearch')){
+				//第一次点搜索
+				Cookie::set('paperSearch',1);
+				$page = 1;
+			}
+		}else{
+			Cookie::set('paperSearch','',time()-3600);			
 		}
 
     	//没登陆
@@ -107,14 +122,14 @@ class Paper extends Base
 				
 				$lunwenList = Db::table('paper_lunwen')
 							->where($map)
-							->order('addtime','asc')
+							->order('addtime','desc')
 							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
 
 			}else{
 				
 				$lunwenList = Db::table('paper_lunwen')
 							->where($map)
-							->order('addtime','asc')
+							->order('addtime','desc')
 							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
 			}
 			
@@ -132,13 +147,13 @@ class Paper extends Base
 				
 				$lunwenList = Db::table('paper_lunwen')
 							->whereOr([$map,$map2])
-							->order('addtime','asc')
+							->order('addtime','desc')
 							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
 				
 			}else{
 				$lunwenList = Db::table('paper_lunwen')
 							->whereOr([$map,$map2])
-							->order('addtime','asc')
+							->order('addtime','desc')
 							->paginate($num,false,['page'=>$page,'path'=>'javascript:AjaxPage([PAGE]);']);
 			}
 		}

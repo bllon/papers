@@ -128,7 +128,6 @@ class Index extends Base
 	//首页
     public function index()
     {			
-
 		$rank_name = Request::param('rank_name');
 	
 		//查询最新通告
@@ -181,7 +180,36 @@ class Index extends Base
     		$data = Request::param();
 	    	$type = intval($data['type']);//1方格，2列表
 
+	    	//显示方式
+			if(Cookie::get('displayFunc') == null){
+				$displayFunc = 3;
+			}else{
+				$displayFunc = Cookie::get('displayFunc');
+			}
+
+			if($displayFunc == 1){
+	    		$num = 12;
+	    	}else if($displayFunc == 2){
+	    		$num = 8;
+	    	}else if($displayFunc == 3){
+	    		$num = 15;
+	    	}
+
+	    	$page = Cookie::get('currentPage') ? Cookie::get('currentPage') : 1;
+
+	    	//改变页码
+	    	if($type == 1){
+	    		$newPage = ceil((($page-1)*$num+1)/12);
+	    	}else if($type == 2){
+	    		$newPage = ceil((($page-1)*$num+1)/8);
+	    	}else if($type == 3){
+	    		$newPage = ceil((($page-1)*$num+1)/15);
+	    	}	
+
 	    	Cookie::set('displayFunc',$type);
+
+	    	//返回新页码
+	    	return ['status'=>1,'page'=>$newPage];
     	}
     }
 	

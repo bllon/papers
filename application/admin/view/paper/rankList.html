@@ -18,12 +18,12 @@
         <div class="col-md-6">
           <div class="tile">
             <div class="tile-title-w-btn">
-              <h3 class="title">一级分类</h3>
+              <h3 class="title">专业类</h3>
               <p><a class="btn btn-primary icon-btn" href="" data-toggle="modal" data-target=".rankmodel"><i class="fa fa-plus"></i>添加	</a></p>
             </div>
             <div class="tile-body">
               <div class="tile">
-		            <h3 class="tile-title">所有分类</h3>
+		            <h3 class="tile-title">所有专业类</h3>
 		            <table class="table table-hover">
 		              <thead>
 		                <tr>
@@ -55,12 +55,12 @@
         <div class="col-md-6">
           <div class="tile">
             <div class="tile-title-w-btn">
-              <h3 class="title">二级分类</h3>
+              <h3 class="title">专业</h3>
               <p><a class="btn btn-primary icon-btn" href="" data-toggle="modal" data-target=".selemodel"><i class="fa fa-plus"></i>添加	</a></p>
             </div>
             <div class="tile-body">
               <div class="tile">
-		            <h3 class="tile-title">所有分类</h3>
+		            <h3 class="tile-title">专业</h3>
 		            <table class="table table-hover">
 		              <thead>
 		                <tr>
@@ -100,7 +100,7 @@
 	        <div class="modal-dialog" role="document">
 	          <div class="modal-content">
 	            <div class="modal-header">
-	              <h5 class="modal-title">添加一级分类</h5>
+	              <h5 class="modal-title">添加专业类</h5>
 	              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 	            </div>
 	            <div class="modal-body">
@@ -128,13 +128,13 @@
 	        <div class="modal-dialog" role="document">
 	          <div class="modal-content">
 	            <div class="modal-header">
-	              <h5 class="modal-title">添加二级分类</h5>
+	              <h5 class="modal-title">添加专业</h5>
 	              <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
 	            </div>
 	            <div class="modal-body">
 	              <form action="">
 	              	<div class="form-group">
-		                <label for="exampleSelect1">一级分类</label>
+		                <label for="exampleSelect1">专业类</label>
 		                <select class="form-control" name="sele_type" id="sele_type">
 		                	{volist name="rankList" id="rank" key="i"}
 		                  	<option value="{$rank.rank_name}">{$rank.rank_name}</option>

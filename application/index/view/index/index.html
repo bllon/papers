@@ -73,26 +73,26 @@
 						  	<p class="pull-right">
 						  		{switch name="$displayFunc"}
 								{case 1}
-									<button class="btn btn-warning btn-sm" style="outline:none" id="square_display">
+									<button class="btn btn-warning btn-sm" style="border:0;outline:none" id="square_display">
 							  			<span class="glyphicon glyphicon-th"></span>
 							  		</button>
-							  		<button class="btn btn-info btn-sm" style="outline:none" id="list_display">
+							  		<button class="btn btn-info btn-sm" style="border:0;outline:none" id="list_display">
 							  			<span class="glyphicon glyphicon-menu-hamburger"></span>
 							  		</button>
 								{/case}
 								{case 2}
-									<button class="btn btn-info btn-sm" style="outline:none" id="square_display">
+									<button class="btn btn-info btn-sm" style="border:0;outline:none" id="square_display">
 							  			<span class="glyphicon glyphicon-th"></span>
 							  		</button>
-							  		<button class="btn btn-warning btn-sm" style="outline:none" id="list_display">
+							  		<button class="btn btn-warning btn-sm" style="border:0;outline:none" id="list_display">
 							  			<span class="glyphicon glyphicon-menu-hamburger"></span>
 							  		</button>
 								{/case}
 								{case 3}
-									<button class="btn btn-info btn-sm" style="outline:none" id="square_display">
+									<button class="btn btn-info btn-sm" style="border:0;outline:none" id="square_display">
 							  			<span class="glyphicon glyphicon-th"></span>
 							  		</button>
-							  		<button class="btn btn-info btn-sm" style="outline:none" id="list_display">
+							  		<button class="btn btn-info btn-sm" style="border:0;outline:none" id="list_display">
 							  			<span class="glyphicon glyphicon-menu-hamburger"></span>
 							  		</button>
 								{/case}
@@ -305,25 +305,27 @@
 						//获取当前页码
 						var page = $('.pagination .active span').html();
 
-						console.log(view);
+						// console.log(view);
 						if(view != 1){
-							console.log('方格显示');
+							// console.log('方格显示');
 							$(this).removeClass('btn-info').addClass('btn-warning');
 							//发送请求
 							$.get("{:url('index/displayFunc')}",{'type':1},function(data){
+								// console.log(data);
 								$('#view').val(1);
-								AjaxPage(page);
+								AjaxPage(data.page);
 							})
 
 							return false;
 						}else{
-							console.log('普通显示');
+							// console.log('普通显示');
 							$(this).removeClass('btn-warning').addClass('btn-info');
 
 							//发送请求
 							$.get("{:url('index/displayFunc')}",{'type':3},function(data){
+								// console.log(data);
 								$('#view').val(3);
-								AjaxPage(page);
+								AjaxPage(data.page);
 								
 							})
 						}
@@ -340,26 +342,28 @@
 						
 						//获取当前显示方式
 						var view = $('#view').val();
-						console.log(view);
+						// console.log(view);
 						//获取当前页码
 						var page = $('.pagination .active span').html();
 
 						if(view != 2){
-							console.log('列表显示');
+							// console.log('列表显示');
 							$(this).removeClass('btn-info').addClass('btn-warning');
 							//发送请求
 							$.get("{:url('index/displayFunc')}",{'type':2},function(data){
+								// console.log(data);
 								$('#view').val(2);
-								AjaxPage(page);
+								AjaxPage(data.page);
 							})
 							return false;
 						}else{
-							console.log('普通显示');
+							// console.log('普通显示');
 							$(this).removeClass('btn-warning').addClass('btn-info');
 							//发送请求
 							$.get("{:url('index/displayFunc')}",{'type':3},function(data){
+								// console.log(data);
 								$('#view').val(3);
-								AjaxPage(page);
+								AjaxPage(data.page);
 								
 							})
 						}

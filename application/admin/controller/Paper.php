@@ -177,7 +177,7 @@ class Paper extends Base
 		}
 		
 		
-		
+		$data['major'] = $data['lunwen_rank'];
 		$data['school_name'] = Session::get('school');
 		if(Lunwen::create($data)){
 			$this->success('上传成功','paper/uploadLunwen');
@@ -301,7 +301,7 @@ class Paper extends Base
 		}
 		
 		
-		
+		$data['major'] = $data['lunwen_rank'];
 		$data['school_name'] = Session::get('school');
 
 		if(Lunwen::update($data)){

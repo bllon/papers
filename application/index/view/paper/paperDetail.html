@@ -28,7 +28,7 @@
 								<article class="page" id="lunwen">
 								{volist name="$paperInfo.content" id="content" key="i"}
 									<h3 class="text-left text-info"><span class="badge" style="-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;">{$i}</span></h3>
-									<p class="" style="padding:0 10px;letter-spacing:2px;font-size:18px;line-height:40px;">{$content|raw}</p><br><hr class="text-danger" />
+									<p class="" style="padding:0 10px;letter-spacing:2px;font-size:18px;line-height:40px;word-wrap:break-word;">{$content|raw}</p><br><hr class="text-danger" />
 								{/volist}
 									<!-- <a href="#tit" style="-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;">回到顶部</a> -->
 								</article>
@@ -96,7 +96,10 @@
 
 
 
-			$('#openNotes').click(function(){				
+			$('#openNotes').click(function(){
+				if($('#userId').val() == ''){
+					alert('还没登录');
+				}				
 				$('#paperNotes-wrap').animate({
 					'left':'0px'
 				});
@@ -406,15 +409,20 @@
 				// 	return false;
 				// }
 
-		    	$.get("{:url('recommend/push')}",{'consumer_id':$('#userId').val()},function(data){
+		    	$.get("{:url('recommend/push')}",{'consumer_id':$('#userId').val(),'paper_id':$('#paperId').val()},function(data){
 		    		if(data.status){
 		    			//成功获取推荐论文
 		    			//渲染论文
-		    			var paperList = JSON.parse(data.data);
-		    			if(paperList.length > 0){
-		    				var html = '<div class="col-md-4" style="position:fixed;top:230px;right:0;" id="recommend"><div class="list-group"><li class="list-group-item text-center"><span>推荐论文</span><button class="btn btn-sm btn-warning" id="sizeClick" style="margin-left:20px;outline:none;">收起</button></li>';
+		    			var paperList = JSON.parse(data.data);	  			
 
-		    				var pushNum = 0;	//实际推荐数
+	    				//拼接HTML
+	    				var html = '<div class="list-group"><li class="list-group-item text-center"><span>推荐论文</span><button class="btn btn-sm btn-warning" id="sizeClick" style="margin-left:20px;outline:none;">收起</button></li>';
+
+	    				//实际推荐数
+	    				var pushNum = 0;
+
+		    			if(paperList.length > 0){
+	
 			    			for(var i=0;i<paperList.length;i++){
 			    				if(paperList[i].id != $('#paperId').val()){
 			    					html += '<a href="javascript:void(0);" data-id="'+paperList[i].id+'" target="_blank" class="list-group-item recom" style="padding:10px 5px;max-height:160px;overflow:hidden;"><h4 class="list-group-item-heading"><span>'+paperList[i].lunwen_title+'</span></h4><p class="text-right" style="margin:0;"><span class="pull-left"><small>专业: '+paperList[i].major+'</small></span><small>作者: '+paperList[i].writer+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>分类: <span class="text-danger">'+paperList[i].rank_type+'</span> <span class="glyphicon glyphicon-arrow-right"></span> <span class="text-info">'+paperList[i].lunwen_rank+'</span></small></span><small style="color:#dfa600;">'+paperList[i].school_name+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>阅读量：'+paperList[i].pv+'</small></span><small style="color:#dfa600;">发布时间:'+formatTime(paperList[i].addtime,'Y/M/D h:m:s')+'</small></p></a>';
@@ -422,36 +430,47 @@
 			    					pushNum = pushNum + 1;
 			    				}	
 			    			}
+			    		}
 
-			    			html += '</div></div>';
-			    			if(pushNum > 0){
-			    				$('body').append(html);
-			    			}
+			    		if(pushNum == 0){
+			    			//没有推荐
+			    			html = '<div class="col-md-4" style="position:fixed;top:230px;right:-800px;" id="recommend">' + html;
+			    			html += '<li class="list-group-item text-center text-info">没有论文可以推荐</li>';
+			    		}else{
+			    			html = '<div class="col-md-4" style="position:fixed;top:230px;right:0;" id="recommend">' + html;
+			    		}
 
-			    			$('.recom').click(function(){
-			    				var id = $(this).attr('data-id');
-			    				// window.location.href = "http://www.papers.com/index/index/paperdetail/id/"+id+".html";
-			    				window.open("/index/paper/paperdetail/id/"+id+".html", '_blank');
-			    			})
+		    			html += '</div></div>';
 
-			    			//收起按钮
-			    			$('#sizeClick').click(function(){
+		    			$('body').append(html);
 
-			    				$('#recommend').animate({
-			    					'right':'-800px'
+
+		    			//渲染结束
+
+		    			$('.recom').click(function(){
+		    				var id = $(this).attr('data-id');
+		    				// window.location.href = "http://www.papers.com/index/index/paperdetail/id/"+id+".html";
+		    				window.open("/index/paper/paperdetail/id/"+id+".html", '_blank');
+		    			})
+
+		    			//收起按钮
+		    			$('#sizeClick').click(function(){
+
+		    				$('#recommend').animate({
+		    					'right':'-800px'
+		    				});
+		    				$('body').append('<div class="openRecommend" style="width:24px;height:100px;text-align:center;line-height:24px;writing-mode:lr-tb;background:#c8bfbf;position:fixed;top:50%;right:0;cursor:pointer;">打开推荐</div>');
+
+		    				$('.openRecommend').click(function(){
+		    					$('#recommend').animate({
+			    					'right':'0px'
 			    				});
-			    				$('body').append('<div class="openRecommend" style="width:24px;height:100px;text-align:center;line-height:24px;writing-mode:lr-tb;background:#c8bfbf;position:fixed;top:50%;right:0;cursor:pointer;">打开推荐</div>');
+			    				$(this).remove();
+		    				})
+		    			})
 
-			    				$('.openRecommend').click(function(){
-			    					$('#recommend').animate({
-				    					'right':'0px'
-				    				});
-				    				$(this).remove();
-			    				})
-			    			})
-			    			//渲染结束
-		    			}
 		    		}
+
 		    	})
 
 		    },1000);
