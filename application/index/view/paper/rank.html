@@ -7,6 +7,7 @@
 					  <h2>所有类别</h2>
 					</div>
 					<div class="pape-body">
+						<h4 class="text-info">专业类：</h4>
 						<div class="row">
 							<div class="col-md-10" style="padding:20px 30px;">
 								{if $schoolRank}
@@ -27,6 +28,7 @@
 							</div>
 							<div class="col-md-2"></div>
 						</div>
+						<h4 class="text-info">专业：</h4>
 						<div class="row">
 							<div class="col-md-10" style="margin-top:20px ;padding:20px 30px;border:1px dashed red;">
 								{volist name="$seleList" id="sele"}
@@ -40,8 +42,12 @@
 							</div>
 							<div class="col-md-2"></div>
 						</div>
+						<div class="alert alert-danger alert-dismissible" role="alert" style="width:80%;margin-top:40px;">
+						  <strong>&nbsp;解释：</strong>中国大学共有13个学科，92个大学专业类，506种大学专业。13个学科分别是：哲学、经济学、法学、教育学、文学、历史学、理学、工学、农学、医学、管理学、艺术学,军事学。<br>例如：<br>08学科门类：工学<br>&nbsp;&nbsp;&nbsp;&nbsp;0809 计算机类<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;080901 计算机科学与技术（注：可授工学或理学学士学位）<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;080902 软件工程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;080903 网络工程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;080904K 信息安全（注：可授工学或理学或管理学学士学位）<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;080905 物联网工程<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;080906 数字媒体技术
+						</div>
 					</div>
 				</div>
+
 				
 				
 {/block}

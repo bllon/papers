@@ -19,7 +19,7 @@
 									<label for="groupName">房间主题</label>
 									<input type="text" class="form-control" name="title" id="" placeholder="设置房间主题 , 招来志同道合的伙伴" value="" />
 								</div>
-								<input type="hidden" name="creator" id="creator" value="{$Think.Session.user_name}" />
+								<input type="hidden" name="creator" id="creator" value="{$Think.Session.user_id}" />
 								<input type="hidden" name="roomKey" value="{$roomKey}" />
 								<button type="submit" class="btn btn-success">创建</button>
 							</form>	

@@ -84,7 +84,9 @@
 	  $('[data-toggle="tooltip"]').tooltip();
 	})
 
-	function trimStr(str){return str.replace(/(^\s*)|(\s*$)/g,"");}
+	function trimStr(str){
+		return str.replace(/(^\s*)|(\s*$)/g,'');
+	}
 	
 	$('#searchPaper').on('click',function(e){
 		if(trimStr($("input[name='keywords']").val())===''){
@@ -93,6 +95,7 @@
 			// location.reload();
 			return false;
 		}
+		$("input[name='keywords']").val(trimStr($("input[name='keywords']").val()));
 	})
 
 	//获取用户头像cookie值

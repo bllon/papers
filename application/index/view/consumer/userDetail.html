@@ -10,12 +10,12 @@
 				        {eq name="$userInfo.user_img" value=""}
 				        <img class="img-circle" src="/static/images/userimg/1.jpg" style="width:100px;height:100px;margin:5px;">
 				        {/eq}
-					  <span class="h3" style="position:relative;left:15px;bottom:-30px;">{$userInfo.name}</span>
+					  <span class="h3" style="position:relative;left:15px;bottom:-30px;color:#848181;">{$userInfo.name}</span>
 					  <span class="h4" style="position:relative;left:30px;bottom:-30px;">
 					  	{if $userInfo.gender}
-					  	女
+					  	<i class="fa fa-venus" style="color:#ff6f88;" aria-hidden="true"></i>
 					  	{else/}
-					  	男
+					  	<i class="fa fa-mars" style="color:#2bacfa;" aria-hidden="true"></i>
 					  	{/if}
 					  </span>
 					  <span class="h5 text-danger" style="position:relative;left:40px;bottom:-30px;">
@@ -27,8 +27,8 @@
 					  	<ul class="nav nav-tabs" role="tablist">
 					    	<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">个人信息</a></li>
 					    	<li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">歌单</a></li>
-					    	<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">通知</a></li>
-					    	<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">私信</a></li>
+					    	<li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">文章</a></li>
+					    	<li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">讨论组</a></li>
 					  	</ul>
 
 					  	<!-- Tab panes -->
@@ -92,8 +92,19 @@
 									</video>
 								</div>
 					    	</div>
-					    	<div role="tabpanel" class="tab-pane" id="messages">...</div>
-					    	<div role="tabpanel" class="tab-pane" id="settings">...</div>
+					    	<div role="tabpanel" class="tab-pane" id="messages"></div>
+					    	<div role="tabpanel" class="tab-pane" id="settings">
+					    		<div class="list-group">
+								{volist name="groupList" id="group"}
+								  <a href="{:url('chat/room',['id'=>$group.id])}" class="list-group-item">
+								    	<span class="badge" style="background-color:#fff;font-weight:normal;padding:0;">
+								    		<p style="color:#6c5959;margin:0;padding:4px 6px;background-color:#dcd0fa;border-radius:10px;">{$group.name}</p>
+								    	</span>
+							    		{$group.title}
+								  </a>
+								{/volist}
+								</div>
+					    	</div>
 					  	</div>
 						
 						
@@ -129,7 +140,7 @@
 
 					})
 
-					//下载控件
+					// //下载控件
 					$('.download').click(function(){
 						alert('服务器带宽不够，暂停下载服务');
 						return false;
@@ -140,7 +151,7 @@
 
 					})
 
-					//收藏控件
+					// //收藏控件
 					$('.collect').click(function(e){
 						var that = this;
 						var url = $(this).attr('data-url');
@@ -154,7 +165,7 @@
 						})
 					})
 
-					//删除控件
+					// //删除控件
 					$('.remove').click(function(e){
 						var that = this;
 						var id = $(this).attr('data-id');
@@ -167,6 +178,5 @@
 					})
 				</script>
 
-{include file="consumer/userDetail-right"} 
 {/block}
 

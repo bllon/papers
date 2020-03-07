@@ -65,7 +65,7 @@ if(!function_exists('getAdminName'))
 	}
 }
 
-
+//根据名称获取用户id
 if(!function_exists('getConsumerId'))
 {
 	function getConsumerId($name)
@@ -75,6 +75,7 @@ if(!function_exists('getConsumerId'))
 	}
 }
 
+//根据id获取论文题目
 if(!function_exists('getPaperName'))
 {
 	function getPaperName($id)
@@ -87,6 +88,7 @@ if(!function_exists('getPaperName'))
 	}
 }
 
+//根据id获取用户名称
 if(!function_exists('getUserName'))
 {
 	function getUserName($id)
@@ -96,6 +98,7 @@ if(!function_exists('getUserName'))
 	}
 }
 
+//截断标题
 if(!function_exists('subTitle'))
 {
 	function subTitle($title)
@@ -106,15 +109,18 @@ if(!function_exists('subTitle'))
 		return $title;
 	}
 }
+
+//根据回复id获取回复者的名称
 if(!function_exists('getPostUser'))
 {
 	function getPostUser($id)
 	{
 		$userInfo = Comment::get($id);
-		return $userInfo['reply_user'];
+		return getUserName($userInfo['user_id']);
 	}
 }
 
+//回复id获取评论用户id
 if(!function_exists('getPostUserId'))
 {
 	function getPostUserId($id)
@@ -124,6 +130,7 @@ if(!function_exists('getPostUserId'))
 	}
 }
 
+//根据id获取用户头像
 if(!function_exists('getConsumerImg'))
 {
 	function getConsumerImg($id)
@@ -133,6 +140,7 @@ if(!function_exists('getConsumerImg'))
 	}
 }
 
+//根据名称获取用户头像
 if(!function_exists('getConsumerImgOfName'))
 {
 	function getConsumerImgOfName($name)
@@ -417,7 +425,7 @@ function deal($path)
 }
 
 
-
+//论文查重
 function passPaper($path)
 {
 	$res = [];

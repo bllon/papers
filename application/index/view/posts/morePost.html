@@ -16,7 +16,7 @@
 					
 					<div class="list-group">
 					{volist name="postList" id="post"}
-					  <a href="{:url('posts/postDetail',['id'=>$post.id])}" target="_blank" class="list-group-item" style="padding:10px 5px;max-height:160px;overflow:hidden;">
+					  <a href="{:url('posts/postDetail',['id'=>$post.id])}" class="list-group-item" style="padding:10px 5px;max-height:160px;overflow:hidden;">
 					    <h4 class="list-group-item-heading">{$post.title} <span class="glyphicon glyphicon-pencil"></span></h4>
 					    <p class="text-right" style="margin:0;"><span class="pull-left">{$post.subtitle}</span><small>发帖人: {$post.writer}</small></p>
 					    <p class="text-right" style="margin:0;color:#dfa600;"><small>{$post.user_id|getschool}</small></p>

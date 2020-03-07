@@ -1,9 +1,9 @@
 {extend name="public:base2"}
 		{block name="body"}
 		<div class="clear"></div>
-		<div class="menu visible-md-1">
+		<!-- <div class="menu visible-md-1">
 						
-		</div>
+		</div> -->
 		<div class="container container-fluid">
 			<div class="row">
 
@@ -23,14 +23,14 @@
 								<div class="box" style="position:relative;width:100%;height:150px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
 									<h4 style="margin-top:40px;">{$group.name}</h4>
 									<p class="text-warning" style="padding:0px 20px;font-size:12px;">{$group.title}</p>
-									<a href="{:url('chat/room',['id'=>$group.id])}" target="_blank" class="croom btn btn-info btn-sm" style="display:block;position:absolute;width:50px;bottom:12px;left:50%;margin-left:-25px;">加入</a>
+									<a href="{:url('chat/room',['id'=>$group.id])}" class="croom btn btn-info btn-sm" style="display:block;position:absolute;width:50px;bottom:12px;left:50%;margin-left:-25px;">加入</a>
 								</div>
 							</div>
 							{/volist}
 							<div class="col-md-3 col-xs-12">
 								<div class="box" style="position:relative;width:100%;height:150px;border-radius:10px;background:#c3e5d1;margin-bottom:20px;overflow:hidden;">
 									<h3 style="margin-top:50px;"><span class="glyphicon glyphicon-plus"></span></h3>
-									<a href="{:url('chat/createGroup')}" target="_blank" class="croom btn btn-success btn-sm" style="display:block;position:absolute;width:50px;bottom:12px;left:50%;margin-left:-25px;">创建</a>
+									<a href="{:url('chat/createGroup')}" class="croom btn btn-success btn-sm" style="display:block;position:absolute;width:50px;bottom:12px;left:50%;margin-left:-25px;">创建</a>
 								</div>
 							</div>
 						</div>
@@ -160,13 +160,14 @@
 				});
 			}
 
-			$('.menu').html('<ul><li>讨论频道</li><li>在线音乐</li><li>娱乐视频</li></ul>');			
+			//菜单
+			// $('.menu').html('<ul><li>讨论频道</li><li>在线音乐</li><li>娱乐视频</li></ul>');			
 			
 
 			// 小设备隐藏菜单
-			if(window.screen.width < 300){
-				$('.menu').remove();
-			}
+			// if(window.screen.width < 300){
+			// 	$('.menu').remove();
+			// }
 
 			$('.croom').on('click',function(e){
 				if($('#userId').val() == ''){
@@ -176,17 +177,17 @@
 			})
 
 			//菜单
-			$('.menu li').on('click',function(){
-				$(this).css('background','#fff').siblings('li').css('background','none');
-				var index = $('.menu li').index(this);
-				// console.log($('.row .col-md-12 .page-header h4').eq(index).offset().top);
-				$("html,body").animate({scrollTop:$('.row .col-md-12 .page-header h4').eq(index).offset().top-60},1000);//1000是ms,也可以用slow代替ss
-			})
+			// $('.menu li').on('click',function(){
+			// 	$(this).css('background','#fff').siblings('li').css('background','none');
+			// 	var index = $('.menu li').index(this);
+			// 	// console.log($('.row .col-md-12 .page-header h4').eq(index).offset().top);
+			// 	$("html,body").animate({scrollTop:$('.row .col-md-12 .page-header h4').eq(index).offset().top-60},1000);//1000是ms,也可以用slow代替ss
+			// })
 
 
 			//监听滚动条
-			window.onscroll=function(){
-				var t =document.documentElement.scrollTop||document.body.scrollTop;
+			// window.onscroll=function(){
+			// 	var t =document.documentElement.scrollTop||document.body.scrollTop;
 				// console.log(t);
 				// console.log($('#chat').offset().top - 60);
 				// console.log($('#music').offset().top - 60);
@@ -195,17 +196,17 @@
 				// console.log($('#music').offset().top + parseInt($('.row .col-md-12 .text-center').eq(1).css('height')) - 160);
 
 
-				if(t <= ($('#chat').offset().top + parseInt($('.row .col-md-12 .text-center').eq(0).css('height')) - 160)){
-					$('.menu li').eq(0).css('background','#fff').siblings('li').css('background','none');
-					return;
-				}else if(t <= ($('#music').offset().top + parseInt($('.row .col-md-12 .text-center').eq(1).css('height')) - 160)){
-					$('.menu li').eq(1).css('background','#fff').siblings('li').css('background','none');
-					return;
-				}else if(t <= 886){
-					$('.menu li').eq(2).css('background','#fff').siblings('li').css('background','none');
-					return;
-				}
-			}
+				// if(t <= ($('#chat').offset().top + parseInt($('.row .col-md-12 .text-center').eq(0).css('height')) - 160)){
+				// 	$('.menu li').eq(0).css('background','#fff').siblings('li').css('background','none');
+				// 	return;
+				// }else if(t <= ($('#music').offset().top + parseInt($('.row .col-md-12 .text-center').eq(1).css('height')) - 160)){
+				// 	$('.menu li').eq(1).css('background','#fff').siblings('li').css('background','none');
+				// 	return;
+				// }else if(t <= 886){
+				// 	$('.menu li').eq(2).css('background','#fff').siblings('li').css('background','none');
+				// 	return;
+				// }
+			//}
 
 			//播放控件
 			$('.play').click(function(){
@@ -235,7 +236,7 @@
 
 			})
 
-			//下载控件
+			// 下载控件
 			$('.download').click(function(){
 				alert('服务器带宽不够，暂停下载服务');
 				return false;
@@ -286,7 +287,7 @@
 				}
 			)
 
-			//播放mv
+			// 播放mv
 			function playMv(obj){
 				var url = $(obj).attr('data-url');
 				window.open(url, '_blank');

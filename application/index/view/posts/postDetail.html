@@ -34,7 +34,7 @@
 
 
 						<div class="col-md-12" id="comment_list">
-							
+							<p class="text-center">loading...</p>
 						</div>
 				    </div>
 				</div>
@@ -46,7 +46,7 @@
 				    <div class="modal-content">
 				      <div class="modal-header">
 				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				        <h4 class="modal-title" id="exampleModalLabel">评论</h4>
+				        <h4 class="modal-title" id="exampleModalLabel">@</h4>
 				      </div>
 				      <div class="modal-body">
 				        <form action="{:url('posts/reply')}" method="post">
@@ -106,7 +106,7 @@
 				$.get("{:url('posts/getComment')}",{id:{$postInfo.id}},function(data){
 					if(data.status == 1){
 						$('#comment_list').html(data.message);
-						console.log('获取评论成功');
+						// console.log('获取评论成功');
 
 						//渲染后添加事件
 						$('button.reply').on('click',function(){
@@ -114,9 +114,10 @@
 								alert('对不起，你还没有登录');
 								return false;
 							}
-							console.log(123);
-							console.log($(this).attr('replyId'));
+							// console.log(123);
+							// console.log($(this).attr('replyId'));
 							$('input.replyId').val($(this).attr('replyId'));
+							$('#exampleModalLabel').html('@'+$(this).attr('replyUser'));
 						})
 
 						$('#footer').css({

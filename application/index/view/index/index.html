@@ -104,7 +104,7 @@
 						</div>
 						
 						<div class="row" id="list">
-							
+							<p class="text-center">loading...</p>
 						</div>
 						
 						<div class="clearfix"></div>
@@ -217,7 +217,7 @@
 						if(type == 1){
 		                    for(var i=0;i<list.length;i++){
 
-		                    	html += '<div class="pull-left" title="'+list[i].lunwen_title+'" style="width:175px;height:auto;padding:0px 0px 30px 20px;position:relative;"><a href="/index/paper/paperDetail/id/'+list[i].id+'" target="_blank" style="display:block;width:145px;height:130px;margin:0 auto;"><img class="img-rounded" src="/static/images/paper.jpg" style="width:145px;height:130px;margin:0 auto;"/></a><a href="/index/paper/paperDetail/id/'+list[i].id+'" target="_blank"><div class="lv img-rounded" style="width:155px;height:219.6px;background:rgba(145,112,54,0.2);position:absolute;top:0;cursor:pointer;" title="'+list[i].lunwen_title+'"></div></a><div style="width:145px;margin:-4px auto;padding:5px;background:#fff;border-radius:0 0 5px 5px;"><h6 style="height:30px;"><a href="/index/paper/paperDetail/id/'+list[i].id+'" target="_blank">'+LimitNumber(list[i].lunwen_title)+'</a></h6><p class="small" style="margin:0;">阅读量 : '+list[i].pv+'</p><p class="small" style="margin:0;">发布时间 : <span class="text-primary">'+formatTime(list[i].addtime,'Y/M/D')+'</span></p></div></div>';
+		                    	html += '<div class="pull-left" title="'+list[i].lunwen_title+'" style="width:175px;height:auto;padding:0px 0px 30px 20px;position:relative;"><a href="/index/paper/paperDetail/id/'+list[i].id+'" style="display:block;width:145px;height:130px;margin:0 auto;"><img class="img-rounded" src="/static/images/paper.jpg" style="width:145px;height:130px;margin:0 auto;"/></a><a href="/index/paper/paperDetail/id/'+list[i].id+'"><div class="lv img-rounded" style="width:155px;height:219.6px;background:rgba(145,112,54,0.2);position:absolute;top:0;cursor:pointer;" title="'+list[i].lunwen_title+'"></div></a><div style="width:145px;margin:-4px auto;padding:5px;background:#fff;border-radius:0 0 5px 5px;"><h6 style="height:30px;"><a href="/index/paper/paperDetail/id/'+list[i].id+'">'+LimitNumber(list[i].lunwen_title)+'</a></h6><p class="small" style="margin:0;">阅读量 : '+list[i].pv+'</p><p class="small" style="margin:0;">发布时间 : <span class="text-primary">'+formatTime(list[i].addtime,'Y/M/D')+'</span></p></div></div>';
 
 		                    }
 
@@ -237,7 +237,7 @@
 						if(type == 3){
 							for(var i=0;i<list.length;i++){
 
-		                    	html += '<div class="pull-left" style="width:140px;height:auto;padding:0px 0px 30px 10px;"><a href="/index/paper/paperDetail/id/'+list[i].id+'" target="_blank" style="display:block;width:110px;height:130px;margin:0 auto;position:relative;"><img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/><div class="lv img-rounded" style="width:110px;height:130px;margin:0 auto;background:rgba(145,112,54,0.2);position:absolute;top:0;" title="'+list[i].lunwen_title+'"></div></a><div style="padding:0px 2px;"><h6 style="height:30px;"><a href="/index/paper/paperDetail/id/'+list[i].id+'" target="_blank" title="'+list[i].lunwen_title+'">'+LimitNumber(list[i].lunwen_title)+'</a></h6><p class="small" style="margin:0;">作者:'+list[i].writer+'</p><p class="small" style="margin:0;">阅读量:'+list[i].pv+'</p><p class="small" style="margin:0;">发布时间:<span class="text-primary">'+formatTime(list[i].addtime,'Y/M/D')+'</span></p></div></div>';
+		                    	html += '<div class="pull-left" style="width:140px;height:auto;padding:0px 0px 30px 10px;"><a href="/index/paper/paperDetail/id/'+list[i].id+'" style="display:block;width:110px;height:130px;margin:0 auto;position:relative;"><img class="img-rounded" src="/static/images/paper.jpg" style="width:110px;height:130px;margin:0 auto;"/><div class="lv img-rounded" style="width:110px;height:130px;margin:0 auto;background:rgba(145,112,54,0.2);position:absolute;top:0;" title="'+list[i].lunwen_title+'"></div></a><div style="padding:0px 2px;"><h6 style="height:30px;"><a href="/index/paper/paperDetail/id/'+list[i].id+'" title="'+list[i].lunwen_title+'">'+LimitNumber(list[i].lunwen_title)+'</a></h6><p class="small" style="margin:0;">作者:'+list[i].writer+'</p><p class="small" style="margin:0;">阅读量:'+list[i].pv+'</p><p class="small" style="margin:0;">发布时间:<span class="text-primary">'+formatTime(list[i].addtime,'Y/M/D')+'</span></p></div></div>';
 
 		                    }
 		                    

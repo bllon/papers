@@ -14,25 +14,36 @@ use think\facade\Session;
 use think\facade\Cookie;
 use think\Db;
 use app\api\controller\Elastic;
+use app\common\controller\Access;
 
 class Paper extends Base
 {
 	//论文详情
 	public function paperDetail()
 	{
-
 		$id = Request::param('id');
+		$paperInfo = Lunwen::get(function($query) use ($id){
+			$query->where('id',$id);
+		});
+
+		if(is_null(Session::get('user_id'))){
+			//未登录
+			if(!$paperInfo['lunwen_terms']){
+				return Access::nonePower();
+			}
+		}else{
+			//不是注册会员
+			$userInfo = Db::table('paper_consumer')->where('id',Session::get('user_id'))->find();
+			if($userInfo['role_id'] != 1){
+				return Access::nonePower();
+			}
+		}	
 		
 		//获取缓存文件
 		$content = $this->getCacheHtml(['id'=>$id]);
 		if($content){
 			return $content;
 		}
-		
-		$paperInfo = Lunwen::get(function($query) use ($id){
-			$query->where('id',$id);
-		});
-//		var_dump($paperInfo);exit;
 
 		//获取redis缓存论文
 		// $content = Paper($id);
@@ -100,18 +111,18 @@ class Paper extends Base
 			$map2[] = ['id','in',$id];
 
 			//存在搜索就重置页码
-			
-			if(!Cookie::get('paperSearch')){
+			if(!Cookie::get('paperSearch') || Cookie::get('paperSearch') != $keywords){
 				//第一次点搜索
-				Cookie::set('paperSearch',1);
+				Cookie::set('paperSearch',$keywords);
 				$page = 1;
 			}
 		}else{
 			Cookie::set('paperSearch','',time()-3600);			
 		}
 
+		$userInfo = Db::table('paper_consumer')->where('id',Session::get('user_id'))->find();
     	//没登陆
-		if(Session::get('user_id') == null){
+		if(Session::get('user_id') == null || $userInfo['role_id'] != 1){
 			
 	    	$rank_name = Request::param('rank_name');
 			

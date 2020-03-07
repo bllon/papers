@@ -2,7 +2,7 @@
 /**
 *代码测试类
 */
-namespace app\index\controller;
+namespace app\test\controller;
 
 class Test
 {
@@ -28,5 +28,10 @@ class Test
 								->order('addtime','asc')
 								->select();
 		var_dump($lunwenList);
+	}
+
+	public function d()
+	{
+		var_dump('test ok');
 	}
 }

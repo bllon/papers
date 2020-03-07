@@ -94,7 +94,7 @@ class Comunity extends Base
 		$this->view->assign('mvCount',count($mvList));
 		$mvList = array_slice($mvList, 0,8);
 
-		$this->view->assign('title','社区首页');
+		$this->view->assign('title','本科论文库 - 社区');
 		$this->view->assign('groupList',$groupList);
 		$this->view->assign('songList',$data1);
 		$this->view->assign('recommendList',$data2);

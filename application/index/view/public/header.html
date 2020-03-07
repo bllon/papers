@@ -17,6 +17,7 @@
 <script charset="utf-8" src="/static/kindeditor/kindeditor-min.js"></script>
 <script charset="utf-8" src="/static/kindeditor/lang/zh_CN.js"></script>
 <script type="text/javascript" src="/static/sweetalert/sweetalert.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/font-awesome-4.7.0/css/font-awesome.min.css">
 
 <script>
 	var editor;
@@ -131,6 +132,10 @@
 	}
 	.btn{
 		border:0;
+	}
+
+	.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
+		 outline: none; 
 	}
 </style>
 </head>

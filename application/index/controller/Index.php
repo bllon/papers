@@ -135,7 +135,7 @@ class Index extends Base
     	$this->view->assign('noticeInfo',$noticeInfo);
 		
 		$this->view->assign('empty','<h3>没有论文</h3>');
-		$this->view->assign('title','paper');
+		$this->view->assign('title','本科论文库');
 		// $this->view->assign('lunwenList',$lunwenList);
 
 		$keywords = trim(Request::param('keywords'));

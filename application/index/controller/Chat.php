@@ -119,7 +119,7 @@ class Chat extends Base
 		$roomKey = $roomInfo['roomKey'];
 
 		//房主
-		$creator = $roomInfo['creator'];
+		$creator = getUserName($roomInfo['creator']);
 
 		//房间标语
 		$roomWord = $roomInfo['title'];

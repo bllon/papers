@@ -268,6 +268,9 @@ class Consumer extends Base
 		$songList = Db::table('paper_collectMusic')->where('consumer_id',$id)->select();
 		$musicNum = count($songList);
 
+		//用户创建讨论组
+		$groupList = Db::table('paper_group')->where('creator',$id)->select();
+
 		unset($collect);
 		unset($comment);
 		unset($$borrow);
@@ -279,6 +282,7 @@ class Consumer extends Base
 		$this->view->assign('passNum',$passNum);
 		$this->view->assign('musicNum',$musicNum);
 		$this->view->assign('songList',$songList);
+		$this->view->assign('groupList',$groupList);
 		return $this->view->fetch('userDetail');
 	}
 

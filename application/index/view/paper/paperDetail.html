@@ -16,7 +16,7 @@
 								<!-- <button class="btn btn-primary btn-sm pull-left" id="borrow">已借阅</button> -->
 								<button class="btn btn-success btn-sm pull-left" id="borrow" style="outline:none">借阅</button>
 								
-								<a href="{$paperInfo.url}" target="_blank">{$paperInfo.lunwen_title}</a>
+								<a href="">{$paperInfo.lunwen_title}</a>
 								<button class="btn btn-info btn-sm pull-right" id="pdf" style="outline:none">pdf浏览</button>
 							</h4>
 							<p class="paper_info">发布者: {$paperInfo.writer} &nbsp;&nbsp;&nbsp;&nbsp;
@@ -203,7 +203,7 @@
 
 				var text = selectText();
 				if(text !== ''){
-					var html = '<div class="biaoji" style="position:absolute;width:70px;height:auto;border-radius:3px;box-shadow:0px 1px 4px 0px #000;cursor:pointer;" data-notes="'+text+'"><button class="btn btn-info btn-sm" id="add_notes" style="outline:none;">添加笔记</button></div>';
+					var html = '<div class="biaoji" style="position:absolute;width:68px;height:auto;border-radius:3px;box-shadow:0px 1px 4px 0px #000;cursor:pointer;" data-notes="'+text+'"><button class="btn btn-info btn-sm" id="add_notes" style="outline:none;">添加笔记</button></div>';
 					$('body').append(html);
 
 					$('.biaoji').css({
@@ -425,7 +425,7 @@
 	
 			    			for(var i=0;i<paperList.length;i++){
 			    				if(paperList[i].id != $('#paperId').val()){
-			    					html += '<a href="javascript:void(0);" data-id="'+paperList[i].id+'" target="_blank" class="list-group-item recom" style="padding:10px 5px;max-height:160px;overflow:hidden;"><h4 class="list-group-item-heading"><span>'+paperList[i].lunwen_title+'</span></h4><p class="text-right" style="margin:0;"><span class="pull-left"><small>专业: '+paperList[i].major+'</small></span><small>作者: '+paperList[i].writer+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>分类: <span class="text-danger">'+paperList[i].rank_type+'</span> <span class="glyphicon glyphicon-arrow-right"></span> <span class="text-info">'+paperList[i].lunwen_rank+'</span></small></span><small style="color:#dfa600;">'+paperList[i].school_name+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>阅读量：'+paperList[i].pv+'</small></span><small style="color:#dfa600;">发布时间:'+formatTime(paperList[i].addtime,'Y/M/D h:m:s')+'</small></p></a>';
+			    					html += '<a href="javascript:void(0);" data-id="'+paperList[i].id+'" class="list-group-item recom" style="padding:10px 5px;max-height:160px;overflow:hidden;"><h4 class="list-group-item-heading"><span>'+paperList[i].lunwen_title+'</span></h4><p class="text-right" style="margin:0;"><span class="pull-left"><small>专业: '+paperList[i].major+'</small></span><small>作者: '+paperList[i].writer+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>分类: <span class="text-danger">'+paperList[i].rank_type+'</span> <span class="glyphicon glyphicon-arrow-right"></span> <span class="text-info">'+paperList[i].lunwen_rank+'</span></small></span><small style="color:#dfa600;">'+paperList[i].school_name+'</small></p><p class="text-right" style="margin:0;"><span class="pull-left"><small>阅读量：'+paperList[i].pv+'</small></span><small style="color:#dfa600;">发布时间:'+formatTime(paperList[i].addtime,'Y/M/D')+'</small></p></a>';
 
 			    					pushNum = pushNum + 1;
 			    				}	
@@ -449,8 +449,7 @@
 
 		    			$('.recom').click(function(){
 		    				var id = $(this).attr('data-id');
-		    				// window.location.href = "http://www.papers.com/index/index/paperdetail/id/"+id+".html";
-		    				window.open("/index/paper/paperdetail/id/"+id+".html", '_blank');
+		    				window.location.href = "/index/paper/paperdetail/id/"+id+".html";
 		    			})
 
 		    			//收起按钮

@@ -116,26 +116,37 @@ class Posts extends Base
    }
 
    //获取评论列表HTML
-	public function postHtml($commentList,&$s = ''){
+	public function postHtml($commentList,&$s = '',$first = null){
 		$str = &$s;
 
 		foreach($commentList as $comment){
 
 			if($comment['lv'] == 1){
 				$str .= '<li class="list-group-item">
-							    <h5 class="list-group-item-heading"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/consumer/userDetail/id/'.$comment['user_id'].'">'.$comment['reply_user'].'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
-							    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';				
+							    <h5 class="list-group-item-heading"><img src="'.getConsumerImg($comment['user_id']).'" style="width:45px;height:45px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small style="font-size:14px;"><a href="'.'/index/consumer/userDetail/id/'.$comment['user_id'].'">'.getUserName($comment['user_id']).'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'" replyUser="'.getUserName($comment['user_id']).'">回复</button></span></h5>
+							    <p style="padding:0 45px;">'.$comment['content'].'</p>';
+				$first = $comment['user_id'];
+
 			}else{
-					$str .= '<div style="width:93%;margin:0 auto;border-top:1px solid #ddd;">
-									    <h5 style="margin:0;"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="'.'/index/consumer/userDetail/id/'.$comment['user_id'].'">'.$comment['reply_user'].'</a></small>&nbsp;<small>回复</small>&nbsp;<img src="'.getConsumerImg(getPostUserId($comment['reply_id'])).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small><a href="/index/consumer/userDetail/id/'.getPostUserId($comment['reply_id']).'">'.getPostUser($comment['reply_id']).'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'">回复</button></span></h5>
-									    <p>&nbsp;&nbsp;'.$comment['content'].'</p>';
+				$str .= '<div style="margin:0 45px;border-top:1px solid #ddd;">
+								    <h5 style="margin:0;"><img src="'.getConsumerImg($comment['user_id']).'" style="width:30px;height:30px;margin:5px 0px;border-radius:100%;"/>&nbsp;<small style="font-size:13px;"><a href="'.'/index/consumer/userDetail/id/'.$comment['user_id'].'">'.getUserName($comment['user_id']).'</a></small>';				
+
+				if($first && $first != getPostUserId($comment['reply_id'])){
+					$str .= '&nbsp;&nbsp;&nbsp;<small>回复</small>&nbsp;<small style="font-size:13px;"><a href="/index/consumer/userDetail/id/'.getPostUserId($comment['reply_id']).'">@'.getPostUser($comment['reply_id']).'</a></small>&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'" replyUser="'.getUserName($comment['user_id']).'">回复</button></span></h5>
+								    <p style="padding:0 30px;">'.$comment['content'].'</p>';
+				}else{
+					$str .= '&nbsp;&nbsp;&nbsp;<small>'.$comment['create_time'].'</small>&nbsp;&nbsp;<span><button class="btn btn-sm btn-warning reply" style="padding:1px 3px;cursor:pointer;"  data-toggle="modal" data-target=".replymodel" replyId="'.$comment['id'].'" replyUser="'.getUserName($comment['user_id']).'">回复</button></span></h5>
+								    <p style="padding:0 30px;">'.$comment['content'].'</p>';
+				}
+				$str .= '</div>';
+
 			}	
 
 			
 			$children = $comment['children'];
 
 			if($children !== null){							    						
-				$this->postHtml($children,$str);		
+				$this->postHtml($children,$str,$first);		
 			}
 			if($comment['lv'] == 1){
 				$str .= '</li>';
